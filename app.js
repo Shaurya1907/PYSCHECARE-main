@@ -35,29 +35,35 @@ const card4=document.querySelector('.card-4');
 const chatBotPageTakingBtn=document.querySelector('#chat-bot-page-portal-btn');
 
 
-card1.addEventListener('click',()=>{
-    window.location.href="otherHTML/food.html";
-})
+if (card1) {
+    card1.addEventListener('click',()=>{
+        window.location.href="otherHTML/food.html";
+    })
+}
 
+if (card2) {
+    card2.addEventListener('click',()=>{
+        window.location.href="otherHTML/exercise.html";
+    })
+}
 
-card2.addEventListener('click',()=>{
-    window.location.href="otherHTML/exercise.html";
-})
+if (card3) {
+    card3.addEventListener('click',()=>{
+        window.location.href="#section-3";
+    })
+}
 
+if (card4) {
+    card4.addEventListener('click',()=>{
+        window.location.href="otherJS/carGame/games.html";
+    })
+}
 
-card3.addEventListener('click',()=>{
-    window.location.href="#section-3";
-})
-
-
-card4.addEventListener('click',()=>{
-    window.location.href="otherJS/carGame/games.html";
-})
-
-
-chatBotPageTakingBtn.addEventListener('click',()=>{
-    window.location.href="otherHTML/chatBot.html";
-})
+if (chatBotPageTakingBtn) {
+    chatBotPageTakingBtn.addEventListener('click',()=>{
+        window.location.href="otherHTML/chatBot.html";
+    })
+}
 
 
 
@@ -144,9 +150,11 @@ window.addEventListener('scroll',()=>{
 
 const logo=document.querySelector('.logo');
 
-logo.addEventListener('click',()=>{
-    window.location.reload();
-})
+if (logo) {
+    logo.addEventListener('click',()=>{
+        window.location.reload();
+    })
+}
 
 
 
@@ -157,12 +165,16 @@ const attributeText=document.querySelector('.attribute-text');
 const attributeCont=document.querySelector('.actual-author-contribution-cont');
 const cross=document.querySelector('.cross');
 
-attributeText.addEventListener('click',()=>{
-    attributeCont.style.top="50px";
-    attributeCont.style.opacity="1";
-})
+if (attributeText && attributeCont) {
+    attributeText.addEventListener('click',()=>{
+        attributeCont.style.top="50px";
+        attributeCont.style.opacity="1";
+    })
+}
 
-cross.addEventListener('click',()=>{
-    attributeCont.style.top="500px";
-    attributeCont.style.opacity="0";
-})
+if (cross && attributeCont) {
+    cross.addEventListener('click',()=>{
+        attributeCont.style.top="500px";
+        attributeCont.style.opacity="0";
+    })
+}
