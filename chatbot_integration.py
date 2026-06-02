@@ -1,13 +1,18 @@
-import sys
-import os
 import json
-import random
-import numpy as np
-import nltk
+import logging
+import os
 import pickle
-from nltk.stem import WordNetLemmatizer
-from keras.models import load_model
+import random
+import sys
+from typing import Dict
+
+import nltk
+import numpy as np
 from autocorrect import Speller
+from keras.models import load_model
+from nltk.stem import WordNetLemmatizer
+
+logging.basicConfig(level=logging.ERROR)
 
 # Add the Python-Mental-Health-Chatbot-main directory to sys.path
 python_chatbot_path = os.path.join(os.path.dirname(__file__), "Python-Mental-Health-Chatbot-main", "Python-Mental-Health-Chatbot-main")
@@ -15,8 +20,8 @@ sys.path.append(python_chatbot_path)
 
 # Make sure required NLTK packages are downloaded
 try:
-    nltk.download('punkt', quiet=True)
-    nltk.download('wordnet', quiet=True)
+    nltk.download("punkt", quiet=True)
+    nltk.download("wordnet", quiet=True)
     print("NLTK packages downloaded successfully")
 except Exception as e:
     print(f"Error downloading NLTK packages: {e}")
@@ -29,7 +34,7 @@ words = []
 classes = []
 model = None
 intents = {}
-context = {}
+context: Dict[str, str] = {}
 
 def load_chatbot_model():
     """
@@ -59,15 +64,26 @@ def load_chatbot_model():
                 words, classes, training, output = pickle.load(f)
             model = load_model(model_path)
             print("Chatbot model loaded successfully!")
-        except Exception as e:
-            print(f"Error loading model: {e}")
+        except FileNotFoundError as e:
+            print(f"Required model file is missing: {e.filename}")
             print("You need to train the model first or provide the model files")
+            return False
+        except OSError as e:
+            print(f"OS error occurred while loading files: {e}")
+            return False
+        except Exception as e:
+            # If an unexpected error happens, log the full stack trace for debugging
+            logging.exception(
+                "An unexpected error occurred while loading the chatbot model."
+            )
             return False
             
         return True
     
     except Exception as e:
-        print(f"Error initializing chatbot: {e}")
+        logging.exception(
+            "An unexpected error occurred while initializing the chatbot."
+        )
         return False
 
 # Helper functions from the Python chatbot implementation
@@ -155,7 +171,9 @@ def get_chatbot_response(message, user_id="000"):
         return "I apologize if my response wasn't what you were looking for. As an AI assistant, my knowledge is limited. Is there another way I can help you?"
     
     except Exception as e:
-        print(f"Error getting chatbot response: {e}")
+        logging.exception(
+            "An unexpected error occurred while getting the chatbot response."
+        )
         return "Sorry, I'm having trouble processing your request right now."
 
 def detect_language(text):
