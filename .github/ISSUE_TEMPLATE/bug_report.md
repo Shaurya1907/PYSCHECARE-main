@@ -65,11 +65,6 @@ assignees: ""
 ---
 
 ## 🏷️ Suggested Labels
-<!-- Check the ones that apply — a maintainer will confirm -->
-- [ ] `level:beginner` — Simple fix
-- [ ] `level:intermediate` — Requires some investigation
-- [ ] `level:advanced` — Complex root cause
-- [ ] `level:critical` — Breaking / production issue
-- [ ] `type:security` — Security-related bug
-- [ ] `type:design` — Visual / UI bug
-- [ ] `type:performance` — Slowness or memory issue
+<!-- Write the tags you think apply to this issue based on our contribution guidelines. A maintainer will confirm. -->
+
+

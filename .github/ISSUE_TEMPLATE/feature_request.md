@@ -45,11 +45,6 @@ As a **[type of user]**, I want **[some goal]** so that **[some reason]**.
 ---
 
 ## 🏷️ Suggested Labels
-- [ ] `level:beginner` — Small, straightforward addition
-- [ ] `level:intermediate` — Moderate complexity
-- [ ] `level:advanced` — Significant new functionality
-- [ ] `level:critical` — Critical missing feature
-- [ ] `type:design` — Involves UI/UX changes
-- [ ] `type:performance` — Performance-related feature
-- [ ] `type:security` — Security improvement
-- [ ] `type:accessibility` — Accessibility improvement
+<!-- Write the tags you think apply to this issue based on our contribution guidelines. A maintainer will confirm. -->
+
+
