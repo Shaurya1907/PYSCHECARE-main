@@ -1,22 +1,34 @@
-import sys
-import os
 import json
+import logging
+import os
 import random
-import numpy as np
-import nltk
-import pickle
-from nltk.stem import WordNetLemmatizer
-from keras.models import load_model
-from autocorrect import Speller
+import sys
+from pathlib import Path
+from typing import Dict
 
-# Add the Python-Mental-Health-Chatbot-main directory to sys.path
-python_chatbot_path = os.path.join(os.path.dirname(__file__), "Python-Mental-Health-Chatbot-main", "Python-Mental-Health-Chatbot-main")
-sys.path.append(python_chatbot_path)
+import nltk
+import numpy as np
+from autocorrect import Speller
+from keras.models import load_model
+from nltk.stem import WordNetLemmatizer
+
+logging.basicConfig(level=logging.ERROR)
+
+# Resolve the absolute path dynamically
+base_dir = Path(__file__).resolve().parent
+python_chatbot_path = base_dir / "Python-Mental-Health-Chatbot-main" / "Python-Mental-Health-Chatbot-main"
+
+# Check if it actually exists before altering the environment
+if python_chatbot_path.exists() and python_chatbot_path.is_dir():
+    sys.path.insert(0, str(python_chatbot_path))  # Using insert(0) is often safer to prioritize local modules
+else:
+    print(f"Warning: Chatbot dependencies directory not found at {python_chatbot_path}")
+    print("Ensure the chatbot submodule is cloned correctly.")
 
 # Make sure required NLTK packages are downloaded
 try:
-    nltk.download('punkt', quiet=True)
-    nltk.download('wordnet', quiet=True)
+    nltk.download("punkt", quiet=True)
+    nltk.download("wordnet", quiet=True)
     print("NLTK packages downloaded successfully")
 except Exception as e:
     print(f"Error downloading NLTK packages: {e}")
@@ -49,14 +61,14 @@ def load_chatbot_model():
     try:
         # Set paths for model files
         model_path = os.path.join(python_chatbot_path, "chatbot-model.h5")
-        pickle_path = os.path.join(python_chatbot_path, "data.pickle")
+        data_path = os.path.join(python_chatbot_path, "data.json")
         intents_path = os.path.join(python_chatbot_path, "ChatbotWebsite", "static", "data", "intents.json")
         
         # Check if we're working with the provided files or the ones in the original location
         if not os.path.exists(intents_path):
             intents_path = os.path.join(os.path.dirname(__file__), "chatbot_files", "intents.json")
             model_path = os.path.join(os.path.dirname(__file__), "chatbot_files", "model.h5")
-            pickle_path = os.path.join(os.path.dirname(__file__), "chatbot_files", "data.pickle")
+            data_path = os.path.join(os.path.dirname(__file__), "chatbot_files", "data.json")
         
         # Load intents file
         with open(intents_path) as file:
@@ -64,19 +76,34 @@ def load_chatbot_model():
         
         # Try to load existing model and data
         try:
-            with open(pickle_path, "rb") as f:
-                words, classes, training, output = pickle.load(f)
+            with open(data_path, "r") as f:
+                data_dict = json.load(f)
+                words = data_dict.get("words", [])
+                classes = data_dict.get("classes", [])
+                training = data_dict.get("training", [])
+                output = data_dict.get("output", [])
             model = load_model(model_path)
             print("Chatbot model loaded successfully!")
-        except Exception as e:
-            print(f"Error loading model: {e}")
+        except FileNotFoundError as e:
+            print(f"Required model file is missing: {e.filename}")
             print("You need to train the model first or provide the model files")
+            return False
+        except OSError as e:
+            print(f"OS error occurred while loading files: {e}")
+            return False
+        except Exception as e:
+            # If an unexpected error happens, log the full stack trace for debugging
+            logging.exception(
+                "An unexpected error occurred while loading the chatbot model."
+            )
             return False
             
         return True
     
     except Exception as e:
-        print(f"Error initializing chatbot: {e}")
+        logging.exception(
+            "An unexpected error occurred while initializing the chatbot."
+        )
         return False
 
 # Helper functions from the Python chatbot implementation
@@ -129,7 +156,12 @@ def get_chatbot_response(message, user_id="000"):
         success = load_chatbot_model()
         if not success:
             return "Sorry, the chatbot is not available at the moment."
-    
+            
+    # Detect language
+    lang = detect_language(message)
+    if lang != 'en':
+        return "I currently only speak English, but you can contact our human support team for help in other languages."
+
     try:
         # Apply spelling correction
         spell = Speller()
@@ -164,13 +196,14 @@ def get_chatbot_response(message, user_id="000"):
         return "I apologize if my response wasn't what you were looking for. As an AI assistant, my knowledge is limited. Is there another way I can help you?"
     
     except Exception as e:
-        print(f"Error getting chatbot response: {e}")
+        logging.exception(
+            "An unexpected error occurred while getting the chatbot response."
+        )
         return "Sorry, I'm having trouble processing your request right now."
 
 def detect_language(text):
     """
     Detect the language of the input text.
-    This is a simplified function that always returns English for now.
     
     Args:
         text (str): The input text
@@ -178,7 +211,11 @@ def detect_language(text):
     Returns:
         str: The detected language code
     """
-    return "en"  # Default to English
+    try:
+        from langdetect import detect
+        return detect(text)
+    except:
+        return "en"  # Default to English
 
 # Initialize the chatbot model when this module is imported
 load_chatbot_model()

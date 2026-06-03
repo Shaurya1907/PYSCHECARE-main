@@ -15,18 +15,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $password = $_POST["password"];
 
-    // Validate credentials (you should use a more secure method, e.g., database lookup)
-    $validUsername = "example_user";
-    $validPassword = "example_password";
+    // Connect to local SQLite database (secure DB lookup instead of hardcoded plaintext)
+    try {
+        $db = new PDO('sqlite:database.sqlite');
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        // Ensure table exists
+        $db->exec("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, username TEXT UNIQUE, password_hash TEXT)");
+        
+        // Retrieve the user from the database securely
+        $stmt = $db->prepare("SELECT password_hash FROM users WHERE username = :username");
+        $stmt->execute([':username' => $username]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($username == $validUsername && $password == $validPassword) {
-        // Successful login
-        $_SESSION["username"] = $username;
-        header("Location: welcome.php"); // Redirect to a welcome page
-        exit();
-    } else {
-        // Invalid credentials
-        echo "Invalid username or password";
+        // Verify password hash securely
+        if ($user && password_verify($password, $user['password_hash'])) {
+            // Successful login
+            $_SESSION["username"] = $username;
+            header("Location: welcome.php"); // Redirect to a welcome page
+            exit();
+        } else {
+            // Invalid credentials - redirect back to login with error parameter
+            header("Location: login.html?error=1");
+            exit();
+        }
+    } catch (PDOException $e) {
+        die("Database error: " . $e->getMessage());
     }
 }
 ?>

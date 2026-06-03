@@ -274,3 +274,114 @@
         max-width: 85%;
     }
 }
+
+/* Mode Switcher Toggle */
+.main-title {
+    justify-content: space-between !important;
+    align-items: center;
+}
+
+.bot-info {
+    display: flex;
+    align-items: center;
+}
+
+.mode-toggle-container {
+    display: flex;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 3px;
+    border-radius: 30px;
+    backdrop-filter: blur(5px);
+}
+
+.mode-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mode-btn:hover {
+    color: white;
+}
+
+.mode-btn.active {
+    background: white;
+    color: var(--primary-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Mic button inside input area */
+.msger-mic-btn {
+    background: #f1f0f0;
+    color: #555;
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.msger-mic-btn:hover {
+    background: #e4e3e3;
+    color: var(--primary-color);
+}
+
+.msger-mic-btn.listening {
+    background: #ff7675;
+    color: white;
+    animation: micPulse 1.5s infinite;
+}
+
+@keyframes micPulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 118, 117, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 118, 117, 0); }
+}
+
+/* Voice state indicator */
+.voice-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(127, 90, 240, 0.1);
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.3s ease;
+}
+
+.voice-indicator i {
+    animation: breathe 2s infinite ease-in-out;
+}
+
+/* Fallback browser banner */
+.browser-fallback-banner {
+    background: #ffeaa7;
+    color: #d63031;
+    padding: 10px;
+    font-size: 0.85rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}

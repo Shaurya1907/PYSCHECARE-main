@@ -35,29 +35,35 @@ const card4=document.querySelector('.card-4');
 const chatBotPageTakingBtn=document.querySelector('#chat-bot-page-portal-btn');
 
 
-card1.addEventListener('click',()=>{
-    window.location.href="otherHTML/food.html";
-})
+if (card1) {
+    card1.addEventListener('click',()=>{
+        window.location.href="otherHTML/food.html";
+    })
+}
 
+if (card2) {
+    card2.addEventListener('click',()=>{
+        window.location.href="otherHTML/exercise.html";
+    })
+}
 
-card2.addEventListener('click',()=>{
-    window.location.href="otherHTML/exercise.html";
-})
+if (card3) {
+    card3.addEventListener('click',()=>{
+        window.location.href="#section-3";
+    })
+}
 
+if (card4) {
+    card4.addEventListener('click',()=>{
+        window.location.href="otherJS/carGame/games.html";
+    })
+}
 
-card3.addEventListener('click',()=>{
-    window.location.href="#SECTION-3";
-})
-
-
-card4.addEventListener('click',()=>{
-    window.location.href="otherJS/carGame/games.html";
-})
-
-
-chatBotPageTakingBtn.addEventListener('click',()=>{
-    window.location.href="otherHTML/chatBot.html";
-})
+if (chatBotPageTakingBtn) {
+    chatBotPageTakingBtn.addEventListener('click',()=>{
+        window.location.href="otherHTML/chatBot.html";
+    })
+}
 
 
 
@@ -70,7 +76,7 @@ const cards=document.querySelectorAll('.card');
 let options ={
     root: null,
     rootMargin:'200px',
-    threshold:1.0
+    threshold:0.15
 }
 
 let observer= new IntersectionObserver((entries,observe)=>{
@@ -102,32 +108,33 @@ let smallCradOptions={
 }
 
 
-let smallCardobserver= new IntersectionObserver((entries,observe)=>{
+let smallCardobserver = new IntersectionObserver((entries, observe) => {
 
+    entries.forEach((entry) => {
 
-    let speed=300;
-
-    entries.forEach((entry)=>{
-
-        if(entry.isIntersecting){
-            entry.target.style.transitionDuration=`${speed}ms`;
+        if (entry.isIntersecting) {
             entry.target.classList.add('appear');
         }
 
-        speed+=200;
-    })
+    });
 
-},smallCradOptions)
+}, smallCradOptions);
 
 
-smallCrads.forEach((card)=>{
+smallCrads.forEach((card, index) => {
+
+    const delay = 300 + (index * 200);
+
+    card.style.transitionDelay = `${delay}ms`;
+
     smallCardobserver.observe(card);
-})
+
+});
 
 
 
 window.addEventListener('scroll',()=>{
-    if(window.pageYOffset==0){
+    if (window.scrollY === 0) {
         cards.forEach((card)=>{
             card.classList.remove('appear');
         })
@@ -143,9 +150,11 @@ window.addEventListener('scroll',()=>{
 
 const logo=document.querySelector('.logo');
 
-logo.addEventListener('click',()=>{
-    window.location.reload();
-})
+if (logo) {
+    logo.addEventListener('click',()=>{
+        window.location.reload();
+    })
+}
 
 
 
@@ -156,12 +165,16 @@ const attributeText=document.querySelector('.attribute-text');
 const attributeCont=document.querySelector('.actual-author-contribution-cont');
 const cross=document.querySelector('.cross');
 
-attributeText.addEventListener('click',()=>{
-    attributeCont.style.top="50px";
-    attributeCont.style.opacity="1";
-})
+if (attributeText && attributeCont) {
+    attributeText.addEventListener('click',()=>{
+        attributeCont.style.top="50px";
+        attributeCont.style.opacity="1";
+    })
+}
 
-cross.addEventListener('click',()=>{
-    attributeCont.style.top="500px";
-    attributeCont.style.opacity="0";
-})
+if (cross && attributeCont) {
+    cross.addEventListener('click',()=>{
+        attributeCont.style.top="500px";
+        attributeCont.style.opacity="0";
+    })
+}

@@ -92,18 +92,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize
     breathingText.textContent = 'Click to Start';
 
-    // Add keyboard shortcuts for emergency contacts
-    document.addEventListener('keydown', function(e) {
-        switch(e.key) {
-            case '1':
-                window.location.href = 'tel:911';
-                break;
-            case '2':
-                window.location.href = 'tel:18002738255';
-                break;
-            case '3':
-                window.location.href = 'tel:911';
-                break;
-        }
-    });
 }); 

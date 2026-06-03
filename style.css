@@ -176,7 +176,7 @@ p::selection{
         padding:1.5em 0;
     }
 
-    .hamBurger{
+    .hamburger{
         /* position: absolute;
         top:33px;
         right:18px; */
@@ -996,7 +996,7 @@ p::selection{
 
 
 
-/* ++++++++++++++++++++++++++++++++++++  SECTION-3 ++++++++++++++++++++++++++++++++++++++ */
+/* ++++++++++++++++++++++++++++++++++++  section-3 ++++++++++++++++++++++++++++++++++++++ */
 
 
 .section-3-cont{
@@ -1388,4 +1388,8 @@ p::selection{
     100% {
         transform: rotate(360deg);
     }
+}
+
+.delay-300 {
+    animation-delay: 0.3s;
 }

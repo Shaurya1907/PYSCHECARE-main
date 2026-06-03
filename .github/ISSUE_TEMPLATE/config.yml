@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: 💬 Ask a Question
+    url: https://github.com/Niteshagarwal01/PYSCHECARE-main/discussions
+    about: Use GitHub Discussions for questions and general conversation
+
+  - name: 🔒 Report a Security Vulnerability
+    url: https://github.com/Niteshagarwal01/PYSCHECARE-main/security/advisories/new
+    about: Please report security vulnerabilities privately via GitHub Security Advisories

@@ -6,7 +6,7 @@
 
 
 
-const hamburger=document.querySelector('.hamBurger');
+const hamburger=document.querySelector('.hamburger');
 
 
 const line1=document.querySelector('.line1');

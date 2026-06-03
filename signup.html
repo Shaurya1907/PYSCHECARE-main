@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | PsycheCare</title>
-
-    <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
+    <title>Sign Up | PsycheCare</title>
 
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="Images/B_icon01.png">
@@ -118,17 +116,17 @@
                     <li><a href="index.html#section-3">CHAT BOT</a></li>
                     <li><a href="otherHTML/statistics.html">STATISTICS</a></li>
                     <li><a href="index.html#footer">CONTACT</a></li>
-                    <li><a href="login.html" class="active">LOGIN</a></li>
+                    <li><a href="signup.html" class="active">SIGN UP</a></li>
                 </ul>
             </div>
 
             <div class="hamburger">
-                <diV class="line line1"></diV>
+                <div class="line line1"></div>
                 <div class="mid-line-cont">
                     <div class="line mid-line1"></div>
                     <div class="line mid-line2"></div>
                 </div>
-                <diV class="line line3"></diV>
+                <div class="line line3"></div>
             </div>
         </div>
     </div>
@@ -144,44 +142,47 @@
                 <li><a href="index.html#section-3" class="mobile-view-list">CHAT BOT</a></li>
                 <li><a href="otherHTML/statistics.html" class="mobile-view-list">STATISTICS</a></li>
                 <li><a href="index.html#footer" class="mobile-view-list">CONTACT</a></li>
-                <li><a href="login.html" class="mobile-view-list">LOGIN</a></li>
+                <li><a href="signup.html" class="mobile-view-list">SIGN UP</a></li>
             </ul>
         </div>
     </div>
 
-    <!-- Login Form -->
+    <!-- Sign Up Form -->
     <div class="login-container">
         <div class="login-header">
             <div class="login-illustration">
                 <img src="Images/illustration-new/home-bot-img.png" alt="Login">
             </div>
-            <h2 style="color: var(--dark-color);">Welcome to <span style="color: var(--primary-color);">PsycheCare</span></h2>
-            <p style="color: var(--dark-color); font-size: 0.9rem;">Sign in to access your personal dashboard</p>
+            <h2 style="color: var(--dark-color);">Join <span style="color: var(--primary-color);">PsycheCare</span></h2>
+            <p style="color: var(--dark-color); font-size: 0.9rem;">Create your account and begin your wellness journey</p>
         </div>
 
-        <form method="POST" action="login.php">
-    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+        <form action="signup.php" method="post" class="login-form">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-                <p class="error-message" id="login-error">Invalid username or password</p>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
             </div>
 
-            <button type="submit" class="login-btn">Log In</button>
+            <div class="form-group">                    
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                <p class="error-message" id="signup-error"></p>
+            </div>
+
+            <button type="submit" class="login-btn">Create Account</button>
             
             <div class="return-home">
                 <p>
-                    Don't have an account?
-                    <a href="signup.html">Sign Up</a>
+                    Already have an account?
+                    <a href="login.html">Log In</a>
                 </p>
-
                 <p style="margin-top:10px;">
-                     <a href="index.html">Return to Home</a>
+                    <a href="index.html">Return to Home</a>
                 </p>
             </div>
         </form>
@@ -189,10 +190,19 @@
 
     <script src="otherJS/hamberger.js"></script>
     <script>
-        // Show error message if login fails
+        // Show error or success messages from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
+        const errorMsg = document.getElementById('signup-error');
         if (urlParams.has('error')) {
-            document.getElementById('login-error').style.display = 'block';
+            const err = urlParams.get('error');
+            errorMsg.style.display = 'block';
+            if (err === 'exists') {
+                errorMsg.textContent = 'Username already exists.';
+            } else if (err === 'db') {
+                errorMsg.textContent = 'Database error. Please try again.';
+            } else {
+                errorMsg.textContent = 'Sign up failed. Please try again.';
+            }
         }
     </script>
     <script>
@@ -210,5 +220,6 @@
             })
             .catch(error => console.error('Error fetching CSRF token:', error));
     </script>
+    <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
 </body>
 </html>

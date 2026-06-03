@@ -330,14 +330,7 @@
     <script src="otherJS/hamberger.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const contactForm = document.getElementById('contactForm');
-            if (contactForm) {
-                contactForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    alert('Thank you for your message! We will get back to you soon.');
-                    contactForm.reset();
-                });
-            }
+
             
             // Add animation class
             const fadeElements = document.querySelectorAll('.fade-in-section');
@@ -356,6 +349,21 @@
                 el.style.opacity = 0;
             });
         });
+    </script>
+    <script>
+        fetch('csrf.php')
+            .then(response => response.json())
+            .then(data => {
+                const forms = document.querySelectorAll('form');
+                forms.forEach(form => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'csrf_token';
+                    input.value = data.csrf_token;
+                    form.appendChild(input);
+                });
+            })
+            .catch(error => console.error('Error fetching CSRF token:', error));
     </script>
 </body>
 </html>

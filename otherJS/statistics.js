@@ -141,6 +141,7 @@ function addCountry(countryName){
     if(nameOfTheSelectedCountry!="none"){
      
         updateChart(nameOfTheSelectedCountry);
+        countryName.value = "none";
     }
 
 }
