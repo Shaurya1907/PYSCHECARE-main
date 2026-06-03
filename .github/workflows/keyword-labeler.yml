@@ -1,98 +1,273 @@
-name: Master Auto Labeler
+name: 🏷️ Smart PR & Issue Labeler
+
 on:
   issues:
-    types: [opened, edited]
+    types: [opened, edited, reopened]
   pull_request_target:
-    types: [opened, edited]
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
   label-everything:
+    name: Apply Smart Labels
     runs-on: ubuntu-latest
     permissions:
       issues: write
       pull-requests: write
+      contents: read
+
     steps:
-      - uses: actions/github-script@v6
+      - name: Apply Labels
+        uses: actions/github-script@v7
         with:
           script: |
-            // 1. Define ALL 16 labels explicitly with their colors
+            // ================================================================
+            //  PSYCHECARE MASTER AUTO LABELER
+            //  Label System (from PR Labels spec):
+            //    • Difficulty  → required, pick ONE  (level:*)
+            //    • Quality     → optional multiplier  (quality:*)
+            //    • Type        → optional, stackable  (type:*)
+            //    • Special     → gssoc:approved, mentor:*
+            // ================================================================
+
+            // ── STEP 1: Register ALL labels ──────────────────────────────
             const allLabels = [
-              { name: 'level:beginner', color: '006b75' },
-              { name: 'level:intermediate', color: 'fbca04' },
-              { name: 'level:advanced', color: 'd93f0b' },
-              { name: 'level:critical', color: 'b60205' },
-              { name: 'quality:clean', color: '0e8a16' },
-              { name: 'quality:exceptional', color: '0052cc' },
-              { name: 'type:bug', color: 'd73a4a' },
-              { name: 'type:feature', color: 'a2eeef' },
-              { name: 'type:docs', color: '0075ca' },
-              { name: 'type:testing', color: '7057ff' },
-              { name: 'type:security', color: 'e4e669' },
-              { name: 'type:performance', color: 'd876e3' },
-              { name: 'type:design', color: 'bfd4f2' },
-              { name: 'type:refactor', color: '5319e7' },
-              { name: 'type:devops', color: '1d76db' },
-              { name: 'type:accessibility', color: 'ff9f1c' }
+              // ── Difficulty (required, pick one) ──────────────────────
+              { name: 'level:beginner',       color: '006b75', description: '🟢 Beginner — 25 pts' },
+              { name: 'level:intermediate',   color: 'fbca04', description: '🟡 Intermediate — 50 pts' },
+              { name: 'level:advanced',       color: 'd93f0b', description: '🟠 Advanced — 75 pts' },
+              { name: 'level:critical',       color: 'b60205', description: '🔴 Critical — 100 pts' },
+              // ── Quality (optional multiplier) ─────────────────────────
+              { name: 'quality:clean',        color: '0e8a16', description: '✨ Clean code — 1.15x multiplier' },
+              { name: 'quality:exceptional',  color: '0052cc', description: '🌟 Exceptional — 1.30x multiplier' },
+              // ── Type (optional, stackable) ────────────────────────────
+              { name: 'type:bug',             color: 'd73a4a', description: '🐛 Bug fix' },
+              { name: 'type:feature',         color: 'a2eeef', description: '✨ New feature' },
+              { name: 'type:docs',            color: '0075ca', description: '📚 Documentation' },
+              { name: 'type:testing',         color: '7057ff', description: '🧪 Tests' },
+              { name: 'type:security',        color: 'e4e669', description: '🔒 Security fix' },
+              { name: 'type:performance',     color: 'd876e3', description: '⚡ Performance' },
+              { name: 'type:design',          color: 'bfd4f2', description: '🎨 UI/UX/CSS' },
+              { name: 'type:refactor',        color: '5319e7', description: '♻️ Code refactor' },
+              { name: 'type:devops',          color: '1d76db', description: '⚙️ CI/CD & DevOps' },
+              { name: 'type:accessibility',   color: 'ff9f1c', description: '♿ Accessibility' },
+              // ── Special / GSSoC labels ────────────────────────────────
+              { name: 'gssoc:approved',       color: 'f9d0c4', description: '✅ GSSoC approved — +50 base pts' },
+              { name: 'good first issue',     color: '7057ff', description: '👋 Good for newcomers' },
+              { name: 'help wanted',          color: '008672', description: '🙋 Help wanted' },
+              { name: 'duplicate',            color: 'cfd3d7', description: '🔁 Duplicate issue/PR' },
             ];
-            
-            // 2. Automatically create the labels in your repository if they are missing!
+
+            // Auto-create any missing labels
             for (const label of allLabels) {
               try {
                 await github.rest.issues.getLabel({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  name: label.name
+                  owner: context.repo.owner, repo: context.repo.repo, name: label.name
                 });
               } catch (e) {
                 if (e.status === 404) {
-                  console.log(`Creating missing label: ${label.name}`);
+                  console.log(`Creating label: "${label.name}"`);
                   await github.rest.issues.createLabel({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    name: label.name,
-                    color: label.color
+                    owner: context.repo.owner, repo: context.repo.repo,
+                    name: label.name, color: label.color, description: label.description
                   });
                 }
               }
             }
-            
-            // 3. Scan the title and body for keywords
-            const isPR = !!context.payload.pull_request;
+
+            // ── STEP 2: Get title + body ──────────────────────────────────
+            const isPR    = !!context.payload.pull_request;
             const payload = isPR ? context.payload.pull_request : context.payload.issue;
-            const title = payload.title.toLowerCase();
-            const body = (payload.body || "").toLowerCase();
-            const text = title + " " + body;
-            const labelsToAdd = [];
-            
-            // Search for Difficulty
-            if (text.includes('beginner') || text.includes('good first issue')) labelsToAdd.push('level:beginner');
-            if (text.includes('intermediate')) labelsToAdd.push('level:intermediate');
-            if (text.includes('advanced')) labelsToAdd.push('level:advanced');
-            if (text.includes('critical') || text.includes('urgent')) labelsToAdd.push('level:critical');
-            
-            // Search for Quality
-            if (text.includes('clean code')) labelsToAdd.push('quality:clean');
-            if (text.includes('exceptional')) labelsToAdd.push('quality:exceptional');
-            
-            // Search for Type
-            if (text.includes('fix') || text.includes('bug')) labelsToAdd.push('type:bug');
-            if (text.includes('feat') || text.includes('add') || text.includes('new')) labelsToAdd.push('type:feature');
-            if (text.includes('doc') || text.includes('readme')) labelsToAdd.push('type:docs');
-            if (text.includes('test') || text.includes('jest')) labelsToAdd.push('type:testing');
-            if (text.includes('security') || text.includes('vulnerability')) labelsToAdd.push('type:security');
-            if (text.includes('perf') || text.includes('speed')) labelsToAdd.push('type:performance');
-            if (text.includes('css') || text.includes('design') || text.includes('ui')) labelsToAdd.push('type:design');
-            if (text.includes('refactor') || text.includes('cleanup')) labelsToAdd.push('type:refactor');
-            if (text.includes('ci') || text.includes('action') || text.includes('devops')) labelsToAdd.push('type:devops');
-            if (text.includes('a11y') || text.includes('accessibility')) labelsToAdd.push('type:accessibility');
-            
-            // 4. Apply the matched labels
-            if (labelsToAdd.length > 0) {
-              const uniqueLabels = [...new Set(labelsToAdd)];
+            const title   = (payload.title || '').toLowerCase();
+            const body    = (payload.body  || '').toLowerCase();
+            const text    = title + ' ' + body;
+
+            // Word-boundary safe matcher (no substring false-positives)
+            const match = (...phrases) =>
+              phrases.some(p =>
+                new RegExp(`(?<![a-z])${p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}(?![a-z])`, 'i').test(text)
+              );
+
+            // ── STEP 3: Detect DIFFICULTY (pick exactly one) ─────────────
+            // Priority: critical > advanced > intermediate > beginner
+            let difficultyLabel = null;
+
+            if (match('critical', 'urgent', 'blocker', 'hotfix', 'showstopper',
+                      'breaking change', 'production down', 'rce', 'data loss'))
+              difficultyLabel = 'level:critical';
+
+            else if (match('advanced', 'complex', 'expert', 'hard',
+                           'architectural', 'refactor', 'redesign', 'overhaul'))
+              difficultyLabel = 'level:advanced';
+
+            else if (match('intermediate', 'moderate', 'medium difficulty',
+                           'some experience', 'familiar'))
+              difficultyLabel = 'level:intermediate';
+
+            else if (match('beginner', 'easy', 'simple', 'starter',
+                           'first issue', 'first time', 'good first', 'trivial', 'minor'))
+              difficultyLabel = 'level:beginner';
+
+            // ── STEP 4: Detect QUALITY (optional, pick at most one) ───────
+            let qualityLabel = null;
+
+            if (match('exceptional', 'outstanding', 'excellent', 'exemplary', 'perfect'))
+              qualityLabel = 'quality:exceptional';
+
+            else if (match('clean code', 'well structured', 'best practice',
+                           'follows standard', 'clean architecture', 'solid principle'))
+              qualityLabel = 'quality:clean';
+
+            // ── STEP 5: Detect TYPE labels (optional, stackable) ──────────
+            const typeLabels = new Set();
+
+            // type:security (highest priority — check first)
+            if (match('security', 'vulnerability', 'exploit', 'xss', 'csrf',
+                      'injection', 'sqli', 'auth bypass', 'plaintext password',
+                      'hardcode', 'credential', 'dos', 'ddos', 'rate limit',
+                      'sanitize', 'sensitive data', 'session fixation'))
+              typeLabels.add('type:security');
+
+            // type:bug
+            if (match('bug', 'broken', 'crash', 'error', 'exception',
+                      'fails', 'failure', 'regression', 'glitch', 'defect',
+                      'not working', 'incorrect', 'unexpected behaviour', 'issue'))
+              typeLabels.add('type:bug');
+
+            // type:feature
+            if (match('feature', 'enhancement', 'implement', 'add support',
+                      'request', 'proposal', 'new capability', 'introduce',
+                      'would like', 'should have', 'missing feature'))
+              typeLabels.add('type:feature');
+
+            // type:docs
+            if (match('docs', 'documentation', 'readme', 'contributing',
+                      'guide', 'comment', 'jsdoc', 'docstring', 'wiki',
+                      'typo', 'spelling', 'grammar', 'changelog'))
+              typeLabels.add('type:docs');
+
+            // type:testing
+            if (match('test', 'tests', 'testing', 'jest', 'pytest',
+                      'unit test', 'integration test', 'coverage', 'e2e', 'spec'))
+              typeLabels.add('type:testing');
+
+            // type:performance
+            if (match('performance', 'optimization', 'optimize', 'slow', 'speed',
+                      'memory', 'cache', 'caching', 'lazy load', 'bundle size',
+                      'minif', 'compress', 'throughput', 'bottleneck', 'latency'))
+              typeLabels.add('type:performance');
+
+            // type:design
+            if (match('design', 'css', 'style', 'styling', 'layout', 'ui',
+                      'ux', 'responsive', 'mobile view', 'dark mode', 'theme',
+                      'color', 'font', 'icon', 'animation', 'visual', 'figma'))
+              typeLabels.add('type:design');
+
+            // type:refactor
+            if (match('refactor', 'refactoring', 'cleanup', 'clean up',
+                      'restructure', 'reorganize', 'simplify', 'technical debt'))
+              typeLabels.add('type:refactor');
+
+            // type:devops
+            if (match('workflow', 'github action', 'pipeline', 'devops',
+                      'ci/cd', 'deploy', 'deployment', 'docker', 'release',
+                      'automation', 'linter', 'codeql', 'dependabot', 'runner'))
+              typeLabels.add('type:devops');
+
+            // type:accessibility
+            if (match('accessibility', 'a11y', 'wcag', 'screen reader', 'aria',
+                      'keyboard nav', 'alt text', 'contrast', 'tab order', 'semantic html'))
+              typeLabels.add('type:accessibility');
+
+            // ── STEP 6: File-path based TYPE detection (PRs only) ─────────
+            if (isPR) {
+              try {
+                const filesResp = await github.rest.pulls.listFiles({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  pull_number: payload.number, per_page: 100
+                });
+                const files = filesResp.data.map(f => f.filename.toLowerCase());
+                const anyFile = (...patterns) =>
+                  patterns.some(p => files.some(f => new RegExp(p).test(f)));
+
+                if (anyFile('\\.css$', '\\.scss$', '\\.sass$'))      typeLabels.add('type:design');
+                if (anyFile('\\.html$', '\\.htm$'))                   typeLabels.add('type:design');
+                if (anyFile('\\.php$'))                               typeLabels.add('type:security');
+                if (anyFile('\\.py$'))                                typeLabels.add('type:devops');
+                if (anyFile('\\.github/', '\\.yml$', '\\.yaml$'))     typeLabels.add('type:devops');
+                if (anyFile('test', 'spec', '__tests__'))             typeLabels.add('type:testing');
+                if (anyFile('\\.md$', 'readme', 'contributing'))      typeLabels.add('type:docs');
+                if (anyFile('chatbot', 'model', 'nlp'))               typeLabels.add('type:performance');
+                if (anyFile('login', 'auth', 'session', 'password'))  typeLabels.add('type:security');
+
+                // Difficulty boost from file count (many files = more complex)
+                if (!difficultyLabel && filesResp.data.length >= 10)
+                  difficultyLabel = 'level:advanced';
+                else if (!difficultyLabel && filesResp.data.length >= 5)
+                  difficultyLabel = 'level:intermediate';
+                else if (!difficultyLabel && filesResp.data.length >= 1)
+                  difficultyLabel = 'level:beginner';
+
+              } catch (err) {
+                console.log('Could not fetch PR files:', err.message);
+              }
+            }
+
+            // ── STEP 7: Conflict resolution ───────────────────────────────
+            // security > bug (security is more specific)
+            if (typeLabels.has('type:security') && typeLabels.has('type:bug'))
+              typeLabels.delete('type:bug');
+
+            // bug > feature (a PR fixing a bug is not a "feature")
+            if (typeLabels.has('type:bug') && typeLabels.has('type:feature'))
+              typeLabels.delete('type:feature');
+
+            // refactor conflicts with feature
+            if (typeLabels.has('type:refactor') && typeLabels.has('type:feature'))
+              typeLabels.delete('type:feature');
+
+            // ── STEP 8: Assemble final label set ──────────────────────────
+            const finalLabels = [];
+            if (difficultyLabel) finalLabels.push(difficultyLabel);
+            if (qualityLabel)    finalLabels.push(qualityLabel);
+            finalLabels.push(...typeLabels);
+
+            // Special labels
+            if (match('good first issue', 'beginner friendly', 'newcomer'))
+              finalLabels.push('good first issue');
+            if (match('help wanted', 'need help', 'contribution welcome'))
+              finalLabels.push('help wanted');
+            if (match('duplicate', 'already reported', 'already exists'))
+              finalLabels.push('duplicate');
+
+            // ── STEP 9: Fetch existing labels (SAFETY: never remove manually-set labels) ──
+            const existingResp = await github.rest.issues.listLabelsOnIssue({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            const existingNames = new Set(existingResp.data.map(l => l.name));
+
+            // Only add labels that are not already present
+            const uniqueLabels = [...new Set(finalLabels)].filter(l => !existingNames.has(l));
+
+            if (uniqueLabels.length > 0) {
+              console.log(`Adding ${uniqueLabels.length} new labels: ${uniqueLabels.join(', ')}`);
               await github.rest.issues.addLabels({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 labels: uniqueLabels
+              });
+            } else {
+              console.log('All detected labels already present — no changes made.');
+            }
+
+            // ── STEP 10: Warn on PRs missing a difficulty label ───────────
+            if (isPR && !difficultyLabel) {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `## ⚠️ Missing Required Label\n\nThis PR is missing a **difficulty label**, which is **required** for GSSoC scoring.\n\nPlease ask a maintainer to add one of:\n| Label | Points |\n|-------|--------|\n| \`level:beginner\` | 25 pts |\n| \`level:intermediate\` | 50 pts |\n| \`level:advanced\` | 75 pts |\n| \`level:critical\` | 100 pts |\n\n> ℹ️ Without \`gssoc:approved\` + a difficulty label, this contribution will not count toward your score.`
               });
             }
