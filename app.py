@@ -9,8 +9,10 @@ from chatbot_integration import get_chatbot_response
 app = Flask(__name__)
 
 # ── CORS ────────────────────────────────────────────────────────────────────
-# Read allowed origin from environment variable — never hardcode or use wildcard
-ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "http://localhost:3000")
+# Read allowed origin from environment variable — fail closed if not set
+ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN")
+if not ALLOWED_ORIGIN:
+    raise ValueError("CRITICAL: ALLOWED_ORIGIN environment variable is not set! Refusing to start with insecure CORS.")
 CORS(app, origins=[ALLOWED_ORIGIN])
 
 # ── Rate limiting ────────────────────────────────────────────────────────────
