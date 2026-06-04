@@ -1,8 +1,14 @@
 <?php
 session_start();
 
-$db = new PDO('sqlite:' . __DIR__ . '/users.db');
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+try {
+    $db = new PDO('sqlite:' . __DIR__ . '/users.db');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    error_log("Database error: " . $e->getMessage());
+    http_response_code(500);
+    die("An internal error occurred. Please try again later.");
+}
 
 // Create tables if they don't exist
 $db->exec("
