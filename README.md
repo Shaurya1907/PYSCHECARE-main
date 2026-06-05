@@ -91,7 +91,7 @@ PsycheCare ensures sustainability and growth through diverse revenue options, in
 ---
 
 ## 📷 Screenshots
-#### Application Preview
+### Application Preview
 Below are screenshots showcasing different features and interfaces of PsycheCare.
 
 ### Blockson
