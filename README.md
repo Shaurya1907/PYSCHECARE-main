@@ -79,5 +79,5 @@ PsycheCare ensures sustainability and growth through diverse revenue options, in
 ![image](https://github.com/user-attachments/assets/fc0ac485-fd2c-4c66-a634-9b981a31757e)
 
 
-
+this is the bug issue 
 
