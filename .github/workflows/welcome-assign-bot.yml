@@ -123,7 +123,7 @@ jobs:
                   owner,
                   repo,
                   issue_number: issueNumber,
-                  body: `⚠️ Sorry @${user}, I couldn't assign you automatically. A maintainer will help assign this to you shortly.`
+                  body:- atuo assign 
                 });
               }
             }
