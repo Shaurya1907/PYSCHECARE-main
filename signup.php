@@ -49,6 +49,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
 
+        // Check if email already exists
+        $stmt = $db->prepare("SELECT id FROM users WHERE email = :email");
+        $stmt->execute([':email' => $email]);
+        if ($stmt->fetch()) {
+            header("Location: signup.html?error=email_exists");
+            exit();
+        }
+
         // Hash password securely with explicit cost to match login script
         $password_hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
 
