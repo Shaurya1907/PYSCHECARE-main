@@ -1,10 +1,15 @@
+# ── Web Framework ──────────────────────────────────────────────────────────────
 Flask==3.0.0
-Flask-Limiter==3.5.0
 Flask-Cors==4.0.0
+Flask-Limiter==3.5.0
+
+# ── NLP / Chatbot ──────────────────────────────────────────────────────────────
 nltk==3.8.1
 autocorrect==2.6.1
-keras==2.14.0
-numpy==1.26.2
-tensorflow==2.14.0
 langdetect==1.0.9
-spacy==3.7.4
+
+# ── ML / Deep Learning ─────────────────────────────────────────────────────────
+# keras and tensorflow must match — upgrade both together
+tensorflow>=2.16.0
+keras>=2.16.0
+numpy==1.26.2

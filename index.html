@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PsycheCare - Mental Health Support</title>
 
-
-
     <link rel="stylesheet" href="style.css">
     
     <link rel="icon" href="Images/B_icon01.png">
@@ -22,32 +20,31 @@
 </head>
 <body>
     <!-- Page Loader Animation -->
-    <div class="page-loader">
+    <div class="page-loader" role="status" aria-label="Loading page">
         <div class="loader-circle"></div>
     </div>
 
-    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-    +++++++++++                   LANDING-PAGE                    ++++++++++
-    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <a href="#HOME" class="skip-link" style="position:absolute;left:-9999px;top:0;z-index:9999;background:#fff;padding:8px 16px;">Skip to main content</a>
 
-    <div class="main" id="HOME">
+    <a id="HOME"></a>
+    <div class="main">
 
     <!-- +++ HEADER +++ -->
 
-        <div class="header">
+        <header class="header">
             <div class="logo-cantainer">
                 <h2 class="logo">PsycheCare.</h2>
             </div>
 
             <div class="nav-and-btn-cont">
-                <div class="nav-list-cont">
+                <nav class="nav-list-cont" aria-label="Main navigation">
                     <ul class="nav-ul">
-                        <li><a href="#HOME" >HOME</a></li>
-                        <li><a href="#section-3">CHAT BOT</a></li>
+                        <li><a href="#HOME">HOME</a></li>
+                        <li><a href="#SECTION-3">CHAT BOT</a></li>
                         <li><a href="otherHTML/statistics.html">STATISTICS</a></li>
                         <li><a href="contact.html">CONTACT</a></li>
                         <li><a href="login.html">LOGIN</a></li>
-                        <li><a href="otherHTML/sos.html" class="sos-link"><i class="fas fa-exclamation-circle"></i> SOS</a></li>
+                        <li><a href="otherHTML/sos.html" class="sos-link"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> <span>SOS</span></a></li>
                     </ul>
                 </div>
 
@@ -58,41 +55,40 @@
 
                 
 
-                <div class="hamburger">
+                <button class="hamBurger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-nav" tabindex="0">
                     <div class="line line1"></div>
                     <div class="mid-line-cont">
                         <div class="line mid-line1"></div>
                         <div class="line mid-line2"></div>
                     </div>
                     <div class="line line3"></div>
-                </div>
+                </button>
             </div>
 
-        </div>
+        </header>
 
-        <div class="mobile-view-nav-cont" id="mobile-nav">
+        <nav class="mobile-view-nav-cont" id="mobile-nav" aria-label="Mobile navigation">
 
             <div class="mobile-view-nav-head">
                 <p>Menu</p>
             </div>
 
             <div class="mobile-view-nav-list">
-
                 <ul>
-                    <li ><a href="#HOME" class="mobile-view-list">HOME</a></li>
-                    <li ><a href="#section-3" class="mobile-view-list">CHAT BOT</a></li>
-                    <li ><a href="otherHTML/statistics.html" class="mobile-view-list">STATISTICS</a></li>
-                    <li ><a href="#footer" class="mobile-view-list">CONTACT</a></li>
-                    <li ><a href="login.html" class="mobile-view-list">LOGIN</a></li>
+                    <li><a href="#HOME" class="mobile-view-list">HOME</a></li>
+                    <li><a href="#SECTION-3" class="mobile-view-list">CHAT BOT</a></li>
+                    <li><a href="otherHTML/statistics.html" class="mobile-view-list">STATISTICS</a></li>
+                    <li><a href="#FOOTER" class="mobile-view-list">CONTACT</a></li>
+                    <li><a href="login.html" class="mobile-view-list">LOGIN</a></li>
                 </ul>
-
             </div>
 
-        </div>
+        </nav>
 
 
     <!-- ++ CONTENT-ON-LANDING-PAGE +++  -->
     
+        <main id="main-content">
         <div class="content-container">
             <div class="fade-in-section">
                 <div class="content-head-cont">
@@ -107,18 +103,17 @@
                 </div>
             </div>
 
-
-            <div class="content-2-cont fade-in-section delay-300">
+            <div class="content-2-cont fade-in-section" style="animation-delay: 0.3s;">
                 <div class="content-2">
                     <p>This place is dedicated to helping you free yourself from unwanted thought on your mind and 
                         strengthen your mental health.</p>
                 </div>
 
                 <div class="explore-btn-cont">
-                    <a href="#section-2"><button class="explore-btn">Explore <i class="fas fa-chevron-down"></i></button></a>
-                    <a href="otherHTML/statistics.html"><button class="blog-btn">Statistics <i class="fas fa-chart-bar"></i></button></a>
+                    <a href="#SECTION_2"><button class="explore-btn">Explore <i class="fas fa-chevron-down" aria-hidden="true"></i></button></a>
+                    <a href="otherHTML/statistics.html"><button class="blog-btn">Statistics <i class="fas fa-chart-bar" aria-hidden="true"></i></button></a>
                 </div>
-                <div class="floating-shapes">
+                <div class="floating-shapes" aria-hidden="true">
                     <div class="shape shape-1"></div>
                     <div class="shape shape-2"></div>
                     <div class="shape shape-3"></div>
@@ -126,11 +121,8 @@
             </div>
         </div>
 
-        <div class="illustration-cont">
-            <!-- Removed pot illustrations as requested -->
+        <div class="illustration-cont" aria-hidden="true">
             <div class="landing-img-container" id="land-img"></div>
-            
-            <!-- Added floating circles for more visual appeal -->
             <div class="floating-circle circle-1"></div>
             <div class="floating-circle circle-2"></div>
             <div class="floating-circle circle-3"></div>
@@ -138,25 +130,18 @@
             <div class="shadow"></div>
         </div>
 
-    </div>
 
-
-    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-    +++++++++++                   SECTION-2                         ++++++++
-    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
+    <!-- SECTION-2 -->
 
     <a id="section-2"></a>
 
-    <div class="section-2">
+    <section class="section-2" aria-labelledby="section2-heading">
 
         <div class="section-2-head-cont">
-            <h2 class="section-2-head">Here are some proven ways to look after your<span> mental health</span>.</h2>
+            <h2 class="section-2-head" id="section2-heading">Here are some proven ways to look after your<span> mental health</span>.</h2>
         </div>
 
-
         <div class="card-container">
-            
             
             <div class="card card-1">
                 <div class="card-content-cont">
@@ -165,21 +150,20 @@
                         Eat a well balanced diet <br>
                         <span class="link-cont">
                             <a href="otherHTML/food.html">Learn more</a>
-                            <i class="fas fa-long-arrow-alt-right arrow"></i>
+                            <i class="fas fa-long-arrow-alt-right arrow" aria-hidden="true"></i>
                         </span>
                     </p>
                 </div>
-
             </div>
 
             <div class="card card-2">
                 <div class="card-content-cont">
-                    <h3 class="card-head">Exercise </h3>
+                    <h3 class="card-head">Exercise</h3>
                     <p class="card-text">
                         Stay active Exercise regularly  <br>
                         <span class="link-cont">
                             <a href="otherHTML/exercise.html">Learn more</a>
-                            <i class="fas fa-long-arrow-alt-right arrow"></i>
+                            <i class="fas fa-long-arrow-alt-right arrow" aria-hidden="true"></i>
                         </span>
                     </p>
                 </div>
@@ -188,10 +172,10 @@
             <div class="card card-3">
                 <div class="card-content-cont">
                     <h3 class="card-head">Talk</h3>
-                    <p class="card-text">Talk freely to someone  <br>
+                    <p class="card-text">Talk freely to someone <br>
                         <span class="link-cont">
-                            <a href="#section-3">Learn more</a>
-                            <i class="fas fa-long-arrow-alt-right arrow"></i>
+                            <a href="#SECTION-3">Learn more</a>
+                            <i class="fas fa-long-arrow-alt-right arrow" aria-hidden="true"></i>
                         </span>
                     </p>
                 </div>
@@ -200,12 +184,11 @@
             <div class="card card-4">
                 <div class="card-content-cont">
                     <h3 class="card-head">Stay Happy</h3>
-                    <p class="card-text">Do something that makes you happy  <br>
+                    <p class="card-text">Do something that makes you happy <br>
                         <span class="link-cont">
                             <a href="#">Learn more</a>
-                            <i class="fas fa-long-arrow-alt-right arrow"></i>
+                            <i class="fas fa-long-arrow-alt-right arrow" aria-hidden="true"></i>
                         </span>
-                        
                     </p>
                 </div>
             </div>
@@ -221,150 +204,118 @@
             <div class="more-content-card-cont">
                 
                 <div class="more-card">
-
                     <div class="actual-card">
                         <div>
-                            <img src="Images/sleep.png" alt="Person sleeping" width="50px" height="50px">
+                            <img src="Images/sleep.png" alt="Sleep icon" width="50" height="50">
                         </div>
                     </div>
-
                     <div class="more-card-content">
                         <p>Enough Sleep</p>
                     </div>
                 </div>
                 
                 <div class="more-card">
-
                     <div class="actual-card">
-                        <img src="Images/water-bottle.png" alt="Water bottle" width="50px" height="50px">
+                        <img src="Images/water-bottle.png" alt="Water bottle icon" width="50" height="50">
                     </div>
-
                     <div class="more-card-content">
                         <p>Keep Hydrated</p>
                     </div>
                 </div>
                 
                 <div class="more-card">
-
                     <div class="actual-card">
-                        <img src="Images/sun.png" alt="Sunshine" width="50px" height="50px">
+                        <img src="Images/sun.png" alt="Sun icon" width="50" height="50">
                     </div>
-
                     <div class="more-card-content">
                         <p>Sunshine</p>
                     </div>
                 </div>
                 
                 <div class="more-card">
-
                     <div class="actual-card">
-                        <img src="Images/park 01.png" alt="Outdoor park" width="50px" height="50px">
+                        <img src="Images/park 01.png" alt="Park outdoor icon" width="50" height="50">
                     </div>
-
                     <div class="more-card-content">
                         <p>Head Outside</p>
                     </div>
                 </div>
                 
                 <div class="more-card">
-
                     <div class="actual-card">
-                        <img src="Images/laugh.png" alt="Laughing face" width="50px" height="50px">
+                        <img src="Images/laugh.png" alt="Laughing face icon" width="50" height="50">
                     </div>
-
                     <div class="more-card-content">
                         <p>Laugh</p>
                     </div>
                 </div>
                 
                 <div class="more-card">
-
                     <div class="actual-card">
-                        <img src="Images/give-love.png" alt="Gratitude and kindness" width="50px" height="50px">
+                        <img src="Images/give-love.png" alt="Gratitude heart icon" width="50" height="50">
                     </div>
-
                     <div class="more-card-content">
                         <p>Gratitude</p>
                     </div>
                 </div>
                 
                 <div class="more-card">
-
                     <div class="actual-card">
-                        <img src="Images/bad-habits.png" alt="Avoiding bad habits" width="50px" height="50px">
+                        <img src="Images/bad-habits.png" alt="Temperance icon" width="50" height="50">
                     </div>
-
                     <div class="more-card-content">
                         <p>Temperance</p>
                     </div>
                 </div>
-                
- 
 
             </div>
         </div>
 
+    </section>
 
 
-    </div>
+    <!-- SECTION-3 -->
 
-
-
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-    +++++++++++                   section-3                       +++++++++++ 
-    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-     
-    <div class="section-3-cont" id="section-3">
+    <section class="section-3-cont" id="SECTION-3" aria-labelledby="section3-heading">
 
         <div class="take-page-content-cont">
 
             <div class="talk-page-content">
                 <div>
-                    <h2>Talk.</h2>
+                    <h2 id="section3-heading">Talk.</h2>
                     <p>
-                        As above mentioned talking to someone about your feeling really help to reduce depression and heal you.
+                        As above mentioned talking to someone about your feelings really helps to reduce depression and heal you.
                     </p>
-
                     <p>
-                        Talking can be a way to cope with a problem you’ve been carrying around in your head for a while.
-                         Just being listened to can help you feel supported and less alone. And it works both ways.
-                          If you open up, it might encourage others to do the same.
+                        Talking can be a way to cope with a problem you've been carrying around in your head for a while.
+                        Just being listened to can help you feel supported and less alone. And it works both ways.
+                        If you open up, it might encourage others to do the same.
                     </p>
                 </div>
 
                 <div>
                     <h2>Chat Bot</h2>
-
                     <p>
-                        If you feel sad today incase you need someone to talk about what you've been through,here you go
-    
+                        If you feel sad today and need someone to talk to about what you've been through, here you go.
                     </p>
-                    <button class="take-me-there-btn" id="chat-bot-page-portal-btn">Take me there <i class="fas fa-long-arrow-alt-right take-there-arrow"></i></button>
+                    <button class="take-me-there-btn" id="chat-bot-page-portal-btn">
+                        Take me there <i class="fas fa-long-arrow-alt-right take-there-arrow" aria-hidden="true"></i>
+                    </button>
                 </div>
-
- 
             </div>
 
-            <div class="take-page-img-cont">
-
-            </div>
+            <div class="take-page-img-cont" aria-hidden="true"></div>
 
         </div>
 
-    </div>
+    </section>
+    </main>
 
 
+    <!-- FOOTER -->
 
-    
-    
-    <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-    +++++++++++                   FOOTER                         +++++++++++ 
-    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-    <a id="footer"></a>
-    <div class="footer">
+    <a id="FOOTER"></a>
+    <footer class="footer">
         <div class="footer-text-cont">
             <div>
                 <h2>GET IN TOUCH.</h2>
@@ -377,13 +328,13 @@
                 <div class="actual-author-contribution-cont">
                     <div class="attributes-head-cont">
                         <p>
-                            I've Used some free images from Flaticon and freepik,
-                            So here is the attribute for the authors.
+                            I've used some free images from Flaticon and Freepik,
+                            so here are the attributions for the authors.
                         </p>
-
-                        <i class="fas fa-times cross"></i>
+                        <button class="cross" aria-label="Close attributions">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                        </button>
                     </div>
-   
 
                     <ul class="contribution-list">
                         <li><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></li>
@@ -406,18 +357,18 @@
                 <h2 class="logo footer-logo">PsycheCare.</h2>
             </div>
 
-            <div class="icons">
-                <ul>
-                    <li><a href="https://github.com/niteshagarwal"><i class="fab fa-github-square"></i></a></li>
-                    <li><a href="mailto:niteshagarwal@example.com" target="_blank"><i class="far fa-envelope"></i></a></li>
-                    <li><a href="https://www.linkedin.com/in/niteshagarwal/" target="_blank"><i class="fab fa-linkedin"></i></a></li>
+            <nav aria-label="Social media links">
+                <ul class="icons">
+                    <li><a href="https://github.com/niteshagarwal" aria-label="GitHub profile"><i class="fab fa-github-square" aria-hidden="true"></i></a></li>
+                    <li><a href="mailto:niteshagarwal@example.com" target="_blank" aria-label="Send email"><i class="far fa-envelope" aria-hidden="true"></i></a></li>
+                    <li><a href="https://www.linkedin.com/in/niteshagarwal/" target="_blank" aria-label="LinkedIn profile"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
                 </ul>
-            </div>
+            </nav>
         </div>
 
         <p class="copy-rights">Thank You :)</p>
-    </div>
- 
+    </footer>
+
     <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
     <script src="otherJS/hamberger.js"></script>
     <script src="otherJS/theme.js"></script>

@@ -64,7 +64,7 @@ if (card4) {
 
 if (chatBotPageTakingBtn) {
     chatBotPageTakingBtn.addEventListener('click',()=>{
-        window.location.href="otherHTML/chatBot.html";
+        window.location.href="otherHTML/chatBot.php";
     })
 }
 
@@ -79,7 +79,7 @@ const cards=document.querySelectorAll('.card');
 let options ={
     root: null,
     rootMargin:'200px',
-    threshold:1.0
+    threshold:0.15
 }
 
 let observer= new IntersectionObserver((entries,observe)=>{

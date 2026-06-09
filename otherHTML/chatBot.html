@@ -22,6 +22,20 @@
     <script src="../library/p5.speech.js"></script>
     <script src="https://unpkg.com/rivescript@latest/dist/rivescript.min.js"></script>
     
+    <!-- ── Auth Guard ─────────────────────────────────────────────────────────
+         If this page is opened directly (not via chatBot.php), window.PSYCHECARE_TOKEN
+         will be undefined. We redirect immediately to the PHP gateway which
+         performs the real session check.
+    ──────────────────────────────────────────────────────────────────────── -->
+    <script>
+        (function () {
+            if (typeof window.PSYCHECARE_TOKEN === 'undefined') {
+                // Not served through chatBot.php — redirect to the PHP gateway
+                window.location.replace('chatBot.php');
+            }
+        })();
+    </script>
+
     <!-- Add these styles for the typing indicator -->
     <style>
         .typing {
@@ -77,7 +91,7 @@
             <div class="nav-list-cont">
                 <ul class="nav-ul">
                     <li><a href="../index.html">HOME</a></li>
-                    <li><a href="chatBot.html" class="active">CHAT BOT</a></li>
+                    <li><a href="chatBot.php" class="active">CHAT BOT</a></li>
                     <li><a href="statistics.html">STATISTICS</a></li>
                     <li><a href="../contact.html">CONTACT</a></li>
                     <li><a href="../login.html">LOGIN</a></li>
@@ -109,7 +123,7 @@
         <div class="mobile-view-nav-list">
             <ul>
                 <li><a href="../index.html" class="mobile-view-list">HOME</a></li>
-                <li><a href="chatBot.html" class="mobile-view-list active">CHAT BOT</a></li>
+                <li><a href="chatBot.php" class="mobile-view-list active">CHAT BOT</a></li>
                 <li><a href="statistics.html" class="mobile-view-list">STATISTICS</a></li>
                 <li><a href="../contact.html" class="mobile-view-list">CONTACT</a></li>
                 <li><a href="../login.html" class="mobile-view-list">LOGIN</a></li>
@@ -259,7 +273,7 @@
             "happy": ["I'm glad to hear you're feeling happy! What's contributed to your good mood?", "That's wonderful! Happiness is important for our wellbeing. What's making you feel this way?", "It's great that you're feeling happy! Would you like to talk about what positive things have been happening?"],
             "tired": ["Feeling tired can affect our mental state. Have you been getting enough rest?", "Being tired is common when we're busy or stressed. Would you like some tips for better sleep?", "I understand feeling tired can be frustrating. Is there anything specific that might be disrupting your energy levels?"],
             "depressed": ["I'm sorry you're feeling this way. Depression is difficult, but support is available. Have you considered speaking with a mental health professional?", "Depression can feel overwhelming, but you're not alone. Would you like information about professional support options?", "I understand those feelings can be very challenging. Is there someone trusted in your life you could reach out to for support?"],
-            "suicide": ["I'm really concerned about what you're sharing. Please know that you're not alone and help is available. Please call a crisis helpline right away at 988 (Suicide Prevention Lifeline).", "This sounds really serious, and I want to make sure you get the support you need. Please reach out to emergency services or call 988 immediately.", "I'm worried about your safety. Please call 988 or go to your nearest emergency room right away. Your life matters."],
+            "suicide": ["I'm really concerned about what you're sharing. Please know that you're not alone and help is available 24/7. Please call 1800-599-0019 (India), 988 (US/International), or +254 722 178 177 (Kenya) right away.", "This sounds really serious, and I want to make sure you get the support you need. Please reach out to emergency services or call a crisis helpline: 1800-599-0019 (India), 988 (International), or +254 722 178 177 (Kenya).", "I'm worried about your safety. Please call 988, 1800-599-0019, or go to your nearest emergency room right away. Visit our SOS page for more local emergency contacts. Your life matters."],
             "help": ["I'm here to listen and offer support. What specific kind of help are you looking for today?", "I'd be happy to help. Could you tell me more about what you're going through?", "I'm glad you reached out for help. What would be most supportive for you right now?"],
             "thank you": ["You're welcome! I'm glad I could be here for you.", "I'm happy I could help in some way. Take care of yourself!", "You're welcome! Remember that seeking support is a sign of strength."],
             "bye": ["Take care! Remember, it's okay to come back anytime you want to talk.", "Goodbye for now. Be gentle with yourself!", "Bye! Remember that taking care of your mental health is important."],
@@ -281,6 +295,16 @@
             "I appreciate you sharing that with me. What would be most helpful for you right now?",
             "It takes courage to talk about these things. Is there a particular aspect you'd like to focus on?"
         ];
+
+        // ─── API Configuration ──────────────────────────────────────────────────────
+        // For local development this auto-detects localhost.
+        // For production: set window.CHATBOT_API_URL in a server-rendered config block
+        // e.g. <script>window.CHATBOT_API_URL = 'https://api.yourdomain.com';</script>
+        const CHATBOT_API_URL = (function () {
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            return isLocal ? 'http://127.0.0.1:5000' : (window.CHATBOT_API_URL || '');
+        })();
+        // ────────────────────────────────────────────────────────────────────────────
 
         // Global variables & state
         const BOT_IMG = "../Images/illustration-new/home-bot-img.png";
@@ -550,7 +574,7 @@
         function setupChatForm() {
             const msgerForm = document.querySelector(".msger-inputarea");
             const msgerInput = document.querySelector(".msger-input");
-            const msgerSendBtn = document.getElementById('sendBtn');
+            const msgerSendBtn = document.querySelector(".msger-send-btn");
 
             if (msgerForm) {
                 msgerForm.addEventListener("submit", async event => {
@@ -650,19 +674,31 @@
             }
         }
 
+        function enableInputs() {
+            const msgerInput = document.querySelector(".msger-input");
+            const msgerSendBtn = document.querySelector(".msger-send-btn");
+            if (msgerInput) msgerInput.disabled = false;
+            if (msgerSendBtn) msgerSendBtn.disabled = false;
+        }
+
         async function fetchBotResponse(userText) {
             try {
-                // Dynamically resolve API URL for production vs local development
-                const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
-                    ? 'http://127.0.0.1:5000' 
-                    : 'https://api.psychecare.com'; // Replace with actual production API domain
-                
-                const response = await fetch(`${API_URL}/chat`, {
+                if (!CHATBOT_API_URL) {
+                    throw new Error('No production API URL configured. Set window.CHATBOT_API_URL before deploying.');
+                }
+
+                const response = await fetch(`${CHATBOT_API_URL}/chat`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        // Send the HMAC token injected by chatBot.php for API authentication
+                        'Authorization': `Bearer ${window.PSYCHECARE_TOKEN || ''}`
                     },
-                    body: JSON.stringify({ message: userText })
+                    // Send stored session_id so bot remembers conversation context
+                    body: JSON.stringify({
+                        message: userText,
+                        session_id: sessionStorage.getItem('psyche_session_id') || undefined
+                    })
                 });
                 
                 if (!response.ok) {
@@ -670,12 +706,18 @@
                 }
                 
                 const data = await response.json();
+
+                // Persist the session_id for the lifetime of the browser tab
+                if (data.session_id) {
+                    sessionStorage.setItem('psyche_session_id', data.session_id);
+                }
                 
                 // Remove typing indicator
                 removeTypingIndicator();
                 
                 // Add the bot's response to the chat
                 appendMessage("Arya Assistant", BOT_IMG, "left", data.response);
+                enableInputs();
                 
             } catch (error) {
                 console.warn('Flask server not available. Using local keyword fallback...', error);
@@ -702,6 +744,7 @@
                     
                     // Add the bot's response to the chat
                     appendMessage("Arya Assistant", BOT_IMG, "left", response);
+                    enableInputs();
                 }, 1000);
             }
         }
@@ -712,5 +755,6 @@
             return `${h.slice(-2)}:${m.slice(-2)}`;
         }
     </script>
+    <script src="../otherJS/accessibility.js"></script>
 </body>
 </html>

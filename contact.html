@@ -9,6 +9,7 @@
     <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="otherStylesheet/common.css">
+    <link rel="stylesheet" href="otherStylesheet/contact.css">
     <link rel="icon" href="Images/B_icon01.png">
     <script>
         if (localStorage.getItem('theme') === 'dark') {
@@ -171,28 +172,30 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:0;z-index:9999;background:#fff;padding:8px 16px;">Skip to main content</a>
+
     <!-- Floating circles for consistent design across all pages -->
-    <div class="floating-circle circle-1"></div>
-    <div class="floating-circle circle-2"></div>
-    <div class="floating-circle circle-3"></div>
-    <div class="floating-circle circle-4"></div>
+    <div class="floating-circle circle-1" aria-hidden="true"></div>
+    <div class="floating-circle circle-2" aria-hidden="true"></div>
+    <div class="floating-circle circle-3" aria-hidden="true"></div>
+    <div class="floating-circle circle-4" aria-hidden="true"></div>
 
     <!-- Header -->
-    <div class="header">
+    <header class="header">
         <div class="logo-cantainer">
             <h2 class="logo">PsycheCare.</h2>
         </div>
 
         <div class="nav-and-btn-cont">
-            <div class="nav-list-cont">
+            <nav class="nav-list-cont" aria-label="Main navigation">
                 <ul class="nav-ul">
                     <li><a href="index.html">HOME</a></li>
-                    <li><a href="otherHTML/chatBot.html">CHAT BOT</a></li>
+                    <li><a href="otherHTML/chatBot.php">CHAT BOT</a></li>
                     <li><a href="otherHTML/statistics.html">STATISTICS</a></li>
-                    <li><a href="contact.html" class="active">CONTACT</a></li>
+                    <li><a href="contact.html" class="active" aria-current="page">CONTACT</a></li>
                     <li><a href="login.html">LOGIN</a></li>
                 </ul>
-            </div>
+            </nav>
 
             <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
                 <i class="fas fa-moon"></i>
@@ -205,12 +208,12 @@
                     <div class="line mid-line1"></div>
                     <div class="line mid-line2"></div>
                 </div>
-                <diV class="line line3"></diV>
-            </div>
+                <div class="line line3"></div>
+            </button>
         </div>
-    </div>
+    </header>
 
-    <div class="mobile-view-nav-cont" id="mobile-nav">
+    <nav class="mobile-view-nav-cont" id="mobile-nav" aria-label="Mobile navigation">
         <div class="mobile-view-nav-head">
             <p>Menu</p>
         </div>
@@ -218,15 +221,16 @@
         <div class="mobile-view-nav-list">
             <ul>
                 <li><a href="index.html" class="mobile-view-list">HOME</a></li>
-                <li><a href="otherHTML/chatBot.html" class="mobile-view-list">CHAT BOT</a></li>
+                <li><a href="otherHTML/chatBot.php" class="mobile-view-list">CHAT BOT</a></li>
                 <li><a href="otherHTML/statistics.html" class="mobile-view-list">STATISTICS</a></li>
-                <li><a href="contact.html" class="mobile-view-list active">CONTACT</a></li>
+                <li><a href="contact.html" class="mobile-view-list active" aria-current="page">CONTACT</a></li>
                 <li><a href="login.html" class="mobile-view-list">LOGIN</a></li>
             </ul>
         </div>
-    </div>
+    </nav>
 
     <!-- Main Content -->
+    <main id="main-content">
     <div class="contact-container">
         <div class="contact-header fade-in-section">
             <h1>Get in <span>Touch</span></h1>
@@ -235,47 +239,69 @@
 
         <div class="contact-content">
             <div class="contact-form fade-in-section">
-                <form id="contactForm" action="process_contact.php" method="POST">
+                <form id="contactForm" action="process_contact.php" method="POST" novalidate>
                     <div class="form-group">
                         <label for="name">Your Name</label>
-                        <input type="text" id="name" name="name" required>
+                        <input type="text" id="name" name="name" required autocomplete="name" aria-required="true">
                     </div>
                     
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" required>
+                        <input type="email" id="email" name="email" required autocomplete="email" aria-required="true">
                     </div>
                     
                     <div class="form-group">
                         <label for="subject">Subject</label>
-                        <input type="text" id="subject" name="subject" required>
+                        <input type="text" id="subject" name="subject" required aria-required="true">
                     </div>
                     
                     <div class="form-group">
                         <label for="message">Message</label>
-                        <textarea id="message" name="message" required></textarea>
+                        <textarea id="message" name="message" required aria-required="true"></textarea>
                     </div>
                     
                     <button type="submit" class="submit-btn">Send Message</button>
                 </form>
             </div>
             
-            <div class="contact-info">
-
+            <aside class="contact-info" aria-label="Contact information">
                 <div class="info-card fade-in-section">
-                    <h3><i class="fas fa-envelope"></i> Email</h3>
+                    <h3><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Address</h3>
+                    <p>123 Mental Health Street</p>
+                    <p>Wellness City, WC 12345</p>
+                </div>
+                
+                <div class="info-card fade-in-section">
+                    <h3><i class="fas fa-phone" aria-hidden="true"></i> Phone</h3>
+                    <p>+1 (123) 456-7890</p>
+                    <p>+1 (098) 765-4321</p>
+                </div>
+                
+                <div class="info-card fade-in-section">
+                    <h3><i class="fas fa-envelope" aria-hidden="true"></i> Email</h3>
                     <p>info@psychecare.com</p>
                     <p>support@psychecare.com</p>
                 </div>
-            </div>
+                
+                <div class="info-card fade-in-section">
+                    <h3><i class="fas fa-share-alt" aria-hidden="true"></i> Follow Us</h3>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
+    </main>
 
     <!-- Footer -->
-    <div class="footer">
+    <footer class="footer">
         <div class="footer-text-cont">
             <h2>GET IN TOUCH.</h2>
-            <P>I would love to hear from you friend &#60;3</P>
+            <p>I would love to hear from you friend &#60;3</p>
         </div>
 
         <div class="social-icon-cont">
@@ -283,17 +309,17 @@
                 <h2 class="logo footer-logo">PsycheCare.</h2>
             </div>
 
-            <div class="icons">
-                <ul>
-                    <li><a href="https://github.com/niteshagarwal"><i class="fab fa-github-square"></i></a></li>
-                    <li><a href="mailto:niteshagarwal@example.com" target="_blank"><i class="far fa-envelope"></i></a></li>
-                    <li><a href="https://www.linkedin.com/in/niteshagarwal/" target="_blank"><i class="fab fa-linkedin"></i></a></li>
+            <nav aria-label="Social media links">
+                <ul class="icons">
+                    <li><a href="https://github.com/niteshagarwal" aria-label="GitHub profile"><i class="fab fa-github-square" aria-hidden="true"></i></a></li>
+                    <li><a href="mailto:niteshagarwal@example.com" target="_blank" aria-label="Send email"><i class="far fa-envelope" aria-hidden="true"></i></a></li>
+                    <li><a href="https://www.linkedin.com/in/niteshagarwal/" target="_blank" aria-label="LinkedIn profile"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
                 </ul>
-            </div>
+            </nav>
         </div>
 
         <p class="copy-rights">Thank You :)</p>
-    </div>
+    </footer>
 
     <!-- Scripts -->
     <script src="otherJS/hamberger.js"></script>

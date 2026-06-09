@@ -107,6 +107,32 @@
             margin-top: 0.5rem;
             display: none;
         }
+
+        .locked-banner {
+            display: none;
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            color: #fff;
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.6;
+        }
+        .locked-banner strong { font-size: 1.05rem; }
+
+        .logout-toast {
+            display: none;
+            background: #2ecc71;
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -161,6 +187,12 @@
 
     <!-- Login Form -->
     <div class="login-container">
+        <div id="logout-toast" class="logout-toast">✅ You have been successfully logged out.</div>
+        <div id="locked-banner" class="locked-banner">
+            🔒 <strong>Account temporarily locked</strong><br>
+            Too many failed login attempts.<br>
+            <span id="locked-msg">Please try again in 15 minutes.</span>
+        </div>
         <div class="login-header">
             <div class="login-illustration">
                 <img src="Images/illustration-new/home-bot-img.png" alt="Login">
@@ -169,7 +201,7 @@
             <p style="color: var(--dark-color); font-size: 0.9rem;">Sign in to access your personal dashboard</p>
         </div>
 
-        <form action="login.php" method="post" class="login-form">
+        <form method="POST" action="login.php">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
@@ -199,12 +231,56 @@
     <script src="otherJS/hamberger.js"></script>
     <script src="otherJS/theme.js"></script>
     <script>
-        // Show error message if login fails
         const urlParams = new URLSearchParams(window.location.search);
+
+        // Show error message if login fails
         if (urlParams.has('error')) {
-            document.getElementById('login-error').style.display = 'block';
+            const loginError = document.getElementById('login-error');
+            const err = urlParams.get('error');
+
+            if (err === 'locked') {
+                // Show the prominent locked banner instead of the inline error
+                const banner = document.getElementById('locked-banner');
+                const minutes = parseInt(urlParams.get('minutes') || '15', 10);
+                document.getElementById('locked-msg').textContent =
+                    `Your account is locked. Please try again in ${minutes} minute${minutes !== 1 ? 's' : ''}.`;
+                banner.style.display = 'block';
+                // Disable the form so users don't keep hammering
+                document.querySelector('.login-btn').disabled = true;
+                document.querySelector('.login-btn').style.opacity = '0.5';
+            } else if (err === 'db') {
+                loginError.textContent = 'Login is temporarily unavailable. Please try again.';
+                loginError.style.display = 'block';
+            } else if (err === 'rate_limit') {
+                loginError.textContent = 'Too many failed attempts from your network. Please try again in 15 minutes.';
+                loginError.style.display = 'block';
+            } else {
+                loginError.textContent = 'Invalid username or password';
+                loginError.style.display = 'block';
+            }
+        }
+
+        // Show logout success toast
+        if (urlParams.get('logged_out') === '1') {
+            const toast = document.getElementById('logout-toast');
+            if (toast) toast.style.display = 'block';
         }
     </script>
-    <script src="otherJS/csrfInject.js"></script>
+    <script>
+        fetch('csrf.php')
+            .then(response => response.json())
+            .then(data => {
+                const forms = document.querySelectorAll('form');
+                forms.forEach(form => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'csrf_token';
+                    input.value = data.csrf_token;
+                    form.appendChild(input);
+                });
+            })
+            .catch(error => console.error('Error fetching CSRF token:', error));
+    </script>
+     <script src="otherJS/accessibility.js"></script>
 </body>
 </html>

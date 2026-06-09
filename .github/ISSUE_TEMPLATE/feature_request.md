@@ -45,6 +45,7 @@ As a **[type of user]**, I want **[some goal]** so that **[some reason]**.
 ---
 
 ## 🏷️ Suggested Labels
+> Write the tags you think apply to this issue based on our contribution guidelines. A maintainer will confirm.
 - [ ] `level:beginner` — Small, straightforward addition
 - [ ] `level:intermediate` — Moderate complexity
 - [ ] `level:advanced` — Significant new functionality

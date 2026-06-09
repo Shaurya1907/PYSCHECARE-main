@@ -10,11 +10,10 @@ Closes #
 
 ---
 
-## 🏷️ GSSoC Label Reminder
-> ⚠️ This PR **will not count** toward GSSoC scoring without the following labels applied by a maintainer:
-> - [ ] `gssoc:approved` — required base label (+50 pts)
-> - [ ] One `level:*` difficulty label — `level:beginner` / `level:intermediate` / `level:advanced` / `level:critical`
-> - [ ] One or more `type:*` labels — applied automatically by the labeler bot
+## 🏷️ Suggested Labels
+> Write the tags you think apply to this PR based on our contribution guidelines. A maintainer will confirm.
+
+
 
 ---
 

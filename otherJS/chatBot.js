@@ -25,7 +25,7 @@ stoConvoBtn.addEventListener('click',()=>{
     speakBtn.style.display="none";
     stoConvoBtn.style.display="none";
 
-    userSpeech.innerHTML=" ";
+    userSpeech.textContent=" ";
     
 })
 
@@ -109,7 +109,7 @@ function listenUser(){
 
     function startListen(){
 
-        userSpeech.innerHTML=listenSpeech.resultString;
+        userSpeech.textContent=listenSpeech.resultString;
 
     }
  
@@ -159,7 +159,7 @@ const listenText=document.querySelector('.listening-text');
 
 function start(){
     listenText.classList.add("show-text");
-    userSpeech.innerHTML=" ";
+    userSpeech.textContent=" ";
 }
 
 function end(){

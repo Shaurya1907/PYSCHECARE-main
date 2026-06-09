@@ -55,6 +55,32 @@ To run this project locally, you will need:
      python chatbot_integration.py
      ```
 ---
+## 📚  Quick Start for Contributors:
+If you're new to the project, follow this order:
+- Read this README.md for project overview.
+- Check CONTRIBUTING.md for contribution guidelines.
+- Review chatbot_integration_README.md for      chatbot-related functionality.
+- Install dependencies listed in requirements.txt.
+- Run the application using app.py.
+---
+### Useful Resources
+- [Contribution Guide](CONTRIBUTING.md)
+- [Chatbot Integration Guide](chatbot_integration_README.md)
+- [Requirements](requirements.txt)
+---
+  
+## 📄 Project Files Overview
+---
+
+| File | Purpose |
+|------|---------|
+| README.md | Project overview and setup instructions |
+| CONTRIBUTING.md | Contribution guidelines and workflow |
+| chatbot_integration_README.md | Chatbot-related documentation |
+| requirements.txt | Python dependencies required for the project |
+
+---      
+
 ## 🎯 Our Mission
 PsycheCare aims to make mental health support accessible, personal, and stigma-free. By combining technology with empathy, we help users find a sense of purpose, meaning, and balance in their everyday lives.
 ---
@@ -66,17 +92,25 @@ PsycheCare ensures sustainability and growth through diverse revenue options, in
 
 ---
 
-### 📷 Screenshots
+## 📷 Screenshots
+### Application Preview
+Below are screenshots showcasing different features and interfaces of PsycheCare.
 
-![image](https://github.com/user-attachments/assets/b359ca30-64c7-47fb-bc13-8e463b834327)
+### Blockson
+![Blockson](Images/images_for_readme/blocksonImg.PNG)
+### Car Game
+![Car Game](Images/images_for_readme/carGameImg.PNG)
+### Chat Bot
+![Chat Bot](Images/images_for_readme/chatBotImg.PNG)
+### Mobile Version
+![Mobile Version](Images/images_for_readme/mobileVersion.PNG)
+### Second Page
+![Second Page](Images/images_for_readme/secondPage.PNG)
+### Statistics
+![Statistics](Images/images_for_readme/statisticsImg.PNG)
 
-![image](https://github.com/user-attachments/assets/74385c08-67e5-4477-97ec-2a5b9ad9f783)
 
-![image](https://github.com/user-attachments/assets/17f0efa7-af14-47a5-b94f-314aec7750ca)
 
-![image](https://github.com/user-attachments/assets/a0236ef2-45bc-44e3-acbb-cc2c6be992a1)
-
-![image](https://github.com/user-attachments/assets/fc0ac485-fd2c-4c66-a634-9b981a31757e)
 
 
 

@@ -1,31 +1,15 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_set_cookie_params([
-        'lifetime' => 86400,
-        'path' => '/',
-        'domain' => '',
-        'secure' => isset($_SERVER['HTTPS']),
-        'httponly' => true,
-        'samesite' => 'Strict'
-    ]);
-    session_start();
-}
+// session_config.php
+// Centralized secure session configuration.
+// MUST be included before session_start() in all entry points.
 
-if (!isset($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-
-$session_timeout = 1800;
-if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time'] > $session_timeout)) {
-    session_unset();
-    session_destroy();
-    if (basename($_SERVER['PHP_SELF']) !== 'login.php' && basename($_SERVER['PHP_SELF']) !== 'login.html') {
-        header("Location: login.html?timeout=1");
-        exit;
-    }
-}
-
-if (isset($_SESSION['login_time'])) {
-    $_SESSION['login_time'] = time();
-}
+$cookieParams = session_get_cookie_params();
+session_set_cookie_params([
+    'lifetime' => $cookieParams['lifetime'],
+    'path' => '/',
+    'domain' => $_SERVER['HTTP_HOST'] ?? '',
+    'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off', // True if HTTPS
+    'httponly' => true, // Prevent JS access to session cookie (mitigates XSS cookie theft)
+    'samesite' => 'Strict' // Prevent CSRF attacks by not sending cookie cross-site
+]);
 ?>

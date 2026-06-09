@@ -65,7 +65,7 @@ assignees: ""
 ---
 
 ## 🏷️ Suggested Labels
-<!-- Check the ones that apply — a maintainer will confirm -->
+> Write the tags you think apply to this issue based on our contribution guidelines. A maintainer will confirm.
 - [ ] `level:beginner` — Simple fix
 - [ ] `level:intermediate` — Requires some investigation
 - [ ] `level:advanced` — Complex root cause

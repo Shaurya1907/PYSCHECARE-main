@@ -26,6 +26,8 @@ assignees: ""
 ---
 
 ## 🏷️ Suggested Labels
+> Write the tags you think apply to this issue based on our contribution guidelines. A maintainer will confirm.
+
 - [ ] `level:beginner` — Simple text fix (typo, grammar)
 - [ ] `level:intermediate` — Missing section that needs to be written
 - [ ] `type:docs` — Documentation only

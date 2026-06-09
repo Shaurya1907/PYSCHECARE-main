@@ -1,0 +1,196 @@
+
+/* =====================================================
+   ACCESSIBILITY SETTINGS
+===================================================== */
+
+/* Floating Accessibility Button */
+
+.accessibility-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    z-index: 9999;
+    font-size: 24px;
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    display: flex;
+justify-content: center;
+align-items: center;
+
+}
+
+
+.accessibility-btn i {
+    color: white;
+    font-size: 45px;
+}
+
+.accessibility-btn:hover {
+    transform: scale(1.08);
+}
+
+/* Accessibility Panel */
+
+.accessibility-panel {
+    position: fixed;
+    right: 20px;
+    bottom: 85px;
+    width: 240px;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    display: none;
+    z-index: 9999;
+}
+
+.accessibility-panel.show {
+    display: block;
+}
+
+.accessibility-panel h3 {
+    margin-bottom: 12px;
+}
+
+.accessibility-panel label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.accessibility-panel select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+/* =====================================================
+   TEXT SIZE SETTINGS
+===================================================== */
+body.font-small p,
+body.font-small li,
+body.font-small a {
+    font-size: 0.9em;
+}
+
+body.font-large p,
+body.font-large li,
+body.font-large a {
+    font-size: 1.1em;
+}
+
+/* =====================================================
+   HIGH CONTRAST MODE
+===================================================== */
+
+body.high-contrast {
+    --light-color: #000000;
+    --dark-color: #ffffff;
+    --shadow-color: #222222;
+    --black-color:white ;
+    background-color: #000;
+    color: #fff;
+}
+
+/* Header */
+
+body.high-contrast .header {
+    background-color: #111;
+    border: 2px solid #fff;
+}
+
+/* Navigation */
+
+body.high-contrast .nav-ul li a {
+    color: #ffffff;
+}
+
+body.high-contrast .nav-ul li a:hover {
+    color: #ffff00;
+}
+
+/* Logo */
+
+body.high-contrast .logo {
+    color: #9f7cff;
+}
+
+/* Links */
+
+body.high-contrast a {
+    color: #ffff00;
+}
+
+/* Content Cards */
+
+body.high-contrast .content-quote-cont,
+body.high-contrast .content-2 {
+    background-color: #111;
+    color: #fff;
+    border: 1px solid #fff;
+}
+
+/* Buttons */
+
+body.high-contrast button {
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #fff;
+}
+
+/* Accessibility Button */
+
+body.high-contrast .accessibility-btn {
+    background-color: #222;
+    color: white;
+    border: 2px solid white;
+}
+
+/* Accessibility Panel */
+
+body.high-contrast .accessibility-panel {
+    background-color: #111;
+    color: white;
+    border: 1px solid white;
+}
+
+body.high-contrast .accessibility-panel select,
+body.high-contrast .accessibility-panel input {
+    background-color: #222;
+    color: white;
+    border: 1px solid white;
+}
+
+
+
+/* =====================================================
+   KEYBOARD ACCESSIBILITY
+===================================================== */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 3px;
+}
+
+/* High Contrast Specific Focus ring override */
+body.high-contrast *:focus-visible {
+    outline: 3px dashed #ffff00 !important;
+    outline-offset: 3px !important;
+}
+
+/* Highlight Keyboard Focus Feature Activation */
+body.force-focus-indicators *:focus {
+    outline: 4px solid #ff0055 !important;
+    outline-offset: 2px !important;
+}

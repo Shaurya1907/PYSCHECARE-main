@@ -1,0 +1,129 @@
+name: Welcome & Auto-Assign Bot
+
+on:
+  pull_request_target:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  welcome-first-time-contributor:
+    runs-on: ubuntu-latest
+    # Only run for new PRs from first-time contributors
+    if: github.event_name == 'pull_request_target' && (github.event.pull_request.author_association == 'FIRST_TIMER' || github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' || github.event.pull_request.author_association == 'NONE')
+    steps:
+      - name: Post welcome message
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const user = context.payload.pull_request.user.login;
+            const body = `🎉 **Welcome to PsycheCare, @${user}!** 🎉\n\nThank you so much for opening your first Pull Request with us! We truly appreciate your time and effort to contribute to this project.\n\nWhile your PR is being reviewed, please make sure you have read our [Contributing Guidelines](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/CONTRIBUTING.md) to ensure everything matches our standards.\n\nIf you have any questions, feel free to ask here. A maintainer will review your code shortly. Happy coding! 🚀`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: body
+            });
+
+  auto-assign-issue:
+    runs-on: ubuntu-latest
+    # Only run on issue comments (not PR comments)
+    if: github.event_name == 'issue_comment' && !github.event.issue.pull_request
+    steps:
+      - name: Process assign commands
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commentBody = context.payload.comment.body.toLowerCase().trim();
+            const user = context.payload.comment.user.login;
+            const issueNumber = context.payload.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            // Check if comment contains assignment keywords
+            const assignCommands = ['.take', '/assign', '/assign me', 'assign me'];
+            const wantsAssignment = assignCommands.some(cmd => commentBody.includes(cmd));
+            
+            if (wantsAssignment) {
+              
+              // Get the current issue details to check existing assignees
+              const { data: issue } = await github.rest.issues.get({
+                owner,
+                repo,
+                issue_number: issueNumber
+              });
+              
+              // If the issue is already assigned to someone else
+              if (issue.assignees && issue.assignees.length > 0 && !issue.assignees.find(a => a.login === user)) {
+                 const currentAssignees = issue.assignees.map(a => '@' + a.login).join(', ');
+                 await github.rest.issues.createComment({
+                   owner,
+                   repo,
+                   issue_number: issueNumber,
+                   body: `⚠️ Sorry @${user}, this issue is already assigned to ${currentAssignees}. Please find an unassigned issue to work on!`
+                 });
+                 return;
+              }
+              
+              // --- MAX 3 ISSUES ENFORCER ---
+              // Check if user is a maintainer to bypass limit
+              let isMaintainer = false;
+              try {
+                const { data: permData } = await github.rest.repos.getCollaboratorPermissionLevel({
+                  owner, repo, username: user
+                });
+                if (['admin', 'write'].includes(permData.permission)) {
+                  isMaintainer = true;
+                }
+              } catch (e) {}
+
+              if (!isMaintainer) {
+                // Fetch open issues currently assigned to this user
+                const { data: userIssues } = await github.rest.issues.listForRepo({
+                  owner, repo, assignee: user, state: 'open'
+                });
+                const actualIssues = userIssues.filter(i => !i.pull_request);
+                
+                if (actualIssues.length >= 3) {
+                  await github.rest.issues.createComment({
+                    owner,
+                    repo,
+                    issue_number: issueNumber,
+                    body: `👋 Hey @${user}! We love your enthusiasm, but you are already assigned to ${actualIssues.length} other open issues.\n\nTo ensure everyone gets a fair chance to contribute, we have a strict **Max 3 Open Issues** limit per contributor. Please complete and merge one of your existing assigned issues before claiming a new one! 🚀`
+                  });
+                  return; // Stop the assignment process
+                }
+              }
+              // ------------------------------
+              
+              console.log(`Assigning @${user} to issue #${issueNumber}...`);
+              
+              try {
+                await github.rest.issues.addAssignees({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  assignees: [user]
+                });
+                
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  body: `🚀 **Assigned!** @${user}, this issue is now assigned to you. \n\nPlease note our **Max 3 Open Issues** rule. Good luck, and feel free to ask questions if you get stuck!`
+                });
+              } catch (error) {
+                console.error('Failed to assign user:', error);
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  body: `⚠️ Sorry @${user}, I couldn't assign you automatically. A maintainer will help assign this to you shortly.`
+                });
+              }
+            }

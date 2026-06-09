@@ -10,8 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up | PsycheCare</title>
 
-    <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
-
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="Images/B_icon01.png">
     <script>
@@ -111,6 +109,22 @@
             margin-top: 0.5rem;
             display: none;
         }
+
+        .password-strength-bar {
+            height: 4px;
+            border-radius: 4px;
+            margin-top: 6px;
+            background: #e0e0e0;
+            transition: background 0.3s;
+        }
+        .strength-label {
+            font-size: 0.78rem;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+        .strength-weak   { background: #e74c3c; }
+        .strength-medium { background: #f39c12; }
+        .strength-strong { background: #2ecc71; }
     </style>
 </head>
 <body>
@@ -137,12 +151,12 @@
             </button>
 
             <div class="hamburger">
-                <diV class="line line1"></diV>
+                <div class="line line1"></div>
                 <div class="mid-line-cont">
                     <div class="line mid-line1"></div>
                     <div class="line mid-line2"></div>
                 </div>
-                <diV class="line line3"></diV>
+                <div class="line line3"></div>
             </div>
         </div>
     </div>
@@ -173,10 +187,10 @@
             <p style="color: var(--dark-color); font-size: 0.9rem;">Create your account and begin your wellness journey</p>
         </div>
 
-<form action="signup.php" method="post" class="login-form">
+        <form action="signup.php" method="post" class="login-form">
             <div class="form-group">
-                <label for="fullname">Full Name</label>
-                <input type="text" id="fullname" name="fullname" required>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
             </div>
 
             <div class="form-group">
@@ -184,72 +198,100 @@
                 <input type="email" id="email" name="email" required>
             </div>
 
-            <div class="form-group">                    
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required minlength="8">
-                <p class="error-message" id="password-error">Password must be at least 8 characters</p>
-            </div>
-
             <div class="form-group">
-                <label for="confirm-password">Confirm Password</label>
-                <input type="password" id="confirm-password" name="confirm_password" required>
-                <p class="error-message" id="confirm-error">Passwords do not match</p>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password" aria-describedby="password-strength-label">
+                <div class="password-strength-bar" id="strength-bar"></div>
+                <p class="strength-label" id="password-strength-label" aria-live="polite"></p>
+                <p class="error-message" id="signup-error"></p>
             </div>
 
             <button type="submit" class="login-btn">Create Account</button>
             
             <div class="return-home">
-    <p>
-        Already have an account?
-        <a href="login.html">Log In</a>
-    </p>
-</div>
+                <p>
+                    Already have an account?
+                    <a href="login.html">Log In</a>
+                </p>
+                <p style="margin-top:10px;">
+                    <a href="index.html">Return to Home</a>
+                </p>
+            </div>
         </form>
     </div>
 
     <script src="otherJS/hamberger.js"></script>
-    <script src="otherJS/theme.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var form = document.querySelector('.login-form');
-            var password = document.getElementById('password');
-            var confirm = document.getElementById('confirm-password');
-            var passwordError = document.getElementById('password-error');
-            var confirmError = document.getElementById('confirm-error');
+        // ── Password Strength Meter ────────────────────────────────────────────
+        const passwordInput = document.getElementById('password');
+        const strengthBar   = document.getElementById('strength-bar');
+        const strengthLabel = document.getElementById('password-strength-label');
 
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    var valid = true;
-                    if (password.value.length < 8) {
-                        passwordError.style.display = 'block';
-                        valid = false;
-                    } else {
-                        passwordError.style.display = 'none';
-                    }
-                    if (password.value !== confirm.value) {
-                        confirmError.style.display = 'block';
-                        valid = false;
-                    } else {
-                        confirmError.style.display = 'none';
-                    }
-                    if (!valid) e.preventDefault();
-                });
-            }
+        passwordInput.addEventListener('input', function () {
+            const val = this.value;
+            let score = 0;
+            if (val.length >= 8)  score++;
+            if (val.length >= 12) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
 
-            var urlParams = new URLSearchParams(window.location.search);
-            var errorMap = {
-                'missing_fields': 'Please fill in all fields',
-                'name_length': 'Name is too long (max 100 characters)',
-                'password_weak': 'Password must be at least 8 characters',
-                'exists': 'An account with this email or name already exists',
-                'server': 'A server error occurred. Please try again later.'
-            };
-            if (urlParams.has('error')) {
-                var msg = errorMap[urlParams.get('error')] || 'An error occurred';
-                alert(msg);
+            strengthBar.className = 'password-strength-bar';
+            if (val.length === 0) {
+                strengthLabel.textContent = '';
+            } else if (score <= 2) {
+                strengthBar.classList.add('strength-weak');
+                strengthLabel.textContent = '🔴 Weak — use 8+ chars, numbers & symbols';
+                strengthLabel.style.color = '#e74c3c';
+            } else if (score <= 3) {
+                strengthBar.classList.add('strength-medium');
+                strengthLabel.textContent = '🟡 Medium — add uppercase or symbols';
+                strengthLabel.style.color = '#f39c12';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                strengthLabel.textContent = '🟢 Strong password!';
+                strengthLabel.style.color = '#2ecc71';
             }
         });
+        // ─────────────────────────────────────────────────────────────────────
+
+        // Show error or success messages from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorMsg = document.getElementById('signup-error');
+        if (urlParams.has('error')) {
+            const err = urlParams.get('error');
+            errorMsg.style.display = 'block';
+            if (err === 'exists') {
+                errorMsg.textContent = 'Username already exists.';
+            } else if (err === 'email_exists') {
+                errorMsg.textContent = 'Email address already registered.';
+            } else if (err === 'rate_limit') {
+                errorMsg.textContent = 'Too many attempts. Please try again in an hour.';
+            } else if (err === 'weak_password') {
+                errorMsg.textContent = 'Password must be at least 8 characters.';
+            } else if (err === 'db') {
+                errorMsg.textContent = 'Database error. Please try again.';
+            } else {
+                errorMsg.textContent = 'Sign up failed. Please try again.';
+            }
+        }
     </script>
-    <script src="otherJS/csrfInject.js"></script>
+    <script>
+        fetch('csrf.php')
+            .then(response => response.json())
+            .then(data => {
+                const forms = document.querySelectorAll('form');
+                forms.forEach(form => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'csrf_token';
+                    input.value = data.csrf_token;
+                    form.appendChild(input);
+                });
+            })
+            .catch(error => console.error('Error fetching CSRF token:', error));
+    </script>
+    <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
+    <script src="otherJS/accessibility.js"></script>
 </body>
 </html>

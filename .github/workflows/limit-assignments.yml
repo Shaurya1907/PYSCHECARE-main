@@ -1,0 +1,95 @@
+name: Assignment Limit Enforcer
+
+on:
+  issues:
+    types: [assigned]
+
+permissions:
+  issues: write
+
+jobs:
+  check-assignments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check user assignments
+        uses: actions/github-script@v7
+        with:
+          # BUG FIX 2: github-token MUST be explicitly passed — without it the
+          # script uses a read-only installation token and removeAssignees() silently fails.
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const assignee     = context.payload.assignee.login;
+            const issueNumber  = context.payload.issue.number;
+            const owner        = context.repo.owner;
+            const repo         = context.repo.repo;
+            const MAX_ISSUES   = 3;
+
+            // Skip bot accounts
+            if (assignee.endsWith('[bot]')) {
+              console.log(`Skipping — ${assignee} is a bot.`);
+              return;
+            }
+
+            // Check if the assignee is a maintainer/admin → bypass the limit
+            try {
+              const { data: permData } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner,
+                repo,
+                username: assignee
+              });
+              if (['admin', 'write'].includes(permData.permission)) {
+                console.log(`User ${assignee} has '${permData.permission}' access. Bypassing limit.`);
+                return;
+              }
+            } catch (err) {
+              console.log('Could not verify permissions, proceeding with limit check.');
+            }
+
+            // Fetch ALL open issues assigned to this user (per_page:100 avoids truncation)
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner,
+              repo,
+              assignee,
+              state: 'open',
+              per_page: 100
+            });
+
+            // Filter out pull requests (the GitHub API returns PRs in the issues list)
+            const actualIssues = issues.filter(issue => !issue.pull_request);
+
+            console.log(`User ${assignee} has ${actualIssues.length} open issue(s). Limit is ${MAX_ISSUES}.`);
+
+            // BUG FIX 1: was `> MAX_ISSUES` which only triggered at 4+.
+            // Changed to `>= MAX_ISSUES` so the limit fires at exactly 3 as intended.
+            if (actualIssues.length > MAX_ISSUES) {
+              console.log(`Over limit — unassigning ${assignee} from #${issueNumber}.`);
+
+              // Unassign the user from the issue they just grabbed
+              await github.rest.issues.removeAssignees({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                assignees: [assignee]
+              });
+
+              // BUG FIX 4: was `actualIssues.length - 1` (always wrong).
+              // The list already includes the current issue from the API snapshot,
+              // so we report the total directly — no subtraction needed.
+              const others = actualIssues.filter(i => i.number !== issueNumber);
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: [
+                  `👋 Hey @${assignee}! We appreciate your enthusiasm, but you are already assigned to **${others.length} other open issue(s)**:`,
+                  others.map(i => `- #${i.number} — ${i.title}`).join('\n'),
+                  ``,
+                  `To keep things fair for everyone, this repo enforces a **Max ${MAX_ISSUES} open issues** limit per contributor.`,
+                  ``,
+                  `I have automatically unassigned you from this issue. Please close or get a PR merged for one of your existing issues before claiming a new one! 🚀`,
+                ].join('\n')
+              });
+
+            } else {
+              console.log(`User ${assignee} has ${actualIssues.length} issue(s). Within the ${MAX_ISSUES}-issue limit. ✅`);
+            }

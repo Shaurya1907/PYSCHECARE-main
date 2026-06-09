@@ -1,52 +1,84 @@
 <?php
 require_once __DIR__ . '/session_config.php';
+session_start();
+
+require_once __DIR__ . '/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    http_response_code(405);
-    exit;
+    header("Location: login.html");
+    exit();
 }
 
-if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
-    die("CSRF token validation failed");
+if (
+    empty($_POST['csrf_token']) ||
+    empty($_SESSION['csrf_token']) ||
+    !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])
+) {
+    http_response_code(403);
+    die("Invalid CSRF token.");
 }
 
-$username = trim($_POST["username"] ?? '');
-$password = $_POST["password"] ?? '';
+$username = trim($_POST["username"] ?? "");
+$password = $_POST["password"] ?? "";
 
-if (empty($username) || empty($password)) {
-    header("Location: login.html?error=1");
-    exit;
+if ($username === "" || $password === "") {
+    header("Location: login.html?error=invalid");
+    exit();
 }
 
 try {
-    $db = new PDO('sqlite:' . __DIR__ . '/database.sqlite');
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db  = getAuthDatabase();
+    $ip  = getIPAddress();
+    $rateKey = "login:" . $ip;
 
-    $db->exec("CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )");
-
-    $stmt = $db->prepare("SELECT password_hash FROM users WHERE username = :username OR email = :username");
-    $stmt->execute([':username' => $username]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user && password_verify($password, $user['password_hash'])) {
-        session_regenerate_id(true);
-        $_SESSION["username"] = $username;
-        $_SESSION["logged_in"] = true;
-        $_SESSION["login_time"] = time();
-        header("Location: welcome.php");
-        exit;
-    } else {
-        header("Location: login.html?error=1");
-        exit;
+    // Check AND Increment atomically: 5 attempts per 15 minutes
+    if (!enforceRateLimit($db, $rateKey, 5, 900)) {
+    // ── Layer 1: IP-based rate limit (5 attempts per 15 min per IP) ───────────
+    if (!checkRateLimit($db, $rateKey, 5, 900)) {
+        header("Location: login.html?error=rate_limit");
+        exit();
     }
+
+    // Fetch user record
+    $stmt = $db->prepare(
+        "SELECT id, username, password_hash FROM users WHERE username = :username"
+    );
+    $stmt->execute([':username' => $username]);
+    $user = $stmt->fetch();
+
+    // ── Layer 2: Per-account lockout (5 failed attempts → 15 min lock) ───────
+    // Check BEFORE password_verify so locked accounts get no timing hint.
+    if ($user && isAccountLocked($db, $user['id'])) {
+        $remaining = max(0, getAccountLockExpiry($db, $user['id']) - time());
+        $minutes   = (int) ceil($remaining / 60);
+        header("Location: login.html?error=locked&minutes=" . $minutes);
+        exit();
+    }
+
+    // ── Verify password ───────────────────────────────────────────────────────
+    if ($user && password_verify($password, $user['password_hash'])) {
+        // Success — clear all lockout state and regenerate session
+        clearAccountLock($db, $user['id']);
+        resetAttempts($db, $rateKey);
+        session_regenerate_id(true);
+        $_SESSION["user_id"]  = $user["id"];
+        $_SESSION["username"] = $user["username"];
+        header("Location: welcome.php");
+        exit();
+    }
+
+    // Failed attempt is already recorded atomically by enforceRateLimit.
+    // If we reach here, it's just a regular invalid password.
+    // ── Record failure ────────────────────────────────────────────────────────
+    incrementAttempts($db, $rateKey);              // IP counter
+    if ($user) {
+        incrementAccountAttempts($db, $user['id']); // Account counter
+    }
+
 } catch (PDOException $e) {
-    error_log("Login database error: " . $e->getMessage());
-    die("An error occurred. Please try again later.");
+    header("Location: login.html?error=db");
+    exit();
 }
-?>
+
+header("Location: login.html?error=invalid");
+exit();

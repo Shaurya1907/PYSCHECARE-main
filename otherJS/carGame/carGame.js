@@ -104,7 +104,7 @@ if(userInteraction){
 
 rightControl.addEventListener('pointerdown',()=>{
     if(userInteraction){
-        car.setvelocity(-6);
+        car.setvelocity(6);
     }
 
 })
@@ -119,7 +119,7 @@ rightControl.addEventListener('pointerup',()=>{
 
 leftControl.addEventListener('pointerdown',()=>{
     if(userInteraction){
-        car.setvelocity(6);
+        car.setvelocity(-6);
     }
 
 })
