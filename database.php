@@ -49,14 +49,6 @@ function getAuthDatabase(): PDO
 
 function getIPAddress(): string
 {
-    // SECURITY WARNING: Blindly trusting HTTP_X_FORWARDED_FOR allows attackers 
-    // to bypass rate limiting via IP spoofing. We strictly use REMOTE_ADDR.
-    // If behind a trusted reverse proxy (like Cloudflare or Nginx), the proxy 
-    // should be configured to overwrite REMOTE_ADDR at the web server level.
-    // Trusting HTTP_CLIENT_IP or HTTP_X_FORWARDED_FOR allows attackers to
-    // easily bypass IP-based rate limiting by spoofing these headers.
-    // Unless the PHP application is configured behind a trusted reverse proxy
-    // that sanitizes these headers, only REMOTE_ADDR is safe to use.
     return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 }
 
