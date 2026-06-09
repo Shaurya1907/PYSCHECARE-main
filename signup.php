@@ -26,8 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Enforce minimum password length server-side (never trust frontend alone)
-    if (strlen($password) < 8) {
+    // Enforce password complexity server-side (never trust frontend alone)
+    if (strlen($password) < 8 || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password) || !preg_match('/[^a-zA-Z0-9]/', $password)) {
         header("Location: signup.html?error=weak_password");
         exit();
     }
