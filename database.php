@@ -31,10 +31,16 @@ function getAuthDatabase(): PDO
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             email TEXT NOT NULL,
+            subject TEXT NOT NULL,
             message TEXT NOT NULL,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )"
     );
+
+    $contactCols = array_column($db->query('PRAGMA table_info(contact_messages)')->fetchAll(), 'name');
+    if (!in_array('subject', $contactCols)) {
+        $db->exec('ALTER TABLE contact_messages ADD COLUMN subject TEXT NOT NULL DEFAULT ""');
+    }
 
     $db->exec(
         "CREATE TABLE IF NOT EXISTS rate_limiting (

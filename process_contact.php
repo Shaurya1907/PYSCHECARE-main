@@ -16,9 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
+    $subject = trim($_POST['subject'] ?? '');
     $message = trim($_POST['message'] ?? '');
 
-    if (!$name || !$email || !$message) {
+    if (!$name || !$email || !$subject || !$message) {
         die("All fields are required.");
     }
 
@@ -28,6 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (strlen($email) > 255) {
         die("Email must not exceed 255 characters.");
+    }
+
+    if (strlen($subject) > 255) {
+        die("Subject must not exceed 255 characters.");
     }
 
     if (strlen($message) > 1000) {
@@ -40,16 +45,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $name = htmlspecialchars($name);
     $email = htmlspecialchars($email);
+    $subject = htmlspecialchars($subject);
     $message = htmlspecialchars($message);
 
     try {
         require_once __DIR__ . '/database.php';
         $db = getAuthDatabase();
 
-        $stmt = $db->prepare("INSERT INTO contact_messages (name, email, message) VALUES (:name, :email, :message)");
+        $stmt = $db->prepare("INSERT INTO contact_messages (name, email, subject, message) VALUES (:name, :email, :subject, :message)");
         $stmt->execute([
             ':name' => $name,
             ':email' => $email,
+            ':subject' => $subject,
             ':message' => $message
         ]);
 
