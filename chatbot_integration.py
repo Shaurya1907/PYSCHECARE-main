@@ -208,5 +208,11 @@ def detect_language(text):
     except:
         return "en"  # Default to English
 
+def setup_chatbot():
+    """
+    Setup the chatbot. Wrapper around load_chatbot_model for compatibility with app.py.
+    """
+    return load_chatbot_model()
+
 # Initialize the chatbot model when this module is imported
 load_chatbot_model()

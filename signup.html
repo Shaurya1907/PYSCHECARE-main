@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up | PsycheCare</title>
@@ -10,6 +14,11 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="Images/B_icon01.png">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <style>
         .login-container {
             max-width: 400px;
@@ -122,6 +131,11 @@
                 </ul>
             </div>
 
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun" style="display:none"></i>
+            </button>
+
             <div class="hamburger">
                 <diV class="line line1"></diV>
                 <div class="mid-line-cont">
@@ -159,7 +173,7 @@
             <p style="color: var(--dark-color); font-size: 0.9rem;">Create your account and begin your wellness journey</p>
         </div>
 
-        <form action="#" method="post" class="login-form">
+<form action="signup.php" method="post" class="login-form">
             <div class="form-group">
                 <label for="fullname">Full Name</label>
                 <input type="text" id="fullname" name="fullname" required>
@@ -172,8 +186,14 @@
 
             <div class="form-group">                    
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-                
+                <input type="password" id="password" name="password" required minlength="8">
+                <p class="error-message" id="password-error">Password must be at least 8 characters</p>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm_password" required>
+                <p class="error-message" id="confirm-error">Passwords do not match</p>
             </div>
 
             <button type="submit" class="login-btn">Create Account</button>
@@ -188,6 +208,48 @@
     </div>
 
     <script src="otherJS/hamberger.js"></script>
-   
+    <script src="otherJS/theme.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.querySelector('.login-form');
+            var password = document.getElementById('password');
+            var confirm = document.getElementById('confirm-password');
+            var passwordError = document.getElementById('password-error');
+            var confirmError = document.getElementById('confirm-error');
+
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    var valid = true;
+                    if (password.value.length < 8) {
+                        passwordError.style.display = 'block';
+                        valid = false;
+                    } else {
+                        passwordError.style.display = 'none';
+                    }
+                    if (password.value !== confirm.value) {
+                        confirmError.style.display = 'block';
+                        valid = false;
+                    } else {
+                        confirmError.style.display = 'none';
+                    }
+                    if (!valid) e.preventDefault();
+                });
+            }
+
+            var urlParams = new URLSearchParams(window.location.search);
+            var errorMap = {
+                'missing_fields': 'Please fill in all fields',
+                'name_length': 'Name is too long (max 100 characters)',
+                'password_weak': 'Password must be at least 8 characters',
+                'exists': 'An account with this email or name already exists',
+                'server': 'A server error occurred. Please try again later.'
+            };
+            if (urlParams.has('error')) {
+                var msg = errorMap[urlParams.get('error')] || 'An error occurred';
+                alert(msg);
+            }
+        });
+    </script>
+    <script src="otherJS/csrfInject.js"></script>
 </body>
 </html>

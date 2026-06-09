@@ -12,6 +12,11 @@
 
     <link rel="stylesheet" href="../otherStylesheet/common.css">
     <link rel="stylesheet" href="../otherStylesheet/food.css">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
 
 </head>
 <body>
@@ -36,7 +41,10 @@
                     </ul>
                 </div>
 
-    
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun" style="display:none"></i>
+                </button>
 
                 <div class="hamburger">
                     <!-- <div class="lines line1"></div>
@@ -309,6 +317,7 @@
 
     <script src="../otherJS/hamberger.js"></script>
     <script src="../otherJS/food&exercise.js"></script>
+    <script src="../otherJS/theme.js"></script>
     
 </body>
 </html>

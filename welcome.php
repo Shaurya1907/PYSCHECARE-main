@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/session_config.php';
 
 if (!isset($_SESSION["username"])) {
     header("Location: login.html");
@@ -15,6 +15,11 @@ if (!isset($_SESSION["username"])) {
     <title>Welcome | PsycheCare</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="Images/B_icon01.png">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <style>
         .welcome-wrap {
             min-height: 75vh;
@@ -26,7 +31,7 @@ if (!isset($_SESSION["username"])) {
 
         .welcome-card {
             width: min(820px, 100%);
-            background: rgba(255, 255, 255, 0.82);
+            background: var(--card-bg);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(127, 90, 240, 0.12);
             border-radius: 24px;
@@ -113,8 +118,14 @@ if (!isset($_SESSION["username"])) {
                     <li><a href="otherHTML/statistics.html">STATISTICS</a></li>
                     <li><a href="contact.html">CONTACT</a></li>
                     <li><a href="login.html">LOGIN</a></li>
+                    <li><a href="logout.php">LOGOUT</a></li>
                 </ul>
             </div>
+
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun" style="display:none"></i>
+            </button>
         </div>
     </div>
 
@@ -133,5 +144,6 @@ if (!isset($_SESSION["username"])) {
             <p class="welcome-note">If you were not expecting this page, simply return to the home screen.</p>
         </div>
     </div>
+    <script src="otherJS/theme.js"></script>
 </body>
 </html>

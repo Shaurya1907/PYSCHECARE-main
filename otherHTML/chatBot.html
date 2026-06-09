@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="../otherStylesheet/common.css">
     <link rel="stylesheet" href="../otherStylesheet/chatBot.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
     
     <!-- P5.js, P5.speech and RiveScript Libraries -->
@@ -78,6 +83,11 @@
                     <li><a href="../login.html">LOGIN</a></li>
                 </ul>
             </div>
+            
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun" style="display:none"></i>
+            </button>
             
             <div class="hamburger">
                 <diV class="line line1"></diV>
@@ -235,6 +245,7 @@
 
     <!-- Scripts -->
     <script src="../otherJS/hamberger.js"></script>
+    <script src="../otherJS/theme.js"></script>
     
     <!-- Replace with our updated JavaScript code -->
     <script>
@@ -539,16 +550,16 @@
         function setupChatForm() {
             const msgerForm = document.querySelector(".msger-inputarea");
             const msgerInput = document.querySelector(".msger-input");
+            const msgerSendBtn = document.getElementById('sendBtn');
 
             if (msgerForm) {
                 msgerForm.addEventListener("submit", async event => {
                     event.preventDefault();
-                    if (currentMode !== 'text') return; // Submit is disabled in voice mode
+                    if (currentMode !== 'text') return;
                     
                     const msgText = msgerInput.value.trim();
                     if (!msgText) return;
 
-                    // Frontend Debouncing: Disable inputs while waiting for response
                     msgerInput.disabled = true;
                     if (msgerSendBtn) msgerSendBtn.disabled = true;
 

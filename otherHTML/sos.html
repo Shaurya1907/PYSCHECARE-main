@@ -7,15 +7,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../style.css">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0e0e2c, #1a1a40);
-            color: #fff;
+            background: var(--bg-color);
+            color: var(--text-color);
             overflow-x: hidden;
             min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .main-content {
@@ -63,31 +69,26 @@
         .page-section {
             margin-bottom: 4rem;
             padding: 2rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
             border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(108, 92, 231, 0.2);
+            border: 1px solid rgba(127, 90, 240, 0.12);
+            box-shadow: 0 8px 30px rgba(108, 92, 231, 0.15);
         }
 
         h1 {
             text-align: center;
             font-size: 2.5rem;
-            color: #a29bfe;
+            color: var(--primary-color);
             margin-bottom: 2rem;
-            animation: glow 2s infinite alternate;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 10px #a29bfe, 0 0 20px #a29bfe, 0 0 30px #6c5ce7; }
-            to { text-shadow: 0 0 20px #a29bfe, 0 0 30px #6c5ce7, 0 0 40px #2f2fa2; }
         }
 
         h2 {
             font-size: 1.8rem;
-            color: #81ecec;
+            color: var(--primary-color);
             margin-bottom: 1.5rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid #6c5ce7;
+            border-bottom: 2px solid var(--primary-color);
             animation: slideIn 0.5s ease-out;
         }
 
@@ -99,16 +100,19 @@
         }
 
         .emergency-contact {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--bg-color);
             padding: 1.5rem;
             border-radius: 15px;
-            border-left: 4px solid #6c5ce7;
+            border-left: 4px solid var(--primary-color);
+            border-top: 1px solid rgba(127, 90, 240, 0.1);
+            border-right: 1px solid rgba(127, 90, 240, 0.1);
+            border-bottom: 1px solid rgba(127, 90, 240, 0.1);
             transition: all 0.3s ease;
         }
 
         .emergency-contact:hover {
             transform: translateX(10px);
-            background: rgba(108, 92, 231, 0.2);
+            background: rgba(108, 92, 231, 0.15);
         }
 
         .emergency-number {
@@ -121,7 +125,8 @@
 
         .emergency-description {
             font-size: 0.9rem;
-            color: #b2bec3;
+            color: var(--text-color);
+            opacity: 0.8;
             margin-top: 0.5rem;
         }
 
@@ -153,7 +158,7 @@
             bottom: 0;
             border-radius: 50%;
             background: radial-gradient(circle, #6c5ce7, transparent);
-            animation: breathe 8s infinite ease-in-out;
+            transition: transform 4s ease-in-out;
         }
 
         .breathing-text {
@@ -165,7 +170,7 @@
 
         .breathing-instructions {
             margin-top: 2rem;
-            color: #b2bec3;
+            color: var(--text-color);
             font-size: 1.1rem;
             line-height: 1.6;
         }
@@ -188,7 +193,8 @@
         }
 
         .breathing-step {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--bg-color);
+            border: 1px solid rgba(127, 90, 240, 0.12);
             padding: 1rem;
             border-radius: 10px;
             width: 150px;
@@ -215,7 +221,8 @@
         }
 
         .tip-card {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--bg-color);
+            border: 1px solid rgba(127, 90, 240, 0.12);
             padding: 1.5rem;
             border-radius: 15px;
             transition: all 0.3s ease;
@@ -227,7 +234,7 @@
         }
 
         .tip-card h3 {
-            color: #74b9ff;
+            color: var(--primary-color);
             margin-bottom: 1rem;
         }
 
@@ -237,41 +244,12 @@
             margin: 3rem 0;
         }
 
+        /* Cleaned header layout, uses base styles from style.css */
         .header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 30px rgba(108, 92, 231, 0.2);
-        }
-
-        .nav-ul {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-        }
-
-        .nav-ul li a:hover {
-            background: rgba(108, 92, 231, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .sos-link {
-            color: #ff7675 !important;
-            font-weight: bold !important;
-            animation: pulse 2s infinite;
         }
     </style>
 </head>
@@ -288,11 +266,16 @@
                     <li><a href="../index.html#section-3">CHAT BOT</a></li>
                     <li><a href="statistics.html">STATISTICS</a></li>
                     <li><a href="../contact.html">CONTACT</a></li>
-                    <li><a href="login.html">LOGIN</a></li>
+                    <li><a href="../login.html">LOGIN</a></li>
                     <li class="nav-separator"></li>
                     
                 </ul>
             </div>
+
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun" style="display:none"></i>
+            </button>
         </div>
     </div>
 
@@ -409,6 +392,7 @@
 
     <script src="../otherJS/hamberger.js"></script>
     <script src="../otherJS/sos.js"></script>
+    <script src="../otherJS/theme.js"></script>
 </body>
 </html>
 

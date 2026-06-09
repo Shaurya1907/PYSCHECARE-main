@@ -11,6 +11,23 @@
     --lightvarient-darkColor:#2D3142df;
     --black-color:#000;
     --shadow-color:#e9e6f5;
+    --bg-color: #F5F7F9;
+    --text-color: #2D3142;
+    --card-bg: rgba(255, 255, 255, 0.82);
+    --nav-bg: rgba(245, 247, 249, 0.8);
+}
+
+[data-theme="dark"] {
+    --light-color: #1a1a2e;
+    --dark-color: #e0e0e0;
+    --primary-color: #9b7ff0;
+    --lightvarient-darkColor: #e0e0e0df;
+    --black-color: #fff;
+    --shadow-color: #1a1a2e;
+    --bg-color: #1a1a2e;
+    --text-color: #e0e0e0;
+    --card-bg: rgba(30, 30, 60, 0.82);
+    --nav-bg: rgba(26, 26, 46, 0.9);
 }
 
 
@@ -27,8 +44,10 @@ html{
 
 body{
     font-family: 'Poppins', sans-serif;
-    background-color: var(--light-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
     line-height: 1.5em;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 
@@ -161,6 +180,56 @@ p::selection{
 }
 
 
+.theme-toggle-btn {
+    background: none;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1rem;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.theme-toggle-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+    transform: rotate(30deg);
+}
+
+[data-theme="dark"] .header {
+    background-color: var(--nav-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+[data-theme="dark"] .nav-ul li a {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .section-2 {
+    background: linear-gradient(to bottom, #252548 0%, #1a1a2e 100%);
+}
+
+[data-theme="dark"] .section-3-cont {
+    background: var(--bg-color);
+    border-color: rgba(255,255,255,0.08);
+}
+
+[data-theme="dark"] .talk-page-content h2,
+[data-theme="dark"] .talk-page-content p {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .footer {
+    background-color: #252548;
+}
+
 .mobile-view-nav-cont{
     transform:translateX(-100%);
     display:none;
@@ -174,6 +243,10 @@ p::selection{
 
     .header{
         padding:1.5em 0;
+    }
+
+    .theme-toggle-btn {
+        margin-left: 0.5rem;
     }
 
     .hamburger{

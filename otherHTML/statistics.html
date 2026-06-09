@@ -11,6 +11,11 @@
     <link rel="icon" href="../Images/B_icon01.png">
     <link rel="stylesheet" href="../otherStylesheet/common.css">
     <link rel="stylesheet" href="../otherStylesheet/statistics.css">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
 </head>
 <body>
     <!-- Floating circles for consistent design across all pages -->
@@ -36,6 +41,11 @@
                 </ul>
             </div>
             
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun" style="display:none"></i>
+            </button>
+
             <div class="hamburger">
                 <diV class="line line1"></diV>
                 <div class="mid-line-cont">
@@ -123,11 +133,6 @@
         </div>
     </div>
 
-    <div class="error-msg-cont">
-        <h3>Some ERROR! occurred</h3>
-        <button class="error-btn">Click Me</button>
-    </div>
-
     <!-- Footer -->
     <a id="footer"></a>
     <div class="footer">
@@ -154,6 +159,7 @@
     </div>
 
     <script src="../otherJS/hamberger.js"></script>
+    <script src="../otherJS/theme.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
     <script src="../otherJS/data.js"></script>
     <script src="../otherJS/statistics.js"></script>

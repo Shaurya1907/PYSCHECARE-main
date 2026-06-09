@@ -4,14 +4,7 @@
 
 
 
-:root{
-    --light-color:#F5F7F9;
-    --dark-color:#2D3142;
-    --primary-color:#7F5AF0;
-    --lightvarient-darkColor:#2D3142df;
-    --black-color:#000;
-    --shadow-color:#e9e6f5;
-}
+/* Theme variables inherited from common.css */
 
 .land-img-cont{
     width:100%;

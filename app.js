@@ -1,3 +1,6 @@
+// Theme toggle functionality moved to otherJS/theme.js
+
+
 // Page Loader Animation
 window.addEventListener('load', function() {
     const loader = document.querySelector('.page-loader');

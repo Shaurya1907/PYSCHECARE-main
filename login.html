@@ -10,6 +10,11 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="Images/B_icon01.png">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <style>
         .login-container {
             max-width: 400px;
@@ -122,6 +127,11 @@
                 </ul>
             </div>
 
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun" style="display:none"></i>
+            </button>
+
             <div class="hamburger">
                 <diV class="line line1"></diV>
                 <div class="mid-line-cont">
@@ -187,6 +197,7 @@
     </div>
 
     <script src="otherJS/hamberger.js"></script>
+    <script src="otherJS/theme.js"></script>
     <script>
         // Show error message if login fails
         const urlParams = new URLSearchParams(window.location.search);
@@ -194,20 +205,6 @@
             document.getElementById('login-error').style.display = 'block';
         }
     </script>
-    <script>
-        fetch('csrf.php')
-            .then(response => response.json())
-            .then(data => {
-                const forms = document.querySelectorAll('form');
-                forms.forEach(form => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'csrf_token';
-                    input.value = data.csrf_token;
-                    form.appendChild(input);
-                });
-            })
-            .catch(error => console.error('Error fetching CSRF token:', error));
-    </script>
+    <script src="otherJS/csrfInject.js"></script>
 </body>
 </html>

@@ -13,6 +13,11 @@
     <link rel="icon" href="Images/B_icon01.png">
     <!-- FontAwesome for icons -->
     <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
 
 </head>
 <body>
@@ -46,7 +51,10 @@
                     </ul>
                 </div>
 
-
+                    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                        <i class="fas fa-sun" style="display:none"></i>
+                    </button>
 
                 
 
@@ -168,7 +176,7 @@
                 <div class="card-content-cont">
                     <h3 class="card-head">Exercise </h3>
                     <p class="card-text">
-                        Stay active Excercise regularly  <br>
+                        Stay active Exercise regularly  <br>
                         <span class="link-cont">
                             <a href="otherHTML/exercise.html">Learn more</a>
                             <i class="fas fa-long-arrow-alt-right arrow"></i>
@@ -412,6 +420,7 @@
  
     <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
     <script src="otherJS/hamberger.js"></script>
+    <script src="otherJS/theme.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
