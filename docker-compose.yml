@@ -7,11 +7,8 @@ services:
       dockerfile: Dockerfile.php
     ports:
       - "80:80"
-    environment:
-      - CHAT_API_SECRET=super_secret_key
-      - ALLOWED_ORIGIN=http://localhost
-    depends_on:
-      - backend
+    env_file:
+      - .env
 
   backend:
     build: 
@@ -19,6 +16,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
-    environment:
-      - ALLOWED_ORIGIN=http://localhost
-      - CHAT_API_SECRET=super_secret_key
+    env_file:
+      - .env
