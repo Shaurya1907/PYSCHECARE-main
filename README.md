@@ -1,117 +1,290 @@
+<div align="center">
+  <img
+    src="Images/images_for_readme/PYSCHECARElogo.png"
+    alt="PsycheCare Logo"
+    width="520">
+</div>
 
 # 🧠 PsycheCare
-*PsycheCare* is an AI-powered mental health platform dedicated to supporting individuals on their path to emotional and psychological well-being. Designed with compassion and technology at its core, PsycheCare blends personalized care with digital innovation to help users manage stress, anxiety, depression, and other mental health challenges.
+
+> **AI-Powered Mental Health Support Platform**
+>
+> PsycheCare combines artificial intelligence, personalized care, and digital wellness tools to help individuals manage stress, anxiety, depression, and overall mental well-being.
+
 ---
+
 ## 🌟 Key Features
-- **Arya – AI Chatbot Assistant**  
-  Meet Arya, your personal mental health companion. Available 24/7, Arya offers emotional support, coping strategies, and guidance through difficult times. Arya is also equipped to handle initial consultations, check-ins, and mood tracking. *(To access this bot, contact the administrator.)*
-- **Emergency SOS**  
-  A quick-access safety feature for users experiencing suicidal thoughts or severe mental health crises. With one click, the SOS system connects users to emergency contacts, mental health helplines, or crisis response services.
-- **Appointment Booking & Reminders**  
-  Easily schedule appointments with licensed therapists and mental health professionals. Built-in reminder notifications ensure users never miss a session.
-- **Personalized Treatment Plans**  
-  Using AI and user data, PsycheCare generates tailored mental health plans. These plans adapt over time based on progress, responses, and evolving needs.
-- **Medication Management**  
-  Users can access and manage their prescribed medications, with information on usage, schedules, and possible side effects to support adherence.
-- **Report Reader**  
-  An intelligent tool that helps users understand medical and therapy reports by translating clinical terms into simple, digestible insights.
-- **AI-Powered Insights & Progress Tracking**  
-  Regular mental health check-ins, mood tracking, and AI-based feedback provide users with ongoing insights into their emotional health journey.
+
+| Feature                             | Description                                                          |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| 🤖 **Arya AI Assistant**            | 24/7 emotional support, mood tracking, and guided conversations.     |
+| 🚨 **Emergency SOS**                | Quick access to emergency contacts and crisis resources.             |
+| 📅 **Appointment Management**       | Schedule therapy sessions and receive reminders.                     |
+| 🧠 **Personalized Treatment Plans** | AI-generated plans tailored to each user's needs.                    |
+| 💊 **Medication Management**        | Track prescriptions, schedules, and medication information.          |
+| 📄 **Report Reader**                | Simplifies medical and therapy reports into understandable insights. |
+| 📊 **Progress Tracking**            | Monitor mood trends and mental wellness over time.                   |
+
 ---
+
 ## 🛠️ Tech Stack
+
 ### Frontend
-* **HTML5** & **CSS3**: Core markup and styling, featuring responsive layouts and custom CSS animations.
-* **Vanilla JavaScript**: Handles DOM manipulation, IntersectionObservers for smooth scroll animations, and interactivity.
-* **FontAwesome**: Iconography.
+
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- FontAwesome
+
 ### Backend & AI
-* **PHP**: Server-side processing for user authentication forms.
-* **Python 3**: Core language for the AI chatbot integration.
-* **TensorFlow / Keras**: Deep learning framework used for intent classification.
-* **NLTK (Natural Language Toolkit)**: For tokenization and lemmatization of user input.
-* **NumPy**: Numerical operations for the NLP pipeline.
-* **Autocorrect**: Automated spelling correction for better AI understanding.
----
-## 🚀 Getting Started
-### Prerequisites
-To run this project locally, you will need:
-- A local web server (e.g., [XAMPP](https://www.apachefriends.org/), [WAMP](https://www.wampserver.com/), or Python's `http.server`) to serve the HTML/PHP files.
-- Python 3.7+ (if you wish to run the AI chatbot backend).
-### Installation
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Niteshagarwal01/PYSCHECARE.git
-   cd PYSCHECARE
-   ```
-2. **Frontend Setup:**
-   - Place the project directory in your local web server's root directory (e.g., `htdocs` for XAMPP).
-   - Open `index.html` via your local server (e.g., `http://localhost/PYSCHECARE/index.html`) in your browser.
-3. **Backend Chatbot Setup (Optional):**
-   - Install the required Python packages:
-     ```bash
-     pip install nltk numpy tensorflow keras autocorrect
-     ```
-   - Run the chatbot integration script to verify dependencies:
-     ```bash
-     python chatbot_integration.py
-     ```
----
-## 📚  Quick Start for Contributors:
-If you're new to the project, follow this order:
-- Read this README.md for project overview.
-- Check CONTRIBUTING.md for contribution guidelines.
-- Review chatbot_integration_README.md for      chatbot-related functionality.
-- Install dependencies listed in requirements.txt.
-- Run the application using app.py.
----
-### Useful Resources
-- [Contribution Guide](CONTRIBUTING.md)
-- [Chatbot Integration Guide](chatbot_integration_README.md)
-- [Requirements](requirements.txt)
----
-  
-## 📄 Project Files Overview
----
 
-| File | Purpose |
-|------|---------|
-| README.md | Project overview and setup instructions |
-| CONTRIBUTING.md | Contribution guidelines and workflow |
-| chatbot_integration_README.md | Chatbot-related documentation |
-| requirements.txt | Python dependencies required for the project |
-
----      
-
-## 🎯 Our Mission
-PsycheCare aims to make mental health support accessible, personal, and stigma-free. By combining technology with empathy, we help users find a sense of purpose, meaning, and balance in their everyday lives.
----
-## 💼 Revenue Model
-PsycheCare ensures sustainability and growth through diverse revenue options, including:
-- **Premium Memberships** with enhanced features and exclusive content.
-- **Corporate Wellness Programs** tailored for employee mental health.
-- **Grant and Funding Opportunities** from government and private organizations committed to mental health advocacy.
+- PHP
+- Python 3
+- TensorFlow / Keras
+- NLTK
+- NumPy
+- Autocorrect
 
 ---
 
-## 📷 Screenshots
-### Application Preview
-Below are screenshots showcasing different features and interfaces of PsycheCare.
+# 🚀 Getting Started
 
-### Blockson
-![Blockson](Images/images_for_readme/blocksonImg.PNG)
-### Car Game
-![Car Game](Images/images_for_readme/carGameImg.PNG)
-### Chat Bot
-![Chat Bot](Images/images_for_readme/chatBotImg.PNG)
-### Mobile Version
-![Mobile Version](Images/images_for_readme/mobileVersion.PNG)
-### Second Page
-![Second Page](Images/images_for_readme/secondPage.PNG)
-### Statistics
-![Statistics](Images/images_for_readme/statisticsImg.PNG)
+## Prerequisites
 
+Before running the project, install:
 
+| Requirement | Version                 |
+| ----------- | ----------------------- |
+| Python      | 3.8+                    |
+| PHP         | 7.4+                    |
+| Git         | Latest                  |
+| Browser     | Chrome / Firefox / Edge |
 
+---
 
+# 💻 Running the Project
 
+PsycheCare contains multiple components. Choose the setup that matches your contribution.
 
+## Option 1 — Frontend Development
 
+For contributors working on:
+
+- UI/UX
+- HTML
+- CSS
+- Client-side JavaScript
+
+### Run Locally
+
+```bash
+# Using Node
+npx serve .
+
+# OR using Python
+python3 -m http.server 8000
+```
+
+Open:
+
+```text
+http://localhost:8000
+```
+
+> ✅ Recommended for most first-time contributors.
+
+---
+
+## Option 2 — Full Application Development
+
+For contributors working on:
+
+- AI Chatbot
+- Backend Logic
+- NLP Models
+- Machine Learning Features
+
+### Clone Repository
+
+```bash
+git clone https://github.com/Niteshagarwal01/PYSCHECARE.git
+cd PYSCHECARE
+```
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Start Application
+
+```bash
+python app.py
+```
+
+The application will usually be available at:
+
+```text
+http://127.0.0.1:5000
+```
+
+---
+
+## Option 3 — PHP Features
+
+For contributors working on:
+
+- Login System
+- Contact Forms
+- PHP Functionality
+
+Move the project into your web server directory:
+
+```text
+XAMPP  → htdocs/
+WAMP   → www/
+```
+
+Access:
+
+```text
+http://localhost/PYSCHECARE
+```
+
+> 💡 Some features may require both PHP and Python services running simultaneously.
+
+---
+
+# 🤝 Quick Start for Contributors
+
+### 1️⃣ Read the Documentation
+
+- README.md
+- CONTRIBUTING.md
+- chatbot_integration_README.md
+
+### 2️⃣ Claim an Issue
+
+Before making changes, ensure an issue has been assigned to you.
+
+### 3️⃣ Sync Your Fork
+
+```bash
+git fetch upstream
+git checkout main
+git rebase upstream/main
+```
+
+### 4️⃣ Create a Branch
+
+```bash
+git checkout -b feat/short-description
+```
+
+Examples:
+
+```text
+feat/add-theme-toggle
+fix/issue-25-navbar-bug
+docs/update-readme
+```
+
+### 5️⃣ Make Changes
+
+Follow the coding standards outlined in CONTRIBUTING.md.
+
+### 6️⃣ Submit a Pull Request
+
+- Push your branch
+- Open a PR
+- Link the issue
+- Complete the PR template
+
+---
+
+# 📚 Useful Resources
+
+| Resource                      | Purpose                             |
+| ----------------------------- | ----------------------------------- |
+| CONTRIBUTING.md               | Contribution workflow and standards |
+| chatbot_integration_README.md | AI chatbot documentation            |
+| requirements.txt              | Python dependencies                 |
+| app.py                        | Main backend entry point            |
+
+---
+
+# 📂 Project Structure
+
+| File                          | Description                      |
+| ----------------------------- | -------------------------------- |
+| README.md                     | Project overview and setup guide |
+| CONTRIBUTING.md               | Contribution guidelines          |
+| chatbot_integration_README.md | Chatbot documentation            |
+| requirements.txt              | Python dependency list           |
+| app.py                        | Backend application entry point  |
+
+---
+
+# 🎯 Our Mission
+
+PsycheCare aims to make mental health support accessible, personalized, and stigma-free through technology-driven solutions that empower individuals on their wellness journey.
+
+---
+
+# 💼 Revenue Model
+
+- ⭐ Premium Memberships
+- 🏢 Corporate Wellness Programs
+- 🤝 Grants & Partnerships
+- 📚 Premium Mental Health Resources
+
+---
+
+# 📷 Screenshots
+
+## Dashboard Overview
+
+![Dashboard Overview](Images/images_for_readme/secondPage.PNG)
+
+Central dashboard displaying personalized mental health tools and resources.
+
+---
+
+## Stress Relief Activity
+
+![Stress Relief Activity](Images/images_for_readme/carGameImg.PNG)
+
+Interactive wellness feature designed to improve engagement and reduce stress.
+
+---
+
+## Arya AI Assistant
+
+![Arya AI Assistant](Images/images_for_readme/chatBotImg.PNG)
+
+Conversational AI interface providing emotional support and mental health guidance.
+
+---
+
+## Mobile Experience
+
+![Mobile Experience](Images/images_for_readme/mobileVersion.PNG)
+
+Responsive design optimized for smartphones and tablets.
+
+---
+
+## Resource Dashboard
+
+![Resource Dashboard](Images/images_for_readme/secondPage.PNG)
+
+Additional tools, resources, and navigation options available to users.
+
+---
+
+## Analytics & Progress Tracking
+
+![Analytics & Progress Tracking](Images/images_for_readme/statisticsImg.PNG)
+
+Visual insights into mood trends, wellness metrics, and user progress.
