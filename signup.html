@@ -474,7 +474,7 @@
             } else if (err === 'rate_limit') {
                 errorMsg.textContent = 'Too many attempts. Please try again in an hour.';
             } else if (err === 'weak_password') {
-                errorMsg.textContent = 'Password must be at least 8 characters.';
+                errorMsg.textContent = 'Password must be at least 8 characters and include uppercase, lowercase, a digit, and a special character.';
             } else if (err === 'db') {
                 errorMsg.textContent = 'Database error. Please try again.';
             } else {
