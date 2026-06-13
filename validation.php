@@ -34,7 +34,14 @@ function isValidUsername(?string $username): bool
 
 function isValidPassword(?string $password): bool
 {
-    return strlen((string) $password) >= MIN_PASSWORD_LENGTH;
+    $pwd = (string) $password;
+    if (strlen($pwd) < MIN_PASSWORD_LENGTH) return false;
+    if (!preg_match('/[A-Z]/', $pwd)) return false;
+    if (!preg_match('/[a-z]/', $pwd)) return false;
+    if (!preg_match('/[0-9]/', $pwd)) return false;
+    if (!preg_match('/[^a-zA-Z0-9]/', $pwd)) return false;
+    
+    return true;
 }
 
 function isValidMessage(?string $message): bool
