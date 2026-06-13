@@ -240,6 +240,8 @@ def get_chatbot_response(message, user_id="000"):
                     if intent["tag"] == results[0][0]:  # if tag matches
                         if intent["tag"].lower() == "reiterate":  # if tag is reiterate
                             # ── Thread-safe context read ───────────────────────────────
+                            # Safely read the user's conversation context to avoid race conditions
+                            # when multiple requests access the shared context dictionary.
                             with _context_lock:
                                 user_ctx = context.get(user_id, {})
                             if user_ctx.get("value"):
@@ -249,6 +251,8 @@ def get_chatbot_response(message, user_id="000"):
                                         and tg["context_set"] == user_ctx["value"]
                                     ):
                                         # ── Thread-safe context write ───────────────────────
+                                        # Update the user's conversation context while holding the lock to
+                                        # prevent concurrent requests from modifying the dictionary at the same time.
                                         with _context_lock:
                                             context[user_id] = {
                                                 "value": intent.get("context_set", ""),
@@ -260,7 +264,8 @@ def get_chatbot_response(message, user_id="000"):
                                 response = random.choice(intent["responses"])
                                 return str(response)
                         if "context_set" in intent and intent["context_set"] != "":
-                            # ── Thread-safe context write ────────────────────────────
+                            # ── Thread-safe context write ───────────────────────
+                            # Store the new conversation context for this user in a thread-safe manner.
                             with _context_lock:
                                 context[user_id] = {
                                     "value": intent["context_set"],
