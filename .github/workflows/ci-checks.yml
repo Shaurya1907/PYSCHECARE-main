@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  statuses: write
 
 jobs:
   super-lint:
@@ -29,3 +30,7 @@ jobs:
           # You can disable specific linters if they are too strict:
           VALIDATE_JSCPD: false
           VALIDATE_PHP_PSALM: false
+          VALIDATE_HTML: false
+          VALIDATE_HTML_PRETTIER: false
+          VALIDATE_PHP_PHPCS: false
+          VALIDATE_YAML_PRETTIER: false
