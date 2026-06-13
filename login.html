@@ -672,6 +672,15 @@
             const toast = document.getElementById('logout-toast');
             if (toast) toast.style.display = 'block';
         }
+
+        // Show password reset success toast
+        if (urlParams.get('password_reset') === '1') {
+            const toast = document.getElementById('logout-toast');
+            if (toast) {
+                toast.textContent = 'Your password has been reset successfully. Please log in.';
+                toast.style.display = 'block';
+            }
+        }
     </script>
     <script>
         fetch('csrf.php')
