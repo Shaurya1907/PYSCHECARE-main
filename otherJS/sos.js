@@ -75,6 +75,17 @@ document.addEventListener('DOMContentLoaded', () => {
             startBreathing();
         }
     });
+    // Keyboard accessibility
+    breathingCircle.setAttribute('tabindex', '0');
+    breathingCircle.setAttribute('role', 'button');
+    breathingCircle.setAttribute('aria-label', 'Start breathing exercise');
+
+      breathingCircle.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        isBreathing ? stopBreathing() : startBreathing();
+    }
+    });
     
     // Add hover effect
     breathingCircle.addEventListener('mouseenter', () => {
