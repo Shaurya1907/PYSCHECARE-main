@@ -22,7 +22,15 @@
   </script>
 </head>
 <body>
-
+<script>
+  (function () {
+    var stored = localStorage.getItem('darkMode');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (stored === 'enabled' || (!stored && prefersDark)) {
+      document.body.classList.add('dark-mode');
+    }
+  })();
+</script>
   <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:0;z-index:9999;background:#fff;padding:8px 16px;">Skip to main content</a>
 
   <header class="header">

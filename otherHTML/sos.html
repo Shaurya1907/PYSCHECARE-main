@@ -288,6 +288,15 @@
     </script>
 </head>
 <body>
+    <script>
+  (function () {
+    var stored = localStorage.getItem('darkMode');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (stored === 'enabled' || (!stored && prefersDark)) {
+      document.body.classList.add('dark-mode');
+    }
+  })();
+</script>
     <div class="header">
         <div class="logo-cantainer">
             <h2 class="logo">PsycheCare.</h2>

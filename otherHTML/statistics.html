@@ -25,6 +25,15 @@
     </script>
 </head>
 <body>
+    <script>
+  (function () {
+    var stored = localStorage.getItem('darkMode');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (stored === 'enabled' || (!stored && prefersDark)) {
+      document.body.classList.add('dark-mode');
+    }
+  })();
+</script>
     <!-- Floating circles for consistent design across all pages -->
     <div class="floating-circle circle-1"></div>
     <div class="floating-circle circle-2"></div>
