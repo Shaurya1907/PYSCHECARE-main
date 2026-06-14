@@ -15,7 +15,7 @@
 <body>
     <script>
   (function () {
-    var stored = localStorage.getItem('darkMode');
+    var stored = localStorage.getItem('darkMode'); 
     var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (stored === 'enabled' || (!stored && prefersDark)) {
       document.body.classList.add('dark-mode');
