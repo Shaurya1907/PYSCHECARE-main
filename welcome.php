@@ -137,7 +137,7 @@ if (empty($_SESSION['csrf_token'])) {
             <div class="nav-list-cont">
                 <ul class="nav-ul">
                     <li><a href="index.html">HOME</a></li>
-                    <li><a href="otherHTML/chatBot.php">CHAT BOT</a></li>
+                    <li><a href="index.html#SECTION-3">CHAT BOT</a></li>
                     <li><a href="otherHTML/statistics.html">STATISTICS</a></li>
                     <li><a href="contact.html">CONTACT</a></li>
                     <li>
@@ -165,7 +165,7 @@ if (empty($_SESSION['csrf_token'])) {
         <div class="mobile-view-nav-list">
             <ul>
                 <li><a href="index.html" class="mobile-view-list">HOME</a></li>
-                <li><a href="otherHTML/chatBot.php" class="mobile-view-list">CHAT BOT</a></li>
+                <li><a href="index.html#SECTION-3" class="mobile-view-list">CHAT BOT</a></li>
                 <li><a href="otherHTML/statistics.html" class="mobile-view-list">STATISTICS</a></li>
                 <li><a href="contact.html" class="mobile-view-list">CONTACT</a></li>
                 <li><a href="otherHTML/sos.html" class="mobile-view-list sos-link">
