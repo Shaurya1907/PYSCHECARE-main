@@ -18,6 +18,8 @@ COPY . /var/www/html/
 
 # Set permissions and create non-root user
 RUN chown -R www-data:www-data /var/www/html
+
+# Create non-root user (www-data already exists in php:8.2-apache)
 USER www-data
 
 # Add health check
