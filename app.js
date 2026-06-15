@@ -61,7 +61,7 @@ if (card4) {
 
 if (chatBotPageTakingBtn) {
     chatBotPageTakingBtn.addEventListener('click',()=>{
-        window.location.href="otherHTML/chatBot.php";
+        window.location.href="otherHTML/chatBot.html";
     })
 }
 

@@ -1410,6 +1410,72 @@ p::selection{
 }
 
 
+    .take-page-img-cont{
+        min-width: 200px;
+        min-height: 200px;
+    }
+}
+
+/* Back to top button */
+html {
+  scroll-behavior: smooth;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 85px;
+  right: 25px;
+  width: 46px;
+  height: 46px;
+  background-color: #7b2cbf; 
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(123, 44, 191, 0.3);
+  text-decoration: none;
+  z-index: 9999; 
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              background-color 0.3s ease, 
+              box-shadow 0.3s ease;
+}
+
+.back-to-top svg {
+  transition: transform 0.3s ease;
+}
+
+.back-to-top:hover {
+  background-color: #9d4edd; 
+  transform: translateY(-5px); 
+  box-shadow: 0 6px 20px rgba(157, 78, 221, 0.4);
+}
+
+.back-to-top:hover svg {
+  transform: translateY(-2px); 
+}
+
+.back-to-top:active {
+  transform: translateY(-1px);
+}
+
+.back-to-top:focus-visible {
+  outline: 3px dashed #9d4edd;
+  outline-offset: 4px;
+  transform: translateY(-5px);
+}
+
+@media (max-width: 576px) {
+  .back-to-top {
+    bottom: 80px;
+    right: 25px;
+    width: 42px;
+    height: 42px;
+  }
+}
+
+
+/* ++++++++++++++++++++ FOOTER +++++++++++++++++++ */
 
 /* ++++++++++++++++++++ FOOTER +++++++++++++++++++ */
 
@@ -1444,32 +1510,52 @@ p::selection{
     max-width:50ch;
 }
 
+.quick-links{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.quick-links ul li a{
+    text-decoration: none;
+    color:var(--dark-color);
+}
+
+.quick-links ul li a:hover{
+    color:var(--light-color);
+    transform: scaleX(1.1);
+}
 
 .social-icon-cont{
     padding:2em 0 .5em 0;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+}
+
+.social-head{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .footer-logo{
     color:var(--light-color);
-    margin:.5em 0;
+    margin: 0;
 }
 
 .icons{
-    margin: .5em 0;
+    margin: 0;
 }
 
 .icons ul{
     display: flex;
-    flex-direction: row;
-    list-style: none;
+    justify-content: center;
+    gap: 1em;
 }
 
-.icons ul li{
+ .icons ul li{
     padding: .5em 1em 0 0;
 }
 
@@ -1478,6 +1564,21 @@ p::selection{
     font-size: 1.5em;
 }
 
+
+.footer ul,
+.footer ul li,
+.footer .credits-list{
+    list-style: none !important;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row !important;
+    gap: 2em;
+}
+.footer ul li::marker,
+.footer .credits-list li::marker{
+    display: none;
+}
 
 .copy-rights{
     padding: 1em 0 0 0;

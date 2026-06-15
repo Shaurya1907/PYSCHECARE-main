@@ -32,15 +32,25 @@ function isValidUsername(?string $username): bool
         && preg_match('/^[A-Za-z0-9_.-]+$/', $username) === 1;
 }
 
-function isValidPassword(?string $password): bool
+function validatePasswordComplexity(?string $password): bool
 {
     $pwd = (string) $password;
-    if (strlen($pwd) < MIN_PASSWORD_LENGTH) return false;
-    if (!preg_match('/[A-Z]/', $pwd)) return false;
-    if (!preg_match('/[a-z]/', $pwd)) return false;
-    if (!preg_match('/[0-9]/', $pwd)) return false;
-    if (!preg_match('/[^a-zA-Z0-9]/', $pwd)) return false;
-    
+    if (strlen($pwd) < MIN_PASSWORD_LENGTH) {
+        return false;
+    }
+    if (preg_match('/[A-Z]/', $pwd) !== 1) {
+        return false;
+    }
+    if (preg_match('/[a-z]/', $pwd) !== 1) {
+        return false;
+    }
+    if (preg_match('/[0-9]/', $pwd) !== 1) {
+        return false;
+    }
+    if (preg_match('/[^a-zA-Z0-9]/', $pwd) !== 1) {
+        return false;
+    }
+
     return true;
 }
 
@@ -58,7 +68,7 @@ function validateSignupInput(string $username, string $email, string $password):
     if (!isValidEmailInput($email)) {
         return 'email';
     }
-    if (!isValidPassword($password)) {
+    if (!validatePasswordComplexity($password)) {
         return 'weak_password';
     }
     return null;
