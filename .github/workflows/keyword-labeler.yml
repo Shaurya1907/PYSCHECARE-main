@@ -6,6 +6,11 @@ on:
   pull_request_target:
     types: [opened, edited, reopened, synchronize]
 
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
 jobs:
   label-everything:
     name: Apply Smart Labels
@@ -271,3 +276,4 @@ jobs:
                 body: `## ⚠️ Missing Required Label\n\nThis PR is missing a **difficulty label**, which is **required** for GSSoC scoring.\n\nPlease ask a maintainer to add one of:\n| Label | Points |\n|-------|--------|\n| \`level:beginner\` | 25 pts |\n| \`level:intermediate\` | 50 pts |\n| \`level:advanced\` | 75 pts |\n| \`level:critical\` | 100 pts |\n\n> ℹ️ Without \`gssoc:approved\` + a difficulty label, this contribution will not count toward your score.`
               });
             }
+

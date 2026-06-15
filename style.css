@@ -1409,6 +1409,13 @@ p::selection{
     }
 }
 
+
+    .take-page-img-cont{
+        min-width: 200px;
+        min-height: 200px;
+    }
+}
+
 /* Back to top button */
 html {
   scroll-behavior: smooth;
@@ -1467,6 +1474,8 @@ html {
   }
 }
 
+
+/* ++++++++++++++++++++ FOOTER +++++++++++++++++++ */
 
 /* ++++++++++++++++++++ FOOTER +++++++++++++++++++ */
 

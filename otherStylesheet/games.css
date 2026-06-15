@@ -315,3 +315,26 @@ p::selection{
 .right-control{
     transform: rotate(180deg);
 }
+
+/* Dark Mode Styles */
+body.dark-mode {
+    --light-color: #1a1a1a;
+    --dark-color: #e8e8e8;
+    --shadow-color: #333333;
+}
+
+body.dark-mode .whole-container {
+    background-color: var(--light-color);
+}
+
+body.dark-mode .back-to-home {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode .game-card-cont .actual-game-cont .game-name {
+    color: var(--dark-color);
+}
+
+body.dark-mode .game-card-cont .actual-game-cont .game {
+    box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+}

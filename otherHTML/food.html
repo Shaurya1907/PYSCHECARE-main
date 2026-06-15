@@ -12,10 +12,17 @@
 
     <link rel="stylesheet" href="../otherStylesheet/common.css">
     <link rel="stylesheet" href="../otherStylesheet/food.css">
-
 </head>
 <body>
-
+<script>
+  (function () {
+    var stored = localStorage.getItem('darkMode');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (stored === 'enabled' || (!stored && prefersDark)) {
+      document.body.classList.add('dark-mode');
+    }
+  })();
+</script>
 
     <div class="land-cont">
 
@@ -36,7 +43,9 @@
                     </ul>
                 </div>
 
-    
+                <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
 
                 <div class="hamburger">
                     <!-- <div class="lines line1"></div>
@@ -292,7 +301,7 @@
 
         <div class="social-icon-cont">
             <div class="social-head">
-                <h2 class="logo footer-logo">Arya.</h2>
+                <h2 class="logo footer-logo">PsycheCare.</h2>
             </div>
 
             <div class="icons">
@@ -307,8 +316,9 @@
         <p class="copy-rights">Thank You :)</p>
     </div>
 
+    <script src="../otherJS/darkMode.js"></script>
     <script src="../otherJS/hamberger.js"></script>
-    <script src="../otherJS/food&exercise.js"></script>
-    
+    <script src="../otherJS/food-exercise.js"></script>
+    <script src="../otherJS/accessibility.js"></script>
 </body>
 </html>

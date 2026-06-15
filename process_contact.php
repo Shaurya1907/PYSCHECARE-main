@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/session_config.php';
+require_once __DIR__ . '/validation.php';
 session_start();
 
 if (empty($_SESSION['csrf_token'])) {
@@ -13,19 +15,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Invalid CSRF token.");
     }
 
-    $name    = htmlspecialchars(trim($_POST['name'] ?? ''));
-    $email   = htmlspecialchars(trim($_POST['email'] ?? ''));
-    $message = htmlspecialchars(trim($_POST['message'] ?? ''));
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $subject = trim($_POST['subject'] ?? '');
+    $message = trim($_POST['message'] ?? '');
 
-    if (!$name || !$email || !$message) {
-        die("All fields are required.");
+    $error = validateContactInput($name, $email, $subject, $message);
+    if ($error !== null) {
+        http_response_code(400);
+        die(json_encode(['success' => false, 'error' => $error]));
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        die("Invalid email address.");
-    }
+    try {
+        require_once __DIR__ . '/database.php';
+        $db = getAuthDatabase();
 
-    // TODO: save to DB or send email
-    echo "Message received. Thank you, $name!";
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        if (!enforceRateLimit($db, "contact:" . $ip, 5, 60)) {
+            http_response_code(429);
+            die("Too many contact attempts. Please try again later.");
+        }
+
+        $stmt = $db->prepare("INSERT INTO contact_messages (name, email, subject, message) VALUES (:name, :email, :subject, :message)");
+        $stmt->execute([
+            ':name' => $name,
+            ':email' => $email,
+            ':subject' => $subject,
+            ':message' => $message
+        ]);
+
+        echo "Message received. Thank you, " . htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8') . "!";
+    } catch (PDOException $e) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Database error. Please try again later.']);
+    }
 }
 ?>

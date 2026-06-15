@@ -12,7 +12,10 @@
     <link rel="icon" href="Images/B_icon01.png">
     <style>
         .login-container {
-            max-width: 400px;
+            max-width: 950px;
+            display: flex;
+            overflow: hidden;
+            padding: 0;
             margin: 100px auto;
             padding: 2rem;
             background-color: var(--light-color);
@@ -57,6 +60,7 @@
         }
         
         .login-btn {
+            width:100%;
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -102,6 +106,384 @@
             margin-top: 0.5rem;
             display: none;
         }
+
+        .locked-banner {
+            display: none;
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            color: #fff;
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.6;
+        }
+        .locked-banner strong { font-size: 1.05rem; }
+
+        .logout-toast {
+            display: none;
+            background: #2ecc71;
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .welcome-panel{
+            width:50%;
+            background: linear-gradient(
+                135deg,
+                #7f5af0,
+                #9d7bff
+            );
+            color:white;
+            padding:3rem;
+        }
+
+.login-form-section{
+    width:50%;
+    padding:3rem;
+    background:white;
+}
+
+.login-page{
+    display:flex;
+    min-height:calc(100vh - 80px);
+
+    width:90%;
+    max-width:1400px;
+
+    margin:40px auto;
+
+    border-radius:30px;
+    overflow:hidden;
+
+    box-shadow:0 25px 60px rgba(127,90,240,.15);
+}
+
+.left-panel{
+    flex:1;
+    position:relative;
+    overflow:hidden;
+
+    background:linear-gradient(
+        135deg,
+        #7f5af0,
+        #9370ff
+    );
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+}
+
+.left-panel::before{
+    content:"";
+
+    position:absolute;
+
+    width:350px;
+    height:350px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.12);
+
+    top:-100px;
+    right:-100px;
+
+    animation:blobMove 8s ease-in-out infinite;
+}
+
+.left-panel::after{
+    content:"";
+
+    position:absolute;
+
+    width:250px;
+    height:250px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.08);
+
+    bottom:-80px;
+    left:-80px;
+
+    animation:blobMove 10s ease-in-out infinite reverse;
+}
+
+.left-content{
+    max-width:520px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+
+    gap:18px;
+}
+
+.left-content img{
+    width:260px;
+    display:block;
+
+    animation:floatBot 4s ease-in-out infinite;
+    z-index:2;
+    position:relative;
+}
+
+@keyframes floatBot{
+    0%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-18px);
+    }
+
+    100%{
+        transform:translateY(0px);
+    }
+}
+
+.right-panel{
+    flex:1;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:#f8f7ff;
+}
+
+.login-box{
+    width:100%;
+    max-width:580px;
+
+    background:white;
+
+    padding:2rem;
+
+    border-radius:22px;
+
+    box-shadow:
+        0 20px 50px rgba(
+            127,
+            90,
+            240,
+            .18
+        );
+}
+
+.login-header{
+    text-align:center;
+    margin-bottom:2rem;
+}
+
+.login-header h2{
+    color:var(--dark-color);
+}
+
+.login-header h2 span{
+    color:var(--primary-color);
+}
+
+.form-group input{
+    width:100%;
+    padding:1rem;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    font-family:'Poppins',sans-serif;
+
+    transition:.3s;
+}
+
+.form-group input:focus{
+    outline:none;
+    border-color:var(--primary-color);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(127,90,240,.15);
+}
+
+.login-btn{
+    width:100%;
+
+    background:var(--primary-color);
+
+    color:white;
+
+    border:none;
+
+    padding:1rem;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.3s;
+}
+
+.login-btn:hover{
+    background:#6a4cc7;
+    transform:translateY(-2px);
+}
+
+.bubble{
+    position:absolute;
+    border-radius:50%;
+
+    background:rgba(255,255,255,.15);
+    backdrop-filter:blur(5px);
+
+    animation:floatBubble linear infinite;
+}
+
+.bubble1{
+    width:20px;
+    height:20px;
+    left:10%;
+    bottom:-50px;
+    animation-duration:12s;
+}
+
+.bubble2{
+    width:35px;
+    height:35px;
+    left:25%;
+    bottom:-70px;
+    animation-duration:15s;
+}
+
+.bubble3{
+    width:25px;
+    height:25px;
+    left:60%;
+    bottom:-40px;
+    animation-duration:10s;
+}
+
+.bubble4{
+    width:45px;
+    height:45px;
+    left:80%;
+    bottom:-80px;
+    animation-duration:18s;
+}
+
+.bubble5{
+    width:18px;
+    height:18px;
+    left:45%;
+    bottom:-60px;
+    animation-duration:14s;
+}
+
+@keyframes floatBubble{
+
+    0%{
+        transform:
+            translateY(0)
+            translateX(0)
+            scale(1);
+
+        opacity:0;
+    }
+
+    10%{
+        opacity:1;
+    }
+
+    50%{
+        transform:
+            translateY(-300px)
+            translateX(30px)
+            scale(1.15);
+    }
+
+    100%{
+        transform:
+            translateY(-700px)
+            translateX(-20px)
+            scale(.9);
+
+        opacity:0;
+    }
+}
+
+@keyframes blobMove{
+
+    0%{
+        transform:
+            translate(0,0)
+            scale(1);
+    }
+
+    50%{
+        transform:
+            translate(30px,-30px)
+            scale(1.1);
+    }
+
+    100%{
+        transform:
+            translate(0,0)
+            scale(1);
+    }
+}
+
+
+@media(max-width:900px){
+
+    .login-page{
+        flex-direction:column;
+    }
+
+    .left-panel{
+        padding:40px 25px;
+    }
+
+    .left-content h1{
+        font-size:2rem;
+    }
+
+    .right-panel{
+        padding:30px 20px;
+    }
+}
+
+        .feature-box{
+            margin-top:15px;
+            padding:12px;
+            border-radius:10px;
+            background:rgba(255,255,255,0.15);
+            text-align:center;
+        }
+
+        @media(max-width:768px){
+
+            .login-container{
+                flex-direction:column;
+            }
+
+            .welcome-panel,
+            .login-form-section{
+                width:100%;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -121,6 +503,10 @@
                     <li><a href="login.html" class="active">LOGIN</a></li>
                 </ul>
             </div>
+
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
 
             <div class="hamburger">
                 <diV class="line line1"></diV>
@@ -150,52 +536,140 @@
     </div>
 
     <!-- Login Form -->
-    <div class="login-container">
-        <div class="login-header">
-            <div class="login-illustration">
-                <img src="Images/illustration-new/home-bot-img.png" alt="Login">
+    <div class="login-page">
+
+    <div class="left-panel">
+        <div class="bubble bubble1"></div>
+        <div class="bubble bubble2"></div>
+        <div class="bubble bubble3"></div>
+        <div class="bubble bubble4"></div>
+        <div class="bubble bubble5"></div>
+        <div class="left-content">
+            <img src="Images/illustration-new/home-bot-img.png" alt="PsycheCare">
+
+            <h1>Welcome Back</h1>
+
+            <p>
+                Continue your wellness journey with AI-powered support,
+                personalized insights, and a safe place to grow.
+            </p>
+
+            <div class="feature-box">🤖 AI Wellness Support</div>
+            <div class="feature-box">💜 Personalized Guidance</div>
+            <div class="feature-box">🔒 Safe & Secure Experience</div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+
+        <div class="login-box">
+
+            <div id="logout-toast" class="logout-toast">
+                ✅ You have been successfully logged out.
             </div>
-            <h2 style="color: var(--dark-color);">Welcome to <span style="color: var(--primary-color);">PsycheCare</span></h2>
-            <p style="color: var(--dark-color); font-size: 0.9rem;">Sign in to access your personal dashboard</p>
+
+            <div id="locked-banner" class="locked-banner">
+                🔒 <strong>Account temporarily locked</strong><br>
+                <span id="locked-msg"></span>
+            </div>
+
+            <div class="login-header">
+                <h2>
+                    Welcome Back to
+                    <span>PsycheCare</span>
+                </h2>
+
+                <p>
+                    Sign in to access your personal dashboard
+                </p>
+            </div>
+
+            <form method="POST" action="login.php" class="login-form">
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        autocomplete="username"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        autocomplete="current-password"
+                        required>
+
+                    <p class="error-message" id="login-error"></p>
+                </div>
+
+                <button type="submit" class="login-btn">
+                    Log In
+                </button>
+
+                <div class="return-home">
+
+                    <p>
+                        Don't have an account?
+                        <a href="signup.html">Sign Up</a>
+                    </p>
+
+                    <p>
+                        <a href="index.html">Return Home</a>
+                    </p>
+
+                </div>
+
+            </form>
+
         </div>
 
-        <form method="POST" action="login.php">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-                <p class="error-message" id="login-error">Invalid username or password</p>
-            </div>
-
-            <button type="submit" class="login-btn">Log In</button>
-            
-            <div class="return-home">
-                <p>
-                    Don't have an account?
-                    <a href="signup.html">Sign Up</a>
-                </p>
-
-                <p style="margin-top:10px;">
-                     <a href="index.html">Return to Home</a>
-                </p>
-            </div>
-        </form>
     </div>
+
+</div>
 
     <script src="otherJS/hamberger.js"></script>
     <script>
-        // Show error message if login fails
         const urlParams = new URLSearchParams(window.location.search);
+
+        // Show error message if login fails
         if (urlParams.has('error')) {
             const loginError = document.getElementById('login-error');
-            loginError.textContent = urlParams.get('error') === 'db'
-                ? 'Login is temporarily unavailable. Please try again.'
-                : 'Invalid username or password';
-            loginError.style.display = 'block';
+            const err = urlParams.get('error');
+
+            if (err === 'locked') {
+                // Show the prominent locked banner instead of the inline error
+                const banner = document.getElementById('locked-banner');
+                const minutes = parseInt(urlParams.get('minutes') || '15', 10);
+                document.getElementById('locked-msg').textContent =
+                    `Your account is locked. Please try again in ${minutes} minute${minutes !== 1 ? 's' : ''}.`;
+                banner.style.display = 'block';
+                // Disable the form so users don't keep hammering
+                document.querySelector('.login-btn').disabled = true;
+                document.querySelector('.login-btn').style.opacity = '0.5';
+            } else if (err === 'db') {
+                loginError.textContent = 'Login is temporarily unavailable. Please try again.';
+                loginError.style.display = 'block';
+            } else if (err === 'rate_limit') {
+                loginError.textContent = 'Too many failed attempts from your network. Please try again in 15 minutes.';
+                loginError.style.display = 'block';
+            } else {
+                loginError.textContent = 'Invalid username or password';
+                loginError.style.display = 'block';
+            }
+        }
+
+        // Show logout success toast
+        if (urlParams.get('logged_out') === '1') {
+            const toast = document.getElementById('logout-toast');
+            if (toast) toast.style.display = 'block';
         }
     </script>
     <script>
@@ -213,5 +687,7 @@
             })
             .catch(error => console.error('Error fetching CSRF token:', error));
     </script>
+     <script src="otherJS/darkMode.js"></script>
+     <script src="otherJS/accessibility.js"></script>
 </body>
 </html>

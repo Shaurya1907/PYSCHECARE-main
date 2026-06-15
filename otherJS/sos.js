@@ -2,7 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const breathingCircle = document.querySelector('.breathing-circle');
     const breathingText = document.querySelector('.breathing-text');
     const breathingSteps = document.querySelectorAll('.breathing-step');
-    
+    if (!breathingCircle || !breathingText) {
+        console.error('SOS breathing elements not found in DOM');
+        return;
+    }
     let isBreathing = false;
     let currentStep = 0;
     let timer;
@@ -74,6 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             startBreathing();
         }
+    });
+    // Keyboard accessibility
+    breathingCircle.setAttribute('tabindex', '0');
+    breathingCircle.setAttribute('role', 'button');
+    breathingCircle.setAttribute('aria-label', 'Start breathing exercise');
+
+      breathingCircle.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        isBreathing ? stopBreathing() : startBreathing();
+    }
     });
     
     // Add hover effect

@@ -11,12 +11,27 @@
     <link rel="stylesheet" href="../otherStylesheet/chatBot.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
+    <script src="../otherJS/darkMode.js"></script>
     
     <!-- P5.js, P5.speech and RiveScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
     <script src="../library/p5.speech.js"></script>
     <script src="https://unpkg.com/rivescript@latest/dist/rivescript.min.js"></script>
     
+    <!-- ── Auth Guard ─────────────────────────────────────────────────────────
+         If this page is opened directly (not via chatBot.php), window.PSYCHECARE_TOKEN
+         will be undefined. We redirect immediately to the PHP gateway which
+         performs the real session check.
+    ──────────────────────────────────────────────────────────────────────── -->
+    <script>
+        (function () {
+            if (typeof window.PSYCHECARE_TOKEN === 'undefined') {
+                // Not served through chatBot.php — redirect to the PHP gateway
+                window.location.replace('chatBot.php');
+            }
+        })();
+    </script>
+
     <!-- Add these styles for the typing indicator -->
     <style>
         .typing {
@@ -43,6 +58,33 @@
         .typing .dot:nth-child(3) {
             animation-delay: -0.9s;
             margin-right: 0;
+        }
+
+        .crisis-warning {
+            display: none;
+            margin: 12px;
+            padding: 12px;
+            border-left: 4px solid #d63031;
+            border-radius: 6px;
+            background: #fff2f2;
+            color: #3d1f1f;
+            font-size: 0.95rem;
+        }
+
+        .crisis-warning strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .crisis-warning a {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background: #d63031;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
         }
 
         @keyframes wave {
@@ -72,12 +114,16 @@
             <div class="nav-list-cont">
                 <ul class="nav-ul">
                     <li><a href="../index.html">HOME</a></li>
-                    <li><a href="chatBot.html" class="active">CHAT BOT</a></li>
+                    <li><a href="chatBot.php" class="active">CHAT BOT</a></li>
                     <li><a href="statistics.html">STATISTICS</a></li>
                     <li><a href="../contact.html">CONTACT</a></li>
                     <li><a href="../login.html">LOGIN</a></li>
                 </ul>
             </div>
+            
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
             
             <div class="hamburger">
                 <diV class="line line1"></diV>
@@ -99,7 +145,7 @@
         <div class="mobile-view-nav-list">
             <ul>
                 <li><a href="../index.html" class="mobile-view-list">HOME</a></li>
-                <li><a href="chatBot.html" class="mobile-view-list active">CHAT BOT</a></li>
+                <li><a href="chatBot.php" class="mobile-view-list active">CHAT BOT</a></li>
                 <li><a href="statistics.html" class="mobile-view-list">STATISTICS</a></li>
                 <li><a href="../contact.html" class="mobile-view-list">CONTACT</a></li>
                 <li><a href="../login.html" class="mobile-view-list">LOGIN</a></li>
@@ -170,7 +216,17 @@
                         <button class="mode-btn" id="btnVoiceMode" type="button" title="Voice Assistant Mode">
                             <i class="fas fa-microphone"></i> Voice
                         </button>
+                        <button class="mode-btn" id="btnNewChat" type="button" title="Start New Conversation">
+                            <i class="fas fa-plus"></i> New Chat
+                        </button>
                     </div>
+                </div>
+
+                <div class="crisis-warning" id="crisisWarning" role="alert">
+                    <strong>Immediate support may be needed.</strong>
+                    <div>Are you safe right now?</div>
+                    <div>If you may hurt yourself or someone else, call emergency services now. In the U.S. call or text 988 for crisis support.</div>
+                    <a href="sos.html">SOS resources</a>
                 </div>
 
                 <main class="msger-chat">
@@ -235,41 +291,19 @@
 
     <!-- Scripts -->
     <script src="../otherJS/hamberger.js"></script>
+    <script src="../otherJS/chatClient.js"></script>
     
     <!-- Replace with our updated JavaScript code -->
     <script>
-        // Dictionary for fallback local responses (when Flask API is not running)
-        const mentalHealthResponses = {
-            "hello": ["Hello! How are you feeling today?", "Hi there! I'm here to chat. How are you doing?", "Hello! How can I assist you with your mental health today?"],
-            "how are you": ["I'm here to help you! How are you feeling today?", "I'm good, thanks for asking! How about you?", "I'm functioning well. More importantly, how are you doing?"],
-            "sad": ["I'm sorry to hear that you're feeling sad. Would you like to talk about what's making you feel this way?", "Feeling sad is a normal emotion. Would sharing what triggered this feeling help?", "I understand feeling sad can be difficult. Would you like some strategies that might help lift your mood?"],
-            "anxious": ["Anxiety can be challenging. Taking slow deep breaths might help in the moment. Would you like to talk about what's causing your anxiety?", "I'm sorry you're feeling anxious. Sometimes focusing on the present moment can help. What specific concerns are on your mind?", "Anxiety is something many people experience. Would you like to discuss some coping strategies?"],
-            "stressed": ["Stress can definitely be overwhelming. Would you like to talk about what's causing your stress?", "I understand feeling stressed. Would you like some relaxation techniques that might help?", "Stress is a common reaction to demanding situations. What specific situation is causing you stress right now?"],
-            "happy": ["I'm glad to hear you're feeling happy! What's contributed to your good mood?", "That's wonderful! Happiness is important for our wellbeing. What's making you feel this way?", "It's great that you're feeling happy! Would you like to talk about what positive things have been happening?"],
-            "tired": ["Feeling tired can affect our mental state. Have you been getting enough rest?", "Being tired is common when we're busy or stressed. Would you like some tips for better sleep?", "I understand feeling tired can be frustrating. Is there anything specific that might be disrupting your energy levels?"],
-            "depressed": ["I'm sorry you're feeling this way. Depression is difficult, but support is available. Have you considered speaking with a mental health professional?", "Depression can feel overwhelming, but you're not alone. Would you like information about professional support options?", "I understand those feelings can be very challenging. Is there someone trusted in your life you could reach out to for support?"],
-            "suicide": ["I'm really concerned about what you're sharing. Please know that you're not alone and help is available. Please call a crisis helpline right away at 988 (Suicide Prevention Lifeline).", "This sounds really serious, and I want to make sure you get the support you need. Please reach out to emergency services or call 988 immediately.", "I'm worried about your safety. Please call 988 or go to your nearest emergency room right away. Your life matters."],
-            "help": ["I'm here to listen and offer support. What specific kind of help are you looking for today?", "I'd be happy to help. Could you tell me more about what you're going through?", "I'm glad you reached out for help. What would be most supportive for you right now?"],
-            "thank you": ["You're welcome! I'm glad I could be here for you.", "I'm happy I could help in some way. Take care of yourself!", "You're welcome! Remember that seeking support is a sign of strength."],
-            "bye": ["Take care! Remember, it's okay to come back anytime you want to talk.", "Goodbye for now. Be gentle with yourself!", "Bye! Remember that taking care of your mental health is important."],
-            "what is depression": ["Depression is a common but serious mood disorder that affects how you feel, think, and handle daily activities. It's characterized by persistent feelings of sadness and loss of interest in activities. Depression is treatable, and seeking help early is important."],
-            "what is anxiety": ["Anxiety is your body's natural response to stress. It's a feeling of fear or apprehension about what's to come. If your feelings of anxiety are extreme, last for longer than six months, and are interfering with your life, you may have an anxiety disorder."],
-            "how to manage stress": ["There are many ways to manage stress including: practice deep breathing, exercise regularly, maintain a healthy diet, get enough sleep, practice mindfulness meditation, limit caffeine and alcohol, connect with others, and seek professional help if needed."],
-            "feel lonely": ["Feeling lonely is a common experience. Consider reaching out to friends or family, joining a group with similar interests, volunteering, or using technology to connect with others. If loneliness persists, speaking with a mental health professional might help."],
-            "can't sleep": ["Having trouble sleeping can be frustrating. Try establishing a consistent sleep schedule, creating a relaxing bedtime routine, limiting screen time before bed, avoiding caffeine later in the day, and making sure your sleep environment is comfortable. If insomnia persists, consider speaking with a healthcare provider."]
-        };
-
-        const defaultResponses = [
-            "I'm here to listen. Could you tell me more about that?",
-            "That's interesting. How does that make you feel?",
-            "Thank you for sharing. Would you like to elaborate on that?",
-            "I'm here to support you. What else would you like to talk about?",
-            "I understand. Is there anything specific about that you'd like to discuss?",
-            "I hear you. How has this been affecting your daily life?",
-            "That sounds challenging. How have you been coping with it so far?",
-            "I appreciate you sharing that with me. What would be most helpful for you right now?",
-            "It takes courage to talk about these things. Is there a particular aspect you'd like to focus on?"
-        ];
+        // ─── API Configuration ──────────────────────────────────────────────────────
+        // For local development this auto-detects localhost.
+        // For production: set window.CHATBOT_API_URL in a server-rendered config block
+        // e.g. <script>window.CHATBOT_API_URL = 'https://api.yourdomain.com';<\/script>
+        const CHATBOT_API_URL = (function () {
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            return isLocal ? 'http://127.0.0.1:5000' : (window.CHATBOT_API_URL || '');
+        })();
+        // ────────────────────────────────────────────────────────────────────────────
 
         // Global variables & state
         const BOT_IMG = "../Images/illustration-new/home-bot-img.png";
@@ -428,6 +462,7 @@
         function setupModeToggle() {
             const btnTextMode = document.getElementById('btnTextMode');
             const btnVoiceMode = document.getElementById('btnVoiceMode');
+            const btnNewChat = document.getElementById('btnNewChat');
             const fallbackBanner = document.getElementById('fallbackBanner');
             const voiceIndicator = document.getElementById('voiceIndicator');
             const micBtn = document.getElementById('micBtn');
@@ -497,6 +532,27 @@
                     }
                 });
             }
+            if (btnNewChat) {
+                btnNewChat.addEventListener('click', () => {
+                    if (!confirm('Start a new conversation? This will clear the current chat session.')) {
+                        return;
+                    }
+                    window.PsycheCareChatClient.resetSessionId();
+                    console.log('Chat session reset successfully.');
+                    
+                    const msgerChat = document.querySelector(".msger-chat");
+                    if (msgerChat) {
+                        msgerChat.innerHTML = '';
+                        
+                        appendMessage(
+                             "PsycheCare Assistant",
+                             BOT_IMG,
+                             "left",
+                             "Hello! I'm your mental health assistant. Feel free to share your thoughts or ask me questions about mental health. I'm here to listen and support you."
+                        );
+                    }
+                });
+            }
 
             if (micBtn) {
                 micBtn.addEventListener('click', () => {
@@ -539,6 +595,7 @@
         function setupChatForm() {
             const msgerForm = document.querySelector(".msger-inputarea");
             const msgerInput = document.querySelector(".msger-input");
+            const msgerSendBtn = document.querySelector(".msger-send-btn");
 
             if (msgerForm) {
                 msgerForm.addEventListener("submit", async event => {
@@ -639,59 +696,45 @@
             }
         }
 
+        function updateCrisisWarning(risk) {
+            const warning = document.getElementById('crisisWarning');
+            if (!warning) return;
+
+            const level = risk && risk.level;
+            warning.style.display = (level === 'HIGH' || level === 'CRITICAL') ? 'block' : 'none';
+        }
+
+        function enableInputs() {
+            const msgerInput = document.querySelector(".msger-input");
+            const msgerSendBtn = document.querySelector(".msger-send-btn");
+            if (msgerInput) msgerInput.disabled = false;
+            if (msgerSendBtn) msgerSendBtn.disabled = false;
+        }
+
         async function fetchBotResponse(userText) {
             try {
-                // Dynamically resolve API URL for production vs local development
-                const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
-                    ? 'http://127.0.0.1:5000' 
-                    : 'https://api.psychecare.com'; // Replace with actual production API domain
-                
-                const response = await fetch(`${API_URL}/chat`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ message: userText })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (!CHATBOT_API_URL) {
+                    throw new Error('No production API URL configured. Set window.CHATBOT_API_URL before deploying.');
                 }
-                
-                const data = await response.json();
+
+                const data = await window.PsycheCareChatClient.sendMessage(userText, {
+                    apiUrl: CHATBOT_API_URL,
+                    token: window.PSYCHECARE_TOKEN || ''
+                });
                 
                 // Remove typing indicator
                 removeTypingIndicator();
                 
                 // Add the bot's response to the chat
                 appendMessage("Arya Assistant", BOT_IMG, "left", data.response);
+                updateCrisisWarning(data.risk);
+                enableInputs();
                 
             } catch (error) {
-                console.warn('Flask server not available. Using local keyword fallback...', error);
-                
-                // Run local keyword response after a slight delay
-                setTimeout(() => {
-                    removeTypingIndicator();
-                    
-                    const text = userText.toLowerCase();
-                    let response = null;
-                    
-                    // Loop through our keyword responses
-                    for (const [keyword, responses] of Object.entries(mentalHealthResponses)) {
-                        if (text.includes(keyword)) {
-                            response = responses[Math.floor(Math.random() * responses.length)];
-                            break;
-                        }
-                    }
-                    
-                    // If no match was found, use a default response
-                    if (!response) {
-                        response = defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
-                    }
-                    
-                    // Add the bot's response to the chat
-                    appendMessage("Arya Assistant", BOT_IMG, "left", response);
-                }, 1000);
+                console.warn('Chatbot request failed:', error);
+                removeTypingIndicator();
+                appendMessage("Arya Assistant", BOT_IMG, "left", window.PsycheCareChatClient.handleError(error));
+                enableInputs();
             }
         }
 
@@ -701,5 +744,6 @@
             return `${h.slice(-2)}:${m.slice(-2)}`;
         }
     </script>
+    <script src="../otherJS/accessibility.js"></script>
 </body>
 </html>

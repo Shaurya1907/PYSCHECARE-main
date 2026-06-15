@@ -13,6 +13,15 @@
     <link rel="stylesheet" href="../otherStylesheet/statistics.css">
 </head>
 <body>
+    <script>
+  (function () {
+    var stored = localStorage.getItem('darkMode');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (stored === 'enabled' || (!stored && prefersDark)) {
+      document.body.classList.add('dark-mode');
+    }
+  })();
+</script>
     <!-- Floating circles for consistent design across all pages -->
     <div class="floating-circle circle-1"></div>
     <div class="floating-circle circle-2"></div>
@@ -29,20 +38,24 @@
             <div class="nav-list-cont">
                 <ul class="nav-ul">
                     <li><a href="../index.html">HOME</a></li>
-                    <li><a href="chatBot.html">CHAT BOT</a></li>
+                    <li><a href="chatBot.php">CHAT BOT</a></li>
                     <li><a href="statistics.html" class="active">STATISTICS</a></li>
                     <li><a href="../contact.html">CONTACT</a></li>
                     <li><a href="../login.html">LOGIN</a></li>
                 </ul>
             </div>
             
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+            
             <div class="hamburger">
-                <diV class="line line1"></diV>
+                <div class="line line1"></div>
                 <div class="mid-line-cont">
                     <div class="line mid-line1"></div>
                     <div class="line mid-line2"></div>
                 </div>
-                <diV class="line line3"></diV>
+                <div class="line line3"></div>
             </div>
         </div>
     </div>
@@ -56,7 +69,7 @@
         <div class="mobile-view-nav-list">
             <ul>
                 <li><a href="../index.html" class="mobile-view-list">HOME</a></li>
-                <li><a href="chatBot.html" class="mobile-view-list">CHAT BOT</a></li>
+                <li><a href="chatBot.php" class="mobile-view-list">CHAT BOT</a></li>
                 <li><a href="statistics.html" class="mobile-view-list active">STATISTICS</a></li>
                 <li><a href="../contact.html" class="mobile-view-list">CONTACT</a></li>
                 <li><a href="../login.html" class="mobile-view-list">LOGIN</a></li>
@@ -177,5 +190,7 @@
             });
         });
     </script>
+    <script src="../otherJS/darkMode.js"></script>
+    <script src="../otherJS/accessibility.js"></script>
 </body>
 </html>

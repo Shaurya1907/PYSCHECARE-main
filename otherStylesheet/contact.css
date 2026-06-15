@@ -167,3 +167,32 @@
                 order: -1;
             }
         }
+/* Dark Mode Styles */
+body.dark-mode .contact-container {
+    background-color: #2a2a2a;
+}
+
+body.dark-mode .contact-content h1 {
+    color: var(--dark-color);
+}
+
+body.dark-mode .contact-content p {
+    color: rgba(232, 232, 232, 0.8);
+}
+
+body.dark-mode .form-group label {
+    color: var(--dark-color);
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group textarea {
+    background-color: #333333;
+    color: var(--dark-color);
+    border-color: #444444;
+}
+
+body.dark-mode .form-group input:focus,
+body.dark-mode .form-group textarea:focus {
+    border-color: #bb86fc;
+    box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.1);
+}

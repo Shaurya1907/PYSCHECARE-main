@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stay Happy | PsycheCare</title>
+  <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../otherStylesheet/common.css">
+  <link rel="icon" href="../Images/B_icon01.png">
+</head>
+<body>
+<script>
+  (function () {
+    var stored = localStorage.getItem('darkMode');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (stored === 'enabled' || (!stored && prefersDark)) {
+      document.body.classList.add('dark-mode');
+    }
+  })();
+</script>
+  <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:0;z-index:9999;background:#fff;padding:8px 16px;">Skip to main content</a>
+
+  <header class="header">
+    <div class="logo-cantainer">
+      <h2 class="logo">PsycheCare.</h2>
+    </div>
+    <div class="nav-and-btn-cont">
+      <nav class="nav-list-cont" aria-label="Main navigation">
+        <ul class="nav-ul">
+          <li><a href="../index.html">HOME</a></li>
+          <li><a href="chatBot.php">CHAT BOT</a></li>
+          <li><a href="statistics.html">STATISTICS</a></li>
+          <li><a href="../contact.html">CONTACT</a></li>
+          <li><a href="../login.html">LOGIN</a></li>
+          <li><a href="sos.html" class="sos-link"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> <span>SOS</span></a></li>
+        </ul>
+      </nav>
+      <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div style="max-width:800px;margin:60px auto;padding:0 24px;">
+      <h1>Stay <span style="color:var(--primary-color)">Happy</span></h1>
+      <p>Happiness is not something ready-made. It comes from your own actions. Here are some simple ways to boost your mood and nurture a positive mindset every day.</p>
+
+      <h2>1. Do Something You Love</h2>
+      <p>Set aside time each day for an activity that brings you joy — whether it's painting, cooking, gaming, or just listening to music.</p>
+
+      <h2>2. Connect with Others</h2>
+      <p>Spend quality time with friends or family. Even a short conversation can lift your spirits significantly.</p>
+
+      <h2>3. Practice Gratitude</h2>
+      <p>Write down three things you're grateful for each day. This simple habit rewires your brain to notice the positive.</p>
+
+      <h2>4. Move Your Body</h2>
+      <p>Exercise releases endorphins — your brain's natural mood boosters. Even a 10-minute walk can make a difference.</p>
+
+      <h2>5. Limit Social Media</h2>
+      <p>Constant comparison on social media can quietly drain happiness. Set boundaries around screen time to protect your mental space.</p>
+
+      <a href="../index.html" style="display:inline-block;margin-top:32px;padding:12px 24px;background:var(--primary-color);color:#fff;border-radius:8px;text-decoration:none;">
+        &larr; Back to Home
+      </a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-text-cont">
+      <h2>GET IN TOUCH.</h2>
+      <p>I would love to hear from you friend &#60;3</p>
+    </div>
+    <p class="copy-rights">Thank You :)</p>
+  </footer>
+
+  <script src="../otherJS/hamberger.js"></script>
+  <script src="../otherJS/accessibility.js"></script>
+  <script src="../otherJS/darkMode.js"></script>
+</body>
+</html>

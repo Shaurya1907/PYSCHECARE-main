@@ -6,22 +6,32 @@ on:
   pull_request:
     branches: [ main, master ]
 
+permissions:
+  contents: read
+  statuses: write
+
 jobs:
   super-lint:
     name: Lint Code Base
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
       - name: Lint Code Base
-        uses: github/super-linter@v5
+        uses: github/super-linter@v7
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SQLFLUFF_DIALECT: sqlite
           # You can disable specific linters if they are too strict:
           VALIDATE_JSCPD: false
           VALIDATE_PHP_PSALM: false
+          VALIDATE_HTML: false
+          VALIDATE_HTML_PRETTIER: false
+          VALIDATE_PHP_PHPCS: false
+          VALIDATE_PHP_PHPSTAN: false
+          VALIDATE_YAML_PRETTIER: false

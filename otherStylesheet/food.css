@@ -13,6 +13,40 @@
     --shadow-color:#e9e6f5;
 }
 
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #1a1a1a;
+}
+
+body.dark-mode .section-2-para p {
+    color: var(--dark-color);
+}
+
+body.dark-mode .food-list-head h2 {
+    color: var(--dark-color);
+}
+
+body.dark-mode .food-desp h2 {
+    color: var(--dark-color);
+}
+
+body.dark-mode .food-desp p {
+    color: rgba(232, 232, 232, 0.8);
+}
+
+body.dark-mode .food-cont {
+    background-color: transparent;
+}
+
+body.dark-mode .container-img {
+    background-blend-mode: lighten;
+    opacity: 0.85;
+}
+
+body.dark-mode .land-img-cont {
+    background-blend-mode: lighten;
+}
+
 .land-img-cont{
     width:100%;
     height:70vh;

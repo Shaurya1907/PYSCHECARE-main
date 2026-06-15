@@ -276,6 +276,15 @@
     </style>
 </head>
 <body>
+    <script>
+  (function () {
+    var stored = localStorage.getItem('darkMode');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (stored === 'enabled' || (!stored && prefersDark)) {
+      document.body.classList.add('dark-mode');
+    }
+  })();
+</script>
     <div class="header">
         <div class="logo-cantainer">
             <h2 class="logo">PsycheCare.</h2>
@@ -288,11 +297,14 @@
                     <li><a href="../index.html#section-3">CHAT BOT</a></li>
                     <li><a href="statistics.html">STATISTICS</a></li>
                     <li><a href="../contact.html">CONTACT</a></li>
-                    <li><a href="login.html">LOGIN</a></li>
+                    <li><a href="../login.html">LOGIN</a></li>
                     <li class="nav-separator"></li>
                     
                 </ul>
             </div>
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" aria-label="Toggle dark mode" style="color: #a29bfe;">
+                <i class="fas fa-moon"></i>
+            </button>
         </div>
     </div>
 
@@ -407,6 +419,7 @@
         </div>
     </div>
 
+    <script src="../otherJS/darkMode.js"></script>
     <script src="../otherJS/hamberger.js"></script>
     <script src="../otherJS/sos.js"></script>
 </body>

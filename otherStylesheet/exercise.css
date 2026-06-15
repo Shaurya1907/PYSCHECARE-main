@@ -216,3 +216,29 @@
     transform: translateX(0);
     opacity: 1;
 }
+
+/* Dark Mode Styles */
+body.dark-mode .section-2-para p {
+    color: var(--dark-color);
+}
+
+body.dark-mode .exercise-list-head h2 {
+    color: var(--dark-color);
+}
+
+body.dark-mode .exercise-desp h2 {
+    color: var(--dark-color);
+}
+
+body.dark-mode .exercise-desp p {
+    color: rgba(232, 232, 232, 0.8);
+}
+
+body.dark-mode .container-img {
+    background-blend-mode: lighten;
+    opacity: 0.85;
+}
+
+body.dark-mode .land-img-cont {
+    background-blend-mode: lighten;
+}

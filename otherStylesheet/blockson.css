@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 
-
 :root{
     --light-color:#F5F7F9;
     --dark-color:#2D3142;
@@ -92,4 +91,20 @@ body{
 .game-over-cont p{
     color:var(--light-color);
 
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    --light-color: #1a1a1a;
+    --dark-color: #e8e8e8;
+    --shadow-color: #333333;
+}
+
+body.dark-mode .back-to-home {
+    background-color: var(--light-color);
+}
+
+body.dark-mode .btn {
+    background-color: #bb86fc;
+    color: #000;
 }

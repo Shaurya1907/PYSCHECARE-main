@@ -1,9 +1,14 @@
 <?php
+require_once __DIR__ . '/session_config.php';
 session_start();
 
 if (!isset($_SESSION["username"])) {
     header("Location: login.html");
     exit();
+}
+
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 ?>
 <!DOCTYPE html>
@@ -98,6 +103,29 @@ if (!isset($_SESSION["username"])) {
                 padding: 2.2rem 1.25rem;
             }
         }
+        
+        .logout-form {
+            display: inline;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(108, 92, 231, 0.2);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -109,14 +137,45 @@ if (!isset($_SESSION["username"])) {
             <div class="nav-list-cont">
                 <ul class="nav-ul">
                     <li><a href="index.html">HOME</a></li>
-                    <li><a href="otherHTML/chatBot.html">CHAT BOT</a></li>
+                    <li><a href="otherHTML/chatBot.php">CHAT BOT</a></li>
                     <li><a href="otherHTML/statistics.html">STATISTICS</a></li>
                     <li><a href="contact.html">CONTACT</a></li>
-                    <li><a href="login.html">LOGIN</a></li>
+                    <li>
+                        <form method="POST" action="logout.php" class="logout-form">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                            <button type="submit" class="logout-btn">LOGOUT</button>
+                        </form>
+                    </li>
                 </ul>
+            </div>
+             <div class="hamburger">
+                <div class="line line1"></div>
+                <div class="mid-line-cont">
+                    <div class="line mid-line1"></div>
+                    <div class="line mid-line2"></div>
+                </div>
+                <div class="line line3"></div>
             </div>
         </div>
     </div>
+     <div class="mobile-view-nav-cont" id="mobile-nav">
+        <div class="mobile-view-nav-head">
+            <p>Menu</p>
+        </div>
+        <div class="mobile-view-nav-list">
+            <ul>
+                <li><a href="index.html" class="mobile-view-list">HOME</a></li>
+                <li><a href="otherHTML/chatBot.php" class="mobile-view-list">CHAT BOT</a></li>
+                <li><a href="otherHTML/statistics.html" class="mobile-view-list">STATISTICS</a></li>
+                <li><a href="contact.html" class="mobile-view-list">CONTACT</a></li>
+                <li><a href="otherHTML/sos.html" class="mobile-view-list sos-link">
+                  <i class="fas fa-exclamation-circle" aria-hidden="true"></i> SOS
+                </a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="welcome-wrap">
 
     <div class="welcome-wrap">
         <div class="welcome-card">
@@ -128,10 +187,13 @@ if (!isset($_SESSION["username"])) {
             </p>
             <div class="welcome-actions">
                 <a href="index.html"><button class="explore-btn">Go to Home</button></a>
-                <a href="otherHTML/chatBot.html"><button class="blog-btn">Open Chat Bot</button></a>
+                <a href="otherHTML/chatBot.php"><button class="blog-btn">Open Chat Bot</button></a>
             </div>
             <p class="welcome-note">If you were not expecting this page, simply return to the home screen.</p>
         </div>
     </div>
+    <script src="otherJS/hamberger.js"></script>
+    <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
+    <script src="otherJS/accessibility.js"></script>
 </body>
 </html>

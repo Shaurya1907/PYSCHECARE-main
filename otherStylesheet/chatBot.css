@@ -384,4 +384,41 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-}
+}
+
+/* Dark Mode Styles */
+body.dark-mode .chatbot-container {
+    background-color: #1a1a1a;
+}
+
+body.dark-mode .msger-chat {
+    background-color: #0d0d0d;
+}
+
+body.dark-mode .left-msg .msg-bubble,
+body.dark-mode .right-msg .msg-bubble {
+    background-color: #2a2a2a;
+    color: rgba(232, 232, 232, 0.9);
+}
+
+body.dark-mode .right-msg .msg-bubble {
+    background-color: #1f1f7f;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.dark-mode .msger-inputarea {
+    background-color: #0d0d0d;
+    border-top-color: #333333;
+}
+
+body.dark-mode .msger-input {
+    background-color: #2a2a2a;
+    color: rgba(232, 232, 232, 0.9);
+    border-color: #333333;
+}
+
+body.dark-mode .msger-send-btn {
+    background-color: #bb86fc;
+    color: #000;
+}
+

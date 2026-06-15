@@ -3,8 +3,21 @@ import logging
 import os
 import random
 import sys
+import threading
+import time
 from pathlib import Path
 from typing import Dict
+
+try:
+    from langdetect import detect as _langdetect_detect
+    from langdetect.lang_detect_exception import LangDetectException
+    _langdetect_available = True
+except ImportError:
+    logging.warning(
+        "langdetect is not installed. Language filtering is disabled; "
+        "all messages will be treated as English."
+    )
+    _langdetect_available = False
 
 import nltk
 import numpy as np
@@ -36,21 +49,51 @@ except Exception as e:
 # Lemmatizer for processing text
 lemmatizer = WordNetLemmatizer()
 
+# Module-level Speller singleton — instantiating Speller() on every request
+# loads its word corpus from disk each time, adding unnecessary latency per call.
+# A single shared instance is safe: Speller is stateless after initialisation.
+_speller = Speller()
+
 # Define global variables that will be initialized in load_chatbot_model()
 words = []
 classes = []
 model = None
 intents = {}
-import time
-context: dict = {}
-CONTEXT_TTL = 1800  # 30 minutes
+# ── Thread-safe context store ─────────────────────────────────────────────────────
+# Flask runs each request in a separate thread. Without a lock, concurrent
+# requests can corrupt the context dict or raise:
+#   RuntimeError: dictionary changed size during iteration
+# All reads AND writes to `context` must be done while holding _context_lock.
+_context_lock: threading.Lock = threading.Lock()
+context: Dict[str, dict] = {}
+CONTEXT_TTL = 1800  # seconds (30 minutes)
+MAX_CONTEXT_SIZE = 1000  # hard cap — evict oldest entries beyond this
 
-def _clean_context():
-    """Remove context entries older than TTL."""
+
+def _clean_context() -> None:
+    """Remove stale context entries and enforce a hard size cap.
+
+    Must be called while NOT holding _context_lock — it acquires the lock
+    internally so callers don't need to worry about it.
+    """
     now = time.time()
-    expired = [uid for uid, val in context.items() if now - val.get("timestamp", 0) > CONTEXT_TTL]
-    for uid in expired:
-        del context[uid]
+    with _context_lock:
+        # Collect expired keys first, then delete — never mutate during iteration
+        expired = [
+            uid for uid, val in context.items()
+            if now - val.get("timestamp", 0) > CONTEXT_TTL
+        ]
+        for uid in expired:
+            context.pop(uid, None)  # pop is safe even if key was already removed
+
+        # Hard cap: evict oldest entries if dict still exceeds MAX_CONTEXT_SIZE
+        if len(context) > MAX_CONTEXT_SIZE:
+            overflow = len(context) - MAX_CONTEXT_SIZE
+            oldest_keys = sorted(
+                context, key=lambda uid: context[uid].get("timestamp", 0)
+            )[:overflow]
+            for uid in oldest_keys:
+                context.pop(uid, None)
 
 def load_chatbot_model():
     """
@@ -150,7 +193,10 @@ def get_chatbot_response(message, user_id="000"):
         str: The chatbot's response
     """
     global words, classes, model, intents, context
-    
+
+    # Prune stale context entries on every request to prevent unbounded memory growth
+    _clean_context()
+
     # Make sure model is loaded
     if model is None:
         success = load_chatbot_model()
@@ -163,9 +209,8 @@ def get_chatbot_response(message, user_id="000"):
         return "I currently only speak English, but you can contact our human support team for help in other languages."
 
     try:
-        # Apply spelling correction
-        spell = Speller()
-        corrected_message = spell(message)
+       # Apply spelling correction (uses module-level singleton, not a new instance per call)
+        corrected_message = _speller(message)
         
         # Get predictions
         results = predict_class(corrected_message)
@@ -175,19 +220,33 @@ def get_chatbot_response(message, user_id="000"):
                 for intent in intents["intents"]:  # loop through intents
                     if intent["tag"] == results[0][0]:  # if tag matches
                         if intent["tag"].lower() == "reiterate":  # if tag is reiterate
-                            if context.get(user_id, {}).get("value") :  # if context exists
+                            # ── Thread-safe context read ───────────────────────────────
+                            with _context_lock:
+                                user_ctx = context.get(user_id, {})
+                            if user_ctx.get("value"):
                                 for tg in intents["intents"]:
                                     if (
                                         "context_set" in tg
-                                        and tg["context_set"] == context[user_id] = {"value": intent["context_set"], "timestamp": time.time()}
+                                        and tg["context_set"] == user_ctx["value"]
                                     ):
+                                        # ── Thread-safe context write ───────────────────────
+                                        with _context_lock:
+                                            context[user_id] = {
+                                                "value": intent.get("context_set", ""),
+                                                "timestamp": time.time()
+                                            }
                                         response = random.choice(tg["responses"])
                                         return str(response)
                             else:
                                 response = random.choice(intent["responses"])
                                 return str(response)
                         if "context_set" in intent and intent["context_set"] != "":
-                            context[user_id] = {"value": intent["context_set"], "timestamp": time.time()}
+                            # ── Thread-safe context write ────────────────────────────
+                            with _context_lock:
+                                context[user_id] = {
+                                    "value": intent["context_set"],
+                                    "timestamp": time.time()
+                                }
                         response = random.choice(intent["responses"])
                         return str(response)
                 results.pop(0)
@@ -215,16 +274,11 @@ def detect_language(text):
     if len(text.strip()) < 15:
         return "en"  # Too short to detect reliably
 
-    try:
-        from langdetect import detect
-        from langdetect.lang_detect_exception import LangDetectException
-        try:
-            return detect(text)
-        except LangDetectException:
-            return "en"
-    except ImportError:
-        logging.error("langdetect is not installed. Language filtering is disabled.")
+    if not _langdetect_available:
         return "en"
 
-# Initialize the chatbot model when this module is imported
-load_chatbot_model()
+    try:
+        return _langdetect_detect(text)
+    except LangDetectException:
+        return "en"
+

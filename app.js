@@ -61,7 +61,7 @@ if (card4) {
 
 if (chatBotPageTakingBtn) {
     chatBotPageTakingBtn.addEventListener('click',()=>{
-        window.location.href="otherHTML/chatBot.html";
+        window.location.href="otherHTML/chatBot.php";
     })
 }
 
@@ -163,7 +163,14 @@ if (logo) {
 
 const attributeText=document.querySelector('.attribute-text');
 const attributeCont=document.querySelector('.actual-author-contribution-cont');
-const cross=document.querySelector('.cross');
+const cross=document.querySelector('#close-attributions');
+
+function hideAttributeModal() {
+    if (attributeCont) {
+        attributeCont.style.top="500px";
+        attributeCont.style.opacity="0";
+    }
+}
 
 if (attributeText && attributeCont) {
     attributeText.addEventListener('click',()=>{
@@ -172,9 +179,25 @@ if (attributeText && attributeCont) {
     })
 }
 
-if (cross && attributeCont) {
-    cross.addEventListener('click',()=>{
-        attributeCont.style.top="500px";
-        attributeCont.style.opacity="0";
-    })
+if (cross) {
+    cross.addEventListener('click', hideAttributeModal);
+}
+
+if (attributeCont) {
+    attributeCont.addEventListener('click', (event) => {
+        if (event.target === attributeCont) {
+           hideAttributeModal();
+        }
+    });
+}
+
+
+if (document && attributeCont && attributeText) {
+    document.addEventListener('click', (event) => {
+        if (attributeCont.style.opacity === '1' &&
+            !attributeCont.contains(event.target) &&
+            !attributeText.contains(event.target)) {
+            hideAttributeModal();
+        }
+    });
 }

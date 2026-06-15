@@ -10,12 +10,15 @@
     <link rel="icon" href="Images/B_icon01.png">
     <style>
         .login-container {
-            max-width: 400px;
-            margin: 100px auto;
+            width: 100%;
+            max-width: 580px;
+            padding: 3rem;
+            border-radius: 24px;
+            margin: 0;
             padding: 2rem;
             background-color: var(--light-color);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(127, 90, 240, 0.2);
+            border-radius: 22px;
+            box-shadow:0 20px 50px rgba(127,90,240,.18);
             animation: fadeIn 0.8s ease forwards;
         }
         
@@ -42,7 +45,8 @@
         
         .form-group input {
             width: 100%;
-            padding: 0.75rem;
+            padding: 1rem;
+            font-size: 1rem;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-family: 'Poppins', sans-serif;
@@ -58,7 +62,8 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 0.75rem;
+            padding: 1rem;
+            font-size: 1rem;
             border-radius: 5px;
             font-family: 'Poppins', sans-serif;
             font-weight: 500;
@@ -100,6 +105,203 @@
             margin-top: 0.5rem;
             display: none;
         }
+
+
+        .signup-page{
+            display:flex;
+            min-height:calc(100vh - 80px);
+
+            width:90%;
+            max-width:1400px;
+
+            margin:40px auto;
+
+            border-radius:30px;
+            overflow:hidden;
+
+            box-shadow: 0 25px 60px rgba(127,90,240,.15);
+        }
+
+/* LEFT SIDE */
+
+.left-panel{
+    flex:1;
+    position:relative;
+    overflow:hidden;
+
+    background:linear-gradient(135deg,#7f5af0,#9370ff);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+}
+
+.left-panel::before{
+    content:"";
+
+    position:absolute;
+
+    width:350px;
+    height:350px;
+
+    background:rgba(255,255,255,.12);
+
+    border-radius:50%;
+
+    top:-100px;
+    right:-100px;
+
+    animation: blobMove 8s ease-in-out infinite;
+}
+
+.left-panel::after{
+    content:"";
+
+    position:absolute;
+
+    width:250px;
+    height:250px;
+
+    background:rgba(255,255,255,.08);
+
+    border-radius:50%;
+
+    bottom:-80px;
+    left:-80px;
+
+    animation: blobMove 10s ease-in-out infinite reverse;
+}
+
+.left-content{
+    max-width:520px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;   /* 👈 THIS centers everything */
+    text-align:center;    /* 👈 text alignment fix */
+
+    gap:18px;
+}
+
+.left-content img{
+    width:260px;
+    margin-bottom:10px;
+
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+
+    animation: floatBot 4s ease-in-out infinite;
+}
+
+.left-content h1{
+    font-size:3rem;
+    margin-bottom:15px;
+    margin:0;
+    line-height:1.15;
+}
+
+.left-content p{
+    line-height:1.8;
+    margin-bottom:30px;
+    opacity:0.95;
+    margin:0;
+}
+
+.feature-box{
+    width:100%;
+    max-width:320px;
+    text-align:center;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(10px);
+
+    padding:15px 20px;
+    border-radius:12px;
+
+    margin-bottom:15px;
+
+    font-weight:500;
+}
+
+/* RIGHT SIDE */
+
+.right-panel{
+    flex:1;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:#f8f7ff;
+}
+
+@keyframes blobMove{
+    0%{
+        transform:translate(0,0) scale(1);
+    }
+
+    50%{
+        transform:translate(30px,-30px) scale(1.1);
+    }
+
+    100%{
+        transform:translate(0,0) scale(1);
+    }
+}
+
+@keyframes floatBot{
+    0%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-18px);
+    }
+    100%{
+        transform:translateY(0);
+    }
+}
+
+@media(max-width:900px){
+
+    .signup-page{
+        flex-direction:column;
+    }
+
+    .left-panel{
+        padding:40px 25px;
+        text-align:center;
+    }
+
+    .left-content img{
+        margin:auto auto 20px;
+    }
+
+    .left-content h1{
+        font-size:2rem;
+    }
+
+    .right-panel{
+        padding:30px 20px;
+    }
+}
+
+        .password-strength-bar {
+            height: 4px;
+            border-radius: 4px;
+            margin-top: 6px;
+            background: #e0e0e0;
+            transition: background 0.3s;
+        }
+        .strength-label {
+            font-size: 0.78rem;
+            margin-top: 3px;
+            font-weight: 500;
+        }
+        .strength-weak   { background: #e74c3c; }
+        .strength-medium { background: #f39c12; }
+        .strength-strong { background: #2ecc71; }
+
     </style>
 </head>
 <body>
@@ -117,8 +319,16 @@
                     <li><a href="otherHTML/statistics.html">STATISTICS</a></li>
                     <li><a href="index.html#footer">CONTACT</a></li>
                     <li><a href="signup.html" class="active">SIGN UP</a></li>
+                    <li><a href="otherHTML/sos.html" class="sos-link">
+                    <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                    <span>SOS</span>
+                    </a></li>
                 </ul>
             </div>
+
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
 
             <div class="hamburger">
                 <div class="line line1"></div>
@@ -143,16 +353,47 @@
                 <li><a href="otherHTML/statistics.html" class="mobile-view-list">STATISTICS</a></li>
                 <li><a href="index.html#footer" class="mobile-view-list">CONTACT</a></li>
                 <li><a href="signup.html" class="mobile-view-list">SIGN UP</a></li>
+                <li><a href="otherHTML/sos.html" class="mobile-view-list sos-link">
+                <i class="fas fa-exclamation-circle" aria-hidden="true"></i> SOS
+                </a></li>
             </ul>
         </div>
     </div>
 
-    <!-- Sign Up Form -->
+    <div class="signup-page">
+
+    <div class="left-panel">
+
+        <div class="left-content">
+            <img src="Images/illustration-new/home-bot-img.png" alt="PsycheCare">
+
+            <h1>Welcome to PsycheCare</h1>
+
+            <p>
+                Begin your wellness journey with AI-powered support,
+                thoughtful conversations, and a safe space to grow.
+            </p>
+
+            <div class="feature-box">
+                🧠 AI Wellness Support
+            </div>
+
+            <div class="feature-box">
+                💜 Personalized Guidance
+            </div>
+
+            <div class="feature-box">
+                🔒 Safe & Secure Experience
+            </div>
+        </div>
+
+    </div>
+
+    <div class="right-panel">
+
     <div class="login-container">
         <div class="login-header">
-            <div class="login-illustration">
-                <img src="Images/illustration-new/home-bot-img.png" alt="Login">
-            </div>
+            
             <h2 style="color: var(--dark-color);">Join <span style="color: var(--primary-color);">PsycheCare</span></h2>
             <p style="color: var(--dark-color); font-size: 0.9rem;">Create your account and begin your wellness journey</p>
         </div>
@@ -168,28 +409,62 @@
                 <input type="email" id="email" name="email" required>
             </div>
 
-            <div class="form-group">                    
+            <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password" aria-describedby="password-strength-label">
+                <div class="password-strength-bar" id="strength-bar"></div>
+                <p class="strength-label" id="password-strength-label" aria-live="polite"></p>
                 <p class="error-message" id="signup-error"></p>
             </div>
 
             <button type="submit" class="login-btn">Create Account</button>
             
             <div class="return-home">
-                <p>
-                    Already have an account?
-                    <a href="login.html">Log In</a>
-                </p>
-                <p style="margin-top:10px;">
-                    <a href="index.html">Return to Home</a>
-                </p>
-            </div>
-        </form>
+
+    <p>
+        Already have an account?
+        <a href="login.html">Log In</a>
+    </p>
+    </div>  
+    </form>
+</div>
     </div>
 
     <script src="otherJS/hamberger.js"></script>
     <script>
+        // ── Password Strength Meter ────────────────────────────────────────────
+        const passwordInput = document.getElementById('password');
+        const strengthBar   = document.getElementById('strength-bar');
+        const strengthLabel = document.getElementById('password-strength-label');
+
+        passwordInput.addEventListener('input', function () {
+            const val = this.value;
+            let score = 0;
+            if (val.length >= 8)  score++;
+            if (val.length >= 12) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            strengthBar.className = 'password-strength-bar';
+            if (val.length === 0) {
+                strengthLabel.textContent = '';
+            } else if (score <= 2) {
+                strengthBar.classList.add('strength-weak');
+                strengthLabel.textContent = '🔴 Weak — use 8+ chars, numbers & symbols';
+                strengthLabel.style.color = '#e74c3c';
+            } else if (score <= 3) {
+                strengthBar.classList.add('strength-medium');
+                strengthLabel.textContent = '🟡 Medium — add uppercase or symbols';
+                strengthLabel.style.color = '#f39c12';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                strengthLabel.textContent = '🟢 Strong password!';
+                strengthLabel.style.color = '#2ecc71';
+            }
+        });
+        // ─────────────────────────────────────────────────────────────────────
+
         // Show error or success messages from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const errorMsg = document.getElementById('signup-error');
@@ -198,6 +473,12 @@
             errorMsg.style.display = 'block';
             if (err === 'exists') {
                 errorMsg.textContent = 'Username already exists.';
+            } else if (err === 'email_exists') {
+                errorMsg.textContent = 'Email address already registered.';
+            } else if (err === 'rate_limit') {
+                errorMsg.textContent = 'Too many attempts. Please try again in an hour.';
+            } else if (err === 'weak_password') {
+                errorMsg.textContent = 'Password must be at least 8 characters and include uppercase, lowercase, a digit, and a special character.';
             } else if (err === 'db') {
                 errorMsg.textContent = 'Database error. Please try again.';
             } else {
@@ -221,5 +502,7 @@
             .catch(error => console.error('Error fetching CSRF token:', error));
     </script>
     <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
+    <script src="otherJS/darkMode.js"></script>
+    <script src="otherJS/accessibility.js"></script>
 </body>
 </html>

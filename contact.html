@@ -31,12 +31,16 @@
             <nav class="nav-list-cont" aria-label="Main navigation">
                 <ul class="nav-ul">
                     <li><a href="index.html">HOME</a></li>
-                    <li><a href="otherHTML/chatBot.html">CHAT BOT</a></li>
+                    <li><a href="otherHTML/chatBot.php">CHAT BOT</a></li>
                     <li><a href="otherHTML/statistics.html">STATISTICS</a></li>
                     <li><a href="contact.html" class="active" aria-current="page">CONTACT</a></li>
                     <li><a href="login.html">LOGIN</a></li>
                 </ul>
             </nav>
+
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
 
             <button class="hamBurger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-nav" tabindex="0">
                 <div class="line line1"></div>
@@ -57,7 +61,7 @@
         <div class="mobile-view-nav-list">
             <ul>
                 <li><a href="index.html" class="mobile-view-list">HOME</a></li>
-                <li><a href="otherHTML/chatBot.html" class="mobile-view-list">CHAT BOT</a></li>
+                <li><a href="otherHTML/chatBot.php" class="mobile-view-list">CHAT BOT</a></li>
                 <li><a href="otherHTML/statistics.html" class="mobile-view-list">STATISTICS</a></li>
                 <li><a href="contact.html" class="mobile-view-list active" aria-current="page">CONTACT</a></li>
                 <li><a href="login.html" class="mobile-view-list">LOGIN</a></li>
@@ -97,6 +101,7 @@
                     </div>
                     
                     <button type="submit" class="submit-btn">Send Message</button>
+                    <p id="form-status" role="alert" aria-live="polite" style="margin-top:12px;font-weight:500;"></p>
                 </form>
             </div>
             
@@ -162,6 +167,43 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
+            // ── Contact form: fetch-based submission ──────────────────────
+            // Prevents a full page reload and shows inline success/error
+            // feedback instead of landing on a blank PHP response page.
+            const form = document.getElementById('contactForm');
+            const status = document.getElementById('form-status');
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const btn = form.querySelector('.submit-btn');
+                btn.disabled = true;
+                btn.textContent = 'Sending…';
+                status.textContent = '';
+                status.style.color = '';
+
+                try {
+                    const res = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        status.style.color = '#2e7d32';
+                        status.textContent = data.message;
+                        form.reset();
+                    } else {
+                        status.style.color = '#c62828';
+                        status.textContent = data.error || 'Something went wrong. Please try again.';
+                    }
+                } catch (err) {
+                    status.style.color = '#c62828';
+                    status.textContent = 'Network error. Please check your connection and try again.';
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Send Message';
+                }
+            });
+
             
             // Add animation class
             const fadeElements = document.querySelectorAll('.fade-in-section');
@@ -196,5 +238,7 @@
             })
             .catch(error => console.error('Error fetching CSRF token:', error));
     </script>
+    <script src="otherJS/accessibility.js"></script>
+    <script src="otherJS/darkMode.js"></script>
 </body>
 </html>
