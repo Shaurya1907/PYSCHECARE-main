@@ -2,7 +2,6 @@ import base64
 import hmac
 import hashlib
 import os
-import uuid
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_limiter import Limiter
@@ -67,9 +66,10 @@ def chat():
 
     user_id = _verify_chat_token(token)
     if not user_id:
-        return jsonify({
-            "error": "Unauthorized. Please log in to use the chatbot."
-        }), 401
+        return (
+            jsonify({"error": "Unauthorized. Please log in to use the chatbot."}),
+            401,
+        )
 
     data = request.get_json(silent=True)
     validation_error = validate_chat_payload(data)
@@ -97,5 +97,8 @@ if __name__ == "__main__":
     debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
     # Provide a warning that app.run is insecure for production
     import logging
-    logging.warning("You are using the development server. For production, use wsgi.py to ensure bounded thread scaling and prevent memory leaks.")
+
+    logging.warning(
+        "You are using the development server. For production, use wsgi.py to ensure bounded thread scaling and prevent memory leaks."
+    )
     app.run(host="0.0.0.0", port=5000, debug=debug_mode)

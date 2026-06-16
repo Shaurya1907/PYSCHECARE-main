@@ -1,16 +1,18 @@
+import logging
 import os
 import sys
-import logging
+
 from waitress import serve
+
 from app import app
 
 # Configure logging for the WSGI server
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] [WSGI] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
+    format="%(asctime)s [%(levelname)s] [WSGI] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
 )
-logger = logging.getLogger('waitress')
+logger = logging.getLogger("waitress")
 logger.setLevel(logging.INFO)
 
 def run_server():
@@ -41,7 +43,7 @@ def run_server():
             connection_limit=connection_limit,
             channel_timeout=30,  # Drop inactive connections after 30s
             cleanup_interval=30,  # Run GC on channels
-            ident="PsycheCare Server/1.0" # Obfuscate actual server details
+            ident="PsycheCare Server/1.0",  # Obfuscate actual server details
         )
     except Exception as e:
         logger.critical(f"Server crashed with error: {e}")
