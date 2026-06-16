@@ -24,6 +24,20 @@ jobs:
             const repo         = context.repo.repo;
             const MAX_ISSUES   = 3;
 
+            // Ban list check
+            const bannedUsers = ['atul-upadhyay-7'];
+            if (bannedUsers.includes(assignee)) {
+              console.log(`Banned user @${assignee} was assigned. Unassigning.`);
+              await github.rest.issues.removeAssignees({
+                owner, repo, issue_number: issueNumber, assignees: [assignee]
+              });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: issueNumber,
+                body: `🚫 **Assignment Blocked**\n\n@${assignee}, this account is restricted from being assigned to issues in this repository.`
+              });
+              return;
+            }
+
             // Skip bot accounts
             if (assignee.endsWith('[bot]')) {
               console.log(`Skipping — ${assignee} is a bot.`);

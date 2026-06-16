@@ -59,6 +59,10 @@ words = []
 classes = []
 model = None
 intents = {}
+
+# Lock for thread-safe model initialization
+_model_lock = threading.Lock()
+
 # ── Thread-safe context store ─────────────────────────────────────────────────────
 # Flask runs each request in a separate thread. Without a lock, concurrent
 # requests can corrupt the context dict or raise:
@@ -123,8 +127,6 @@ def load_chatbot_model():
                 data_dict = json.load(f)
                 words = data_dict.get("words", [])
                 classes = data_dict.get("classes", [])
-                training = data_dict.get("training", [])
-                output = data_dict.get("output", [])
             model = load_model(model_path)
             print("Chatbot model loaded successfully!")
         except FileNotFoundError as e:
@@ -134,7 +136,7 @@ def load_chatbot_model():
         except OSError as e:
             print(f"OS error occurred while loading files: {e}")
             return False
-        except Exception as e:
+        except Exception:
             # If an unexpected error happens, log the full stack trace for debugging
             logging.exception(
                 "An unexpected error occurred while loading the chatbot model."
@@ -143,7 +145,7 @@ def load_chatbot_model():
             
         return True
     
-    except Exception as e:
+    except Exception:
         logging.exception(
             "An unexpected error occurred while initializing the chatbot."
         )
@@ -199,10 +201,12 @@ def get_chatbot_response(message, user_id="000"):
 
     # Make sure model is loaded
     if model is None:
-        success = load_chatbot_model()
-        if not success:
-            return "Sorry, the chatbot is not available at the moment."
-            
+        with _model_lock:
+            if model is None:
+                success = load_chatbot_model()
+                if not success:
+                    return "Sorry, the chatbot is not available at the moment."
+
     # Detect language
     lang = detect_language(message)
     if lang != 'en':
@@ -254,7 +258,7 @@ def get_chatbot_response(message, user_id="000"):
         # Default response if no matching intent
         return "I apologize if my response wasn't what you were looking for. As an AI assistant, my knowledge is limited. Is there another way I can help you?"
     
-    except Exception as e:
+    except Exception:
         logging.exception(
             "An unexpected error occurred while getting the chatbot response."
         )

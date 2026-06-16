@@ -50,6 +50,11 @@ jobs:
             const wantsAssignment = assignCommands.some(cmd => commentBody.includes(cmd));
             
             if (wantsAssignment) {
+              const bannedUsers = ['atul-upadhyay-7'];
+              if (bannedUsers.includes(user)) {
+                console.log(`Banned user @${user} requested assignment. Ignoring.`);
+                return;
+              }
               
               // Get the current issue details to check existing assignees
               const { data: issue } = await github.rest.issues.get({
@@ -127,3 +132,4 @@ jobs:
                 });
               }
             }
+
