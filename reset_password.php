@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/session_config.php';
+require_once __DIR__ . '/sanitize.php';
 session_start();
 
 require_once __DIR__ . '/database.php';
@@ -230,7 +231,7 @@ if (!$row) {
         </div>
 
         <form method="POST" action="reset_password.php">
-            <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
+            <input type="hidden" name="token" value="<?= attr($token) ?>">
 
             <div class="form-group">
                 <label for="password">New Password</label>

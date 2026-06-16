@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../session_config.php';
+require_once __DIR__ . '/../sanitize.php';
 /**
  * chatBot.php — Authentication gateway for the PsycheCare chatbot page.
  *
@@ -21,7 +22,7 @@ if (!isset($_SESSION['username'])) {
 // It is passed to the browser and sent as an Authorization header on every API call.
 $secret       = getenv('CHAT_API_SECRET') ?: 'change-me-in-production';
 $session_id   = session_id();
-$username     = htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8');
+$username     = attr($_SESSION['username']);
 $payload      = base64_encode($session_id . '|' . $username);
 $signature    = hash_hmac('sha256', $payload, $secret);
 $chat_token   = $payload . '.' . $signature;
@@ -34,7 +35,7 @@ $html = file_get_contents(__DIR__ . '/chatBot.html');
 $injection = <<<JS
     <script>
         // Injected by chatBot.php — DO NOT expose or log these values
-        window.PSYCHECARE_USER    = {$_SESSION['username'] ? json_encode($username) : 'null'};
+        window.PSYCHECARE_USER    = {$_SESSION['username'] ? js($username) : 'null'};
         window.PSYCHECARE_TOKEN   = "{$chat_token}";
     </script>
 JS;

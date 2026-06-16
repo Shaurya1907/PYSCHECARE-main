@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/session_config.php';
 require_once __DIR__ . '/validation.php';
+require_once __DIR__ . '/sanitize.php';
 session_start();
 
 if (empty($_SESSION['csrf_token'])) {
@@ -44,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':message' => $message
         ]);
 
-        echo "Message received. Thank you, " . htmlspecialchars($name, ENT_QUOTES | ENT_HTML5, 'UTF-8') . "!";
+        echo "Message received. Thank you, " . e($name) . "!";
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => 'Database error. Please try again later.']);
