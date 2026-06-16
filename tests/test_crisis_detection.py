@@ -43,3 +43,21 @@ def test_crisis_event_logging(tmp_path):
     assert events[0]["detected_keywords"] == ["suicide"]
     assert events[0]["session_id"] == "session-123"
     assert "timestamp" in events[0]
+
+
+def test_multilingual_crisis_messages():
+    # Spanish crisis detection
+    risk_es = detect_crisis_risk("Quiero suicidarme hoy.")
+    assert risk_es["level"] == "CRITICAL"
+    assert "suicidarme" in risk_es["detected_keywords"]
+
+    # French crisis detection
+    risk_fr = detect_crisis_risk("Je veux me suicider ce soir.")
+    assert risk_fr["level"] == "CRITICAL"
+    assert "suicider" in risk_fr["detected_keywords"]
+
+    # Hindi crisis detection
+    risk_hi = detect_crisis_risk("मैं खुद को मारना चाहता हूँ।")
+    assert risk_hi["level"] == "CRITICAL"
+    assert "खुद को मारना" in risk_hi["detected_keywords"]
+

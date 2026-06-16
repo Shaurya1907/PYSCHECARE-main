@@ -9,22 +9,80 @@ RISK_LEVELS = ("LOW", "MODERATE", "HIGH", "CRITICAL")
 
 RISK_PHRASES = {
     "MODERATE": [
+        # English
         "depressed",
         "hopeless",
         "panic attack",
         "worthless",
+        # Spanish
+        "deprimido",
+        "deprimida",
+        "sin esperanza",
+        "desesperado",
+        "desesperada",
+        "ataque de pánico",
+        # French
+        "déprimé",
+        "déprimée",
+        "sans espoir",
+        "désespéré",
+        "désespérée",
+        "crise de panique",
+        # Hindi
+        "उदास",
+        "निराश",
+        "हताश",
+        "तनाव",
+        "घबराहट",
     ],
     "HIGH": [
+        # English
         "self harm",
         "hurt myself",
         "cut myself",
         "want to die",
+        # Spanish
+        "hacerme daño",
+        "lastimarme",
+        "cortarme",
+        "querer morir",
+        "quiero morir",
+        # French
+        "me faire du mal",
+        "me blesser",
+        "me couper",
+        "vouloir mourir",
+        "veux mourir",
+        # Hindi
+        "चोट पहुंचाना",
+        "नुकसान पहुंचाना",
+        "मरना चाहता",
+        "मरना चाहती",
     ],
     "CRITICAL": [
+        # English
         "kill myself",
         "end my life",
         "suicide",
         "overdose",
+        # Spanish
+        "suicidarme",
+        "suicidarse",
+        "suicidio",
+        "matarme",
+        "quitarme la vida",
+        # French
+        "me suicider",
+        "se suicider",
+        "suicide",
+        "me tuer",
+        "mettre fin à mes jours",
+        # Hindi
+        "आत्महत्या",
+        "सुसाइड",
+        "खुद को मारना",
+        "जान दे देना",
+        "जान देना",
     ],
 }
 

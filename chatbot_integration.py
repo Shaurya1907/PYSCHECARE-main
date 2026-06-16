@@ -24,6 +24,7 @@ import numpy as np
 from autocorrect import Speller
 from keras.models import load_model
 from nltk.stem import WordNetLemmatizer
+from crisis_detection import detect_crisis_risk
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -197,11 +198,26 @@ def get_chatbot_response(message, user_id="000"):
     # Prune stale context entries on every request to prevent unbounded memory growth
     _clean_context()
 
-    # Make sure model is loaded
+    # Perform crisis check first to handle high/critical risk messages reliably across all languages
+    risk = detect_crisis_risk(message)
+    if risk.get("level") in ("HIGH", "CRITICAL"):
+        lang = detect_language(message)
+        if lang == 'es':
+            return "Me preocupa mucho lo que estás compartiendo. Por favor, ten en cuenta que no estás solo y hay ayuda disponible las 24 horas del día, los 7 días de la semana. Por favor, llama al 988 o a los servicios de emergencia de inmediato."
+        elif lang == 'fr':
+            return "Je suis très préoccupé par ce que vous partagez. Sachez que vous n'êtes pas seul et que de l'aide est disponible 24h/24 et 7j/7. Veuillez appeler le 988 ou les services d'urgence immédiatement."
+        elif lang == 'hi':
+            return "आप जो साझा कर रहे हैं, उससे मुझे बहुत चिंता हो रही है। कृपया जानें कि आप अकेले नहीं हैं और सहायता 24/7 उपलब्ध है। कृपया तुरंत 988 या अपने स्थानीय आपातकालीन नंबर पर कॉल करें।"
+        else:
+            return "I'm really concerned about what you're sharing. Please know that you're not alone and help is available 24/7. Please call 1800-599-0019 (India), 988 (US/International), or +254 722 178 177 (Kenya) right away. Visit our SOS page for more local emergency contacts."
+
+    # Make sure model is loaded (using thread-safe double-checked locking)
     if model is None:
-        success = load_chatbot_model()
-        if not success:
-            return "Sorry, the chatbot is not available at the moment."
+        with _model_lock:
+            if model is None:
+                success = load_chatbot_model()
+                if not success:
+                    return "Sorry, the chatbot is not available at the moment."
             
     # Detect language
     lang = detect_language(message)
