@@ -65,6 +65,9 @@ intents = {}
 #   RuntimeError: dictionary changed size during iteration
 # All reads AND writes to `context` must be done while holding _context_lock.
 _context_lock: threading.Lock = threading.Lock()
+# ── Thread-safe model loading lock ────────────────────────────────────────────────
+# To prevent model loading race conditions under concurrent requests during startup.
+_model_lock: threading.Lock = threading.Lock()
 context: Dict[str, dict] = {}
 CONTEXT_TTL = 1800  # seconds (30 minutes)
 MAX_CONTEXT_SIZE = 1000  # hard cap — evict oldest entries beyond this
@@ -197,11 +200,13 @@ def get_chatbot_response(message, user_id="000"):
     # Prune stale context entries on every request to prevent unbounded memory growth
     _clean_context()
 
-    # Make sure model is loaded
+    # Make sure model is loaded (using thread-safe double-checked locking)
     if model is None:
-        success = load_chatbot_model()
-        if not success:
-            return "Sorry, the chatbot is not available at the moment."
+        with _model_lock:
+            if model is None:
+                success = load_chatbot_model()
+                if not success:
+                    return "Sorry, the chatbot is not available at the moment."
             
     # Detect language
     lang = detect_language(message)
