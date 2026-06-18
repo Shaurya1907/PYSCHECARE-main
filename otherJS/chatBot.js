@@ -93,8 +93,11 @@ function loading_done() {
 }
 
 function loading_error(){
-    console.log("Error!");
-
+    console.error("Failed to load chatbot brain file.");
+    const userSpeech = document.querySelector('.user-speech');
+    if (userSpeech) {
+        userSpeech.textContent = "Sorry, the chatbot is temporarily unavailable. Please try again later.";
+    }
 }
 
 
