@@ -40,47 +40,39 @@ function setupChatForm() {
     }
 }
 
+function escapeHtml(str) {
+    if (str === null || str === undefined) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function appendMessage(name, img, side, text) {
     const msgerChat = document.querySelector(".msger-chat");
 
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `msg ${side}-msg`;
+    const safeName = escapeHtml(name);
+    const safeImg = escapeHtml(img);
+    const safeText = escapeHtml(text);
 
-    const msgImg = document.createElement('div');
-    msgImg.className = 'msg-img';
-    const imgEl = document.createElement('img');
-    imgEl.src = img;
-    imgEl.alt = name;
-    msgImg.appendChild(imgEl);
-
-    const msgBubble = document.createElement('div');
-    msgBubble.className = 'msg-bubble';
-
-    const msgInfo = document.createElement('div');
-    msgInfo.className = 'msg-info';
-
-    const msgName = document.createElement('div');
-    msgName.className = 'msg-info-name';
-    msgName.textContent = name;
-
-    const msgTime = document.createElement('div');
-    msgTime.className = 'msg-info-time';
-    msgTime.textContent = formatDate(new Date());
-
-    msgInfo.appendChild(msgName);
-    msgInfo.appendChild(msgTime);
-
-    const msgText = document.createElement('div');
-    msgText.className = 'msg-text';
-    msgText.textContent = text;
-
-    msgBubble.appendChild(msgInfo);
-    msgBubble.appendChild(msgText);
-
-    msgDiv.appendChild(msgImg);
-    msgDiv.appendChild(msgBubble);
-
-    msgerChat.appendChild(msgDiv);
+    const msgHTML = `
+    <div class="msg ${side}-msg">
+        <div class="msg-img">
+            <img src="${safeImg}" alt="${safeName}">
+        </div>
+        <div class="msg-bubble">
+            <div class="msg-info">
+                <div class="msg-info-name">${safeName}</div>
+                <div class="msg-info-time">${formatDate(new Date())}</div>
+            </div>
+            <div class="msg-text">${safeText}</div>
+        </div>
+    </div>
+    `;
+    
+    msgerChat.insertAdjacentHTML("beforeend", msgHTML);
     msgerChat.scrollTop = msgerChat.scrollHeight;
 }
 
