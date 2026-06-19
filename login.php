@@ -57,8 +57,9 @@ try {
         clearAccountLock($db, $user['id']);
         resetAttempts($db, $rateKey);
         session_regenerate_id(true);
-        $_SESSION["user_id"]  = $user["id"];
-        $_SESSION["username"] = $user["username"];
+        $_SESSION["user_id"]    = $user["id"];
+        $_SESSION["username"]   = $user["username"];
+        $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
         header("Location: welcome.php");
         exit();
     }
