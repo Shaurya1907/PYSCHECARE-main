@@ -15,16 +15,35 @@ RISK_PHRASES = {
         "worthless",
     ],
     "HIGH": [
-        "self harm",
-        "hurt myself",
-        "cut myself",
-        "want to die",
-    ],
+    "self harm",
+    "hurt myself",
+    "cut myself",
+    "want to die",
+
+    # Hindi
+    "मरना चाहता हूँ",
+
+    # Spanish
+    "quiero morir",
+
+    # French
+    "je veux mourir",
+   ],
     "CRITICAL": [
-        "kill myself",
-        "end my life",
-        "suicide",
-        "overdose",
+    "kill myself",
+    "end my life",
+    "suicide",
+    "overdose",
+
+    # Spanish
+    "quiero suicidarme",
+
+    # French
+    "je veux me suicider",
+
+    # Hindi
+    "मैं खुद को मारना चाहता हूँ",
+    "आत्महत्या",
     ],
 }
 

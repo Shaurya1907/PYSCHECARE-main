@@ -7,6 +7,7 @@ import threading
 import time
 from pathlib import Path
 from typing import Dict
+from crisis_detection import detect_crisis_risk
 
 try:
     from langdetect import detect as _langdetect_detect
@@ -209,8 +210,12 @@ def get_chatbot_response(message, user_id="000"):
 
     # Detect language
     lang = detect_language(message)
-    if lang != 'en':
-        return "I currently only speak English, but you can contact our human support team for help in other languages."
+
+# Check crisis risk before blocking non-English messages
+risk = detect_crisis_risk(message)
+
+if lang != 'en' and risk["level"] == "LOW":
+    return "I currently only speak English, but you can contact our human support team for help in other languages."
 
     try:
        # Apply spelling correction (uses module-level singleton, not a new instance per call)
