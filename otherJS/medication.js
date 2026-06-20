@@ -30,21 +30,25 @@ document.addEventListener('DOMContentLoaded', function () {
         notes: true,
     };
 
-    function setFieldState(input, valid, message, fieldKey) {
+    function setFieldState(input, valid, message, errorKey, stateKey) {
         const group = input.closest('.form-group');
         if (!group) return;
 
         if (valid) {
             group.classList.remove('field-invalid');
             group.classList.add('field-valid');
-            errors[fieldKey].textContent = '';
+            if (errors[errorKey]) {
+                errors[errorKey].textContent = '';
+            }
         } else {
             group.classList.add('field-invalid');
             group.classList.remove('field-valid');
-            errors[fieldKey].textContent = message;
+            if (errors[errorKey]) {
+                errors[errorKey].textContent = message;
+            }
         }
 
-        validationState[fieldKey] = valid;
+        validationState[stateKey] = valid;
         updateSubmitButton();
     }
 
@@ -55,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function validateName() {
         const value = nameInput.value.trim();
         const valid = value.length >= 2 && value.length <= 100;
-        setFieldState(nameInput, valid, valid ? '' : 'Medication name is required and must be 2–100 characters.', 'name');
+        setFieldState(nameInput, valid, valid ? '' : 'Medication name is required and must be 2–100 characters.', 'name', 'name');
         return valid;
     }
 
@@ -64,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const amount = parseFloat(value);
         const valid = value !== '' && !Number.isNaN(amount) && amount >= 0.1 && amount <= 1000;
         const message = valid ? '' : 'Dosage must be a number between 0.1 and 1000';
-        setFieldState(dosageAmountInput, valid, message, 'dosage');
+        setFieldState(dosageAmountInput, valid, message, 'dosage', 'dosage');
         return valid;
     }
 
@@ -72,9 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const value = dosageUnitSelect.value;
         const valid = allowedUnits.includes(value);
         const message = valid ? '' : 'Please select a valid unit (mg, ml, etc.)';
-        setFieldState(dosageUnitSelect, valid, message, 'dosage');
-        validationState.unit = valid;
-        updateSubmitButton();
+        setFieldState(dosageUnitSelect, valid, message, 'dosage', 'unit');
         return valid;
     }
 
@@ -82,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const value = frequencySelect.value;
         const valid = allowedFrequencies.includes(value);
         const message = valid ? '' : 'Please select a valid frequency.';
-        setFieldState(frequencySelect, valid, message, 'frequency');
+        setFieldState(frequencySelect, valid, message, 'frequency', 'frequency');
         return valid;
     }
 
@@ -94,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const valid = value !== '' && !Number.isNaN(selectedDate.getTime()) && selectedDate <= today;
         const message = valid ? '' : 'Start date cannot be in the future';
-        setFieldState(startDateInput, valid, message, 'date');
+        setFieldState(startDateInput, valid, message, 'date', 'date');
         return valid;
     }
 
@@ -102,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const value = notesInput.value.trim();
         const valid = value.length <= 500;
         const message = valid ? '' : 'Notes must be 500 characters or less.';
-        setFieldState(notesInput, valid, message, 'notes');
+        setFieldState(notesInput, valid, message, 'notes', 'notes');
         return valid;
     }
 
@@ -161,7 +163,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: new FormData(form),
             });
 
-            const data = await response.json();
+            let data;
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    // Fall back to reading text
+                }
+            }
+
+            if (!data) {
+                const text = await response.text();
+                const isHtml = text.trim().startsWith('<') || text.includes('<html>');
+                data = {
+                    success: false,
+                    message: isHtml ? 'Server returned an error (HTML format).' : (text.trim() || 'Invalid response from server.')
+                };
+            }
+
             if (response.ok && data.success) {
                 showStatus(data.message || 'Medication added successfully! ✅', 'success');
                 showToast(data.message || 'Medication saved! 🎉', 'success');

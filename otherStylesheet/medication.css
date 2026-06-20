@@ -179,7 +179,7 @@ textarea:focus {
 
 .toast.visible {
     display: block;
-    animation: toastSlide 0.35s ease;
+    animation: toast-slide 0.35s ease;
 }
 
 .toast.success {
@@ -190,7 +190,7 @@ textarea:focus {
     border: 1px solid var(--error-color);
 }
 
-@keyframes toastSlide {
+@keyframes toast-slide {
     from {
         opacity: 0;
         transform: translateX(-50%) translateY(12px);

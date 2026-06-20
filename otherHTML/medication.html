@@ -50,14 +50,14 @@
                 <i class="fas fa-moon"></i>
             </button>
 
-            <div class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-nav">
+            <button class="hamburger" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-nav">
                 <div class="line line1"></div>
                 <div class="mid-line-cont">
                     <div class="line mid-line1"></div>
                     <div class="line mid-line2"></div>
                 </div>
                 <div class="line line3"></div>
-            </div>
+            </button>
         </div>
     </div>
 
@@ -167,7 +167,7 @@
                 <ul class="icons">
                     <li><a href="https://github.com/niteshagarwal" aria-label="GitHub profile"><i class="fab fa-github-square" aria-hidden="true"></i></a></li>
                     <li><a href="mailto:niteshagarwal@example.com" target="_blank" aria-label="Send email"><i class="far fa-envelope" aria-hidden="true"></i></a></li>
-                    <li><a href="https://www.linkedin.com/in/niteshagarwal/" target="_blank" aria-label="LinkedIn profile"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
+                    <li><a href="https://www.linkedin.com/in/niteshagarwal/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
                 </ul>
             </nav>
         </div>
@@ -179,7 +179,15 @@
     <script src="../otherJS/medication.js"></script>
     <script>
         fetch('../csrf.php')
-            .then(response => response.json())
+            .then(response => {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                }
+                return response.text().then(text => {
+                    throw new Error(text || 'Invalid response format');
+                });
+            })
             .then(data => {
                 const form = document.getElementById('medication-form');
                 if (!form) return;

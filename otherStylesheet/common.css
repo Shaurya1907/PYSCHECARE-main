@@ -299,6 +299,9 @@ body.dark-mode .copy-rights {
     }
 
     .hamburger{
+        background: none;
+        border: none;
+        cursor: pointer;
         padding: 0 .35em;
         width:48px;
         height:33px;

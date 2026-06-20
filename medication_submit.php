@@ -32,12 +32,12 @@ if (
     jsonError('Invalid request token.', 'csrf', 403);
 }
 
-$medicationName = htmlspecialchars(trim((string) ($_POST['medication_name'] ?? '')), ENT_QUOTES, 'UTF-8');
+$medicationName = trim((string) ($_POST['medication_name'] ?? ''));
 $dosageAmountRaw = trim((string) ($_POST['dosage_amount'] ?? ''));
-$dosageUnit = htmlspecialchars(trim((string) ($_POST['dosage_unit'] ?? '')), ENT_QUOTES, 'UTF-8');
-$frequency = htmlspecialchars(trim((string) ($_POST['frequency'] ?? '')), ENT_QUOTES, 'UTF-8');
+$dosageUnit = trim((string) ($_POST['dosage_unit'] ?? ''));
+$frequency = trim((string) ($_POST['frequency'] ?? ''));
 $startDateRaw = trim((string) ($_POST['start_date'] ?? ''));
-$notes = htmlspecialchars(trim((string) ($_POST['notes'] ?? '')), ENT_QUOTES, 'UTF-8');
+$notes = trim((string) ($_POST['notes'] ?? ''));
 
 $allowedUnits = ['mg', 'mcg', 'ml', 'tablet', 'capsule', 'drop', 'puff'];
 $allowedFrequencies = ['Once daily', 'Twice daily', 'Three times daily', 'Every 8 hours', 'As needed'];
@@ -67,13 +67,13 @@ if ($startDateRaw === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDateRaw))
     jsonError('Please enter a valid start date.');
 }
 
-$startTimestamp = strtotime($startDateRaw);
-if ($startTimestamp === false) {
+$startDateParsed = DateTimeImmutable::createFromFormat('!Y-m-d', $startDateRaw);
+if ($startDateParsed === false || $startDateParsed->format('Y-m-d') !== $startDateRaw) {
     jsonError('Please enter a valid start date.');
 }
 
-$today = strtotime('today');
-if ($startTimestamp > $today) {
+$today = new DateTimeImmutable('today');
+if ($startDateParsed > $today) {
     jsonError('Start date cannot be in the future');
 }
 
@@ -109,7 +109,7 @@ try {
         ':dosage_amount' => $dosageAmount,
         ':dosage_unit' => $dosageUnit,
         ':frequency' => $frequency,
-        ':start_date' => date('Y-m-d', $startTimestamp),
+        ':start_date' => $startDateParsed->format('Y-m-d'),
         ':notes' => $notes,
     ]);
 
