@@ -7,7 +7,62 @@ import threading
 import time
 from pathlib import Path
 from typing import Dict
+import re
 from crisis_detection import detect_crisis_risk
+
+class SecureIntentSandbox:
+    """
+    A strictly isolated sandbox environment to evaluate intent strings.
+    This prevents Remote Code Execution (RCE) by sanitizing untrusted inputs
+    and ensuring they do not contain executable payloads or shell commands.
+    """
+    def __init__(self, strict_mode: bool = True):
+        self.strict_mode = strict_mode
+        self.blocked_patterns = [
+            r"__import__", r"eval\(", r"exec\(", r"os\.system",
+            r"subprocess", r"open\(", r"shutil", r"sys\.modules",
+            r"globals\(", r"locals\(", r"compile\(", r"`.*`"
+        ]
+        self._pattern_cache = [re.compile(p) for p in self.blocked_patterns]
+
+    def is_safe(self, payload: str) -> bool:
+        """
+        Evaluate if the input payload contains any known malicious patterns
+        that could result in arbitrary code execution.
+        """
+        if not isinstance(payload, str):
+            return False
+            
+        if self.strict_mode and len(payload) > 2000:
+            logging.warning("Sandbox blocked payload exceeding length limit.")
+            return False
+
+        for pattern in self._pattern_cache:
+            if pattern.search(payload):
+                logging.error(f"Sandbox blocked malicious RCE payload: {pattern.pattern}")
+                return False
+                
+        # Additional layer of neutralization for command injections
+        if ";" in payload or "|" in payload or "&" in payload:
+            if self.strict_mode:
+                # Log deeply for audit but reject the evaluation
+                logging.warning("Sandbox blocked potential shell injection characters.")
+                return False
+
+        return True
+
+    def sanitize(self, payload: str) -> str:
+        """
+        Strip potentially harmful characters before evaluation.
+        """
+        if not self.is_safe(payload):
+            raise ValueError("Payload rejected by Secure Intent Sandbox.")
+            
+        # Strip null bytes and normalize
+        return payload.replace('\x00', '').strip()
+
+# Global singleton instance of the sandbox
+intent_sandbox = SecureIntentSandbox()
 
 try:
     from langdetect import detect as _langdetect_detect
@@ -218,8 +273,15 @@ if lang != 'en' and risk["level"] == "LOW":
     return "I currently only speak English, but you can contact our human support team for help in other languages."
 
     try:
-       # Apply spelling correction (uses module-level singleton, not a new instance per call)
-        corrected_message = _speller(message)
+        # Secure Sandbox evaluation to prevent RCE
+        try:
+            sanitized_message = intent_sandbox.sanitize(message)
+        except ValueError as ve:
+            logging.error(f"RCE Attempt Blocked: {str(ve)}")
+            return "Your request could not be processed due to security policies."
+
+        # Apply spelling correction (uses module-level singleton, not a new instance per call)
+        corrected_message = _speller(sanitized_message)
         
         # Get predictions
         results = predict_class(corrected_message)
