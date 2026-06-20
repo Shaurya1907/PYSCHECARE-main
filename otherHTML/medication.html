@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication Management | PsycheCare</title>
+
+    <script src="https://kit.fontawesome.com/1b2b6a64da.js" crossorigin="anonymous"></script>
+
+    <link rel="icon" href="../Images/B_icon01.png">
+    <link rel="stylesheet" href="../otherStylesheet/common.css">
+    <link rel="stylesheet" href="../otherStylesheet/medication.css">
+</head>
+<body>
+    <script>
+        (function () {
+            var stored = localStorage.getItem('darkMode');
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (stored === 'enabled' || (!stored && prefersDark)) {
+                document.body.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
+    <div class="floating-circle circle-1"></div>
+    <div class="floating-circle circle-2"></div>
+    <div class="floating-circle circle-3"></div>
+    <div class="floating-circle circle-4"></div>
+
+    <div class="header">
+        <div class="logo-cantainer">
+            <h2 class="logo">PsycheCare.</h2>
+        </div>
+
+        <div class="nav-and-btn-cont">
+            <div class="nav-list-cont">
+                <ul class="nav-ul">
+                    <li><a href="../index.html">HOME</a></li>
+                    <li><a href="../index.html#SECTION-3">CHAT BOT</a></li>
+                    <li><a href="statistics.html">STATISTICS</a></li>
+                    <li><a href="medication.html" class="active">MEDICATION</a></li>
+                    <li><a href="../contact.html">CONTACT</a></li>
+                    <li><a href="../login.html">LOGIN</a></li>
+                    <li><a href="sos.html" class="sos-link"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> <span>SOS</span></a></li>
+                </ul>
+            </div>
+
+            <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+
+            <div class="hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-nav">
+                <div class="line line1"></div>
+                <div class="mid-line-cont">
+                    <div class="line mid-line1"></div>
+                    <div class="line mid-line2"></div>
+                </div>
+                <div class="line line3"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-view-nav-cont" id="mobile-nav">
+        <div class="mobile-view-nav-head">
+            <p>Menu</p>
+        </div>
+        <div class="mobile-view-nav-list">
+            <ul>
+                <li><a href="../index.html" class="mobile-view-list">HOME</a></li>
+                <li><a href="../index.html#SECTION-3" class="mobile-view-list">CHAT BOT</a></li>
+                <li><a href="statistics.html" class="mobile-view-list">STATISTICS</a></li>
+                <li><a href="medication.html" class="mobile-view-list active">MEDICATION</a></li>
+                <li><a href="../contact.html" class="mobile-view-list">CONTACT</a></li>
+                <li><a href="../login.html" class="mobile-view-list">LOGIN</a></li>
+                <li><a href="sos.html" class="mobile-view-list sos-link"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> SOS</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="page-section medication-page">
+        <div class="page-heading">
+            <h1>Medication Management</h1>
+            <p>Save prescriptions with clear validation, helpful guidance, and success feedback.</p>
+        </div>
+
+        <div class="form-panel">
+            <form id="medication-form" action="../medication_submit.php" method="POST" novalidate>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="medication-name">Medication Name</label>
+                        <input id="medication-name" name="medication_name" type="text" autocomplete="off" placeholder="e.g., Sertraline" maxlength="100" required>
+                        <p class="helper-text">Medication name is required and must be 2–100 characters.</p>
+                        <span class="error-text" id="name-error" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group dosage-group">
+                        <label for="dosage-amount">Dosage Amount</label>
+                        <div class="dosage-row">
+                            <input id="dosage-amount" name="dosage_amount" type="number" inputmode="decimal" step="0.1" min="0.1" max="1000" placeholder="50" required>
+                            <select id="dosage-unit" name="dosage_unit" required>
+                                <option value="">Select unit</option>
+                                <option value="mg">mg</option>
+                                <option value="mcg">mcg</option>
+                                <option value="ml">ml</option>
+                                <option value="tablet">tablet</option>
+                                <option value="capsule">capsule</option>
+                                <option value="drop">drop</option>
+                                <option value="puff">puff</option>
+                            </select>
+                        </div>
+                        <p class="helper-text">Enter a number between 0.1 and 1000.</p>
+                        <span class="error-text" id="dosage-error" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="frequency">Frequency</label>
+                        <select id="frequency" name="frequency" required>
+                            <option value="">Select frequency</option>
+                            <option value="Once daily">Once daily</option>
+                            <option value="Twice daily">Twice daily</option>
+                            <option value="Three times daily">Three times daily</option>
+                            <option value="Every 8 hours">Every 8 hours</option>
+                            <option value="As needed">As needed</option>
+                        </select>
+                        <p class="helper-text">Choose the medication schedule that matches your prescription.</p>
+                        <span class="error-text" id="frequency-error" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="start-date">Start Date</label>
+                        <input id="start-date" name="start_date" type="date" required>
+                        <p class="helper-text">Start date cannot be in the future.</p>
+                        <span class="error-text" id="date-error" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="notes">Notes (optional)</label>
+                        <textarea id="notes" name="notes" rows="4" maxlength="500" placeholder="e.g., take with food or after breakfast"></textarea>
+                        <span class="error-text" id="notes-error" aria-live="polite"></span>
+                    </div>
+                </div>
+
+                <div class="status-row">
+                    <div id="form-status" class="status-message" aria-live="polite"></div>
+                </div>
+
+                <button type="submit" class="submit-btn" disabled>Save Medication</button>
+            </form>
+
+            <div id="toast" class="toast" aria-live="assertive" aria-atomic="true"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-text-cont">
+            <h2>GET IN TOUCH.</h2>
+            <p>I would love to hear from you friend &#60;3</p>
+        </div>
+
+        <div class="social-icon-cont">
+            <div class="social-head">
+                <h2 class="logo footer-logo">PsycheCare.</h2>
+            </div>
+
+            <nav aria-label="Social media links">
+                <ul class="icons">
+                    <li><a href="https://github.com/niteshagarwal" aria-label="GitHub profile"><i class="fab fa-github-square" aria-hidden="true"></i></a></li>
+                    <li><a href="mailto:niteshagarwal@example.com" target="_blank" aria-label="Send email"><i class="far fa-envelope" aria-hidden="true"></i></a></li>
+                    <li><a href="https://www.linkedin.com/in/niteshagarwal/" target="_blank" aria-label="LinkedIn profile"><i class="fab fa-linkedin" aria-hidden="true"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <p class="copy-rights">Thank You :)</p>
+    </footer>
+
+    <script src="../otherJS/hamberger.js"></script>
+    <script src="../otherJS/medication.js"></script>
+    <script>
+        fetch('../csrf.php')
+            .then(response => response.json())
+            .then(data => {
+                const form = document.getElementById('medication-form');
+                if (!form) return;
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'csrf_token';
+                input.value = data.csrf_token;
+                form.appendChild(input);
+            })
+            .catch(error => {
+                console.error('Error fetching CSRF token:', error);
+            });
+    </script>
+    <script src="../otherJS/accessibility.js"></script>
+    <script src="../otherJS/darkMode.js"></script>
+</body>
+</html>
