@@ -4,6 +4,7 @@ require_once __DIR__ . '/sanitize.php';
 session_start();
 
 require_once __DIR__ . '/database.php';
+require_once __DIR__ . '/validation.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (
@@ -29,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
-    if (strlen($password) < 8) {
+    if (!validatePasswordComplexity($password)) {
         header("Location: reset_password.php?token=" . rawurlencode($token) . "&error=weak");
         exit();
     }
@@ -236,12 +237,13 @@ if (!$row) {
 
             <div class="form-group">
                 <label for="password">New Password</label>
-                <input type="password" id="password" name="password" required minlength="8" placeholder="At least 8 characters">
+                <input type="password" id="password" name="password" required minlength="8" placeholder="Min 8 chars, uppercase, number &amp; symbol">
+                
             </div>
 
             <div class="form-group">
                 <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" required minlength="8" placeholder="Re-enter new password">
+                <input  type="password" id="confirm_password" name="confirm_password" required minlength="8" placeholder="Re-enter new password">
                 <p class="error-message" id="error-msg"></p>
             </div>
 
@@ -261,7 +263,7 @@ if (!$row) {
             const errorEl = document.getElementById('error-msg');
             if (err === 'missing') errorEl.textContent = 'All fields are required.';
             else if (err === 'mismatch') errorEl.textContent = 'Passwords do not match.';
-            else if (err === 'weak') errorEl.textContent = 'Password must be at least 8 characters.';
+            else if (err === 'weak') errorEl.textContent = 'Password must be at least 8 characters and include uppercase, lowercase, a digit, and a special character.';
             else if (err === 'rate_limit') errorEl.textContent = 'Too many attempts. Please try again later.';
             else if (err === 'invalid_token') errorEl.textContent = 'This reset link is invalid or has expired.';
             errorEl.style.display = 'block';
