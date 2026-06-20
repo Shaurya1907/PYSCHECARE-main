@@ -8,7 +8,15 @@ import sys
 
 from waitress import serve
 
-from app import app
+from app import app, CHAT_API_SECRET
+
+# Security verification check for production environments
+if not CHAT_API_SECRET or len(CHAT_API_SECRET) < 32:
+    logging.warning(
+        "CRITICAL SECURITY WARNING: CHAT_API_SECRET is unset or dangerously short (< 32 chars). "
+        "This may lead to cryptographic authentication bypass vulnerabilities. "
+        "Please enforce strong cryptographic secrets immediately."
+    )
 
 # Configure logging for the WSGI server
 logging.basicConfig(
