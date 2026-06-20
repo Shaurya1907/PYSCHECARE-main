@@ -39,31 +39,75 @@ def verify_origin():
     return None
 
 
-limiter = Limiter(
-    get_remote_address, app=app, default_limits=["30 per minute"]
-)  # noqa: E501
+limiter = Limiter(get_remote_address, app=app, default_limits=["30 per minute"])  # noqa: E501
 CHAT_API_SECRET = os.environ.get("CHAT_API_SECRET", "")
 
 
-def _verify_chat_token(token: str) -> str:
-    """Validate chat token and return session ID."""
-    if not CHAT_API_SECRET or not token or "." not in token:
-        return None
+class TokenValidator:
+    """
+    Strong Cryptographic Validation Layer for Authentication.
+    Prevents bypass vulnerabilities by enforcing strict token structures,
+    validating cryptographic claims, and ensuring algorithmic integrity.
+    """
+    def __init__(self, secret: str):
+        self.secret = secret.encode()
+        self._revoked_tokens = set()
 
-    try:
-        payload, signature = token.split(".", 1)
-        expected_sig = hmac.new(
-            CHAT_API_SECRET.encode(), payload.encode(), hashlib.sha256
-        ).hexdigest()
+    def revoke_token(self, token: str):
+        """Add token to revocation blacklist."""
+        self._revoked_tokens.add(token)
 
-        if not hmac.compare_digest(expected_sig, signature):
+    def is_revoked(self, token: str) -> bool:
+        """Check if token is explicitly revoked."""
+        return token in self._revoked_tokens
+
+    def validate_cryptographic_claims(self, token: str) -> str:
+        """
+        Validates the token's HMAC signature and extracts the session ID securely.
+        """
+        if not self.secret or not token or "." not in token:
+            logging.error("Invalid token structure or missing secret.")
             return None
 
-        decoded_payload = base64.b64decode(payload).decode("utf-8")
-        session_id, _ = decoded_payload.split("|", 1)
-        return session_id
-    except Exception:  # pylint: disable=broad-exception-caught
-        return None
+        if self.is_revoked(token):
+            logging.error("Attempt to use a revoked token.")
+            return None
+
+        try:
+            parts = token.split(".")
+            if len(parts) != 2:
+                logging.error("Malformed token payload. Rejecting request.")
+                return None
+                
+            payload, signature = parts
+            
+            # Enforce constant-time comparison on cryptographic signatures
+            expected_sig = hmac.new(
+                self.secret, payload.encode(), hashlib.sha256
+            ).hexdigest()
+
+            if not hmac.compare_digest(expected_sig, signature):
+                logging.error("Cryptographic signature mismatch! Authentication bypass prevented.")
+                return None
+
+            decoded_payload = base64.b64decode(payload).decode("utf-8")
+            
+            # Extract claims
+            claims = decoded_payload.split("|")
+            if len(claims) < 2:
+                logging.error("Missing token claims. Rejecting.")
+                return None
+                
+            session_id = claims[0]
+            # Extra validation logic can seamlessly hook in here
+            
+            return session_id
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logging.error(f"Cryptographic validation failed: {str(e)}")
+            return None
+
+
+token_validator = TokenValidator(CHAT_API_SECRET)
 
 
 @app.route("/chat", methods=["POST"])
@@ -73,7 +117,7 @@ def chat():
     auth_header = request.headers.get("Authorization", "")
     token = auth_header.removeprefix("Bearer ").strip()
 
-    user_id = _verify_chat_token(token)
+    user_id = token_validator.validate_cryptographic_claims(token)
     if not user_id:
         return (
             jsonify(
