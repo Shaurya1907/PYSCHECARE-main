@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Analytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .dashboard-container { max-width: 1200px; margin: 2rem auto; padding: 20px; }
+        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .chart-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .stats-bar { display: flex; justify-content: space-around; margin-bottom: 30px; flex-wrap: wrap; gap: 10px; }
+        .stat-item { text-align: center; background: #f8f9fa; padding: 15px 30px; border-radius: 10px; flex: 1; min-width: 100px; }
+        .stat-number { font-size: 2rem; font-weight: bold; color: #6c63ff; }
+        .filter-section { margin-bottom: 20px; }
+        @media (max-width: 768px) { .chart-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="dashboard-container">
+        <h1>?? Mood Tracking Analytics</h1>
+        
+        <div class="filter-section">
+            <label>Date Range: 
+                <input type="date" id="startDate"> to <input type="date" id="endDate">
+                <button onclick="fetchMoodData()">Apply Filter</button>
+            </label>
+        </div>
+
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item"><div class="stat-number" id="totalEntries">0</div>Total Entries</div>
+            <div class="stat-item"><div class="stat-number" id="currentStreak">0</div>Day Streak</div>
+            <div class="stat-item"><div class="stat-number" id="mostCommonMood">-</div>Most Common Mood</div>
+        </div>
+
+        <div class="chart-grid">
+            <div class="chart-card"><canvas id="moodTrendChart"></canvas></div>
+            <div class="chart-card"><canvas id="moodDistributionChart"></canvas></div>
+            <div class="chart-card" style="grid-column: span 2;"><canvas id="intensityChart"></canvas></div>
+        </div>
+    </div>
+
+    <script>
+        let moodChart, distributionChart, intensityChart;
+
+        async function fetchMoodData() {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            let url = '/api/mood-data';
+            if (start && end) url += ?start=&end=;
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            document.getElementById('totalEntries').innerText = data.length;
+            
+            let streak = 0;
+            const today = new Date();
+            for (let i = 0; i < data.length; i++) {
+                const entryDate = new Date(data[i].date);
+                const diff = (today - entryDate) / (1000*60*60*24);
+                if (diff >= 0 && diff < 1) streak++;
+                else break;
+            }
+            document.getElementById('currentStreak').innerText = streak;
+            
+            const moodCounts = {};
+            data.forEach(d => { moodCounts[d.mood] = (moodCounts[d.mood] || 0) + 1; });
+            let maxMood = 'N/A', maxCount = 0;
+            for (const [mood, count] of Object.entries(moodCounts)) {
+                if (count > maxCount) { maxCount = count; maxMood = mood; }
+            }
+            document.getElementById('mostCommonMood').innerText = maxMood;
+
+            const sorted = data.sort((a,b) => new Date(a.date) - new Date(b.date));
+            const labels = sorted.map(d => d.date);
+            const intensityValues = sorted.map(d => d.intensity);
+
+            const moodMap = { "happy":5, "sad":1, "angry":1, "anxious":2, "neutral":3, "excited":5, "calm":4, "tired":2, "stressed":2 };
+            const numericMood = sorted.map(d => moodMap[d.mood] || 3);
+            
+            if (moodChart) moodChart.destroy();
+            if (distributionChart) distributionChart.destroy();
+            if (intensityChart) intensityChart.destroy();
+
+            const ctx1 = document.getElementById('moodTrendChart').getContext('2d');
+            moodChart = new Chart(ctx1, {
+                type: 'line',
+                data: { labels, datasets: [{ label: 'Mood Level (1-5)', data: numericMood, borderColor: '#6c63ff', tension: 0.2 }] },
+                options: { responsive: true, scales: { y: { min: 0, max: 6 } } }
+            });
+
+            const ctx2 = document.getElementById('moodDistributionChart').getContext('2d');
+            const distLabels = Object.keys(moodCounts);
+            const distData = Object.values(moodCounts);
+            distributionChart = new Chart(ctx2, {
+                type: 'bar',
+                data: { labels: distLabels, datasets: [{ label: 'Mood Frequency', data: distData, backgroundColor: '#ff6584' }] },
+                options: { responsive: true }
+            });
+
+            const ctx3 = document.getElementById('intensityChart').getContext('2d');
+            intensityChart = new Chart(ctx3, {
+                type: 'bar',
+                data: { labels, datasets: [{ label: 'Intensity (1-10)', data: intensityValues, backgroundColor: '#4ecdc4' }] },
+                options: { responsive: true }
+            });
+        }
+
+        window.onload = function() {
+            const today = new Date();
+            const past = new Date(today);
+            past.setDate(today.getDate() - 30);
+            document.getElementById('startDate').value = past.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+            fetchMoodData();
+        };
+    </script>
+</body>
+</html>
