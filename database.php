@@ -9,6 +9,72 @@ function getAuthDatabase(): PDO
     return $db;
 }
 
+// ── Secure Database Abstraction Layer ─────────────────────────────────────────
+
+class SecureDatabaseManager
+{
+    private PDO $connection;
+
+    public function __construct(PDO $pdo)
+    {
+        $this->connection = $pdo;
+    }
+
+    /**
+     * Executes a secure prepared statement to prevent SQL Injection.
+     * Enforces the usage of parameters exclusively.
+     * 
+     * @param string $query The SQL query with placeholders
+     * @param array $params An associative array of parameters
+     * @return PDOStatement The executed statement
+     * @throws Exception If parameters are missing for a parameterized query
+     */
+    public function executeQuerySecure(string $query, array $params = []): PDOStatement
+    {
+        if (strpos($query, ':') !== false && empty($params)) {
+            error_log("Security Exception: Query contains placeholders but no parameters were provided.");
+            throw new Exception("SQL Injection Prevention: Parameters must be provided for parameterized queries.");
+        }
+
+        try {
+            $stmt = $this->connection->prepare($query);
+            foreach ($params as $key => $value) {
+                // Ensure strict typing for bound parameters to prevent type juggling attacks
+                $type = PDO::PARAM_STR;
+                if (is_int($value)) {
+                    $type = PDO::PARAM_INT;
+                } elseif (is_bool($value)) {
+                    $type = PDO::PARAM_BOOL;
+                } elseif (is_null($value)) {
+                    $type = PDO::PARAM_NULL;
+                }
+                
+                $stmt->bindValue($key, $value, $type);
+            }
+            
+            $stmt->execute();
+            return $stmt;
+            
+        } catch (PDOException $e) {
+            error_log("Database execution error securely caught: " . $e->getMessage());
+            throw new Exception("A database error occurred. Please try again later.");
+        }
+    }
+    
+    public function fetchOne(string $query, array $params = []): ?array
+    {
+        $stmt = $this->executeQuerySecure($query, $params);
+        $result = $stmt->fetch();
+        return $result ?: null;
+    }
+    
+    public function fetchAll(string $query, array $params = []): array
+    {
+        $stmt = $this->executeQuerySecure($query, $params);
+        return $stmt->fetchAll();
+    }
+}
+
 function getIPAddress(): string
 {
     if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -112,9 +178,8 @@ function getUserProfileSecure(PDO $db, int $targetUserId, int $requestingUserId)
         throw new Exception("Unauthorized access to user profile. IDOR protection triggered.");
     }
 
-    $stmt = $db->prepare('SELECT id, username, email, created_at FROM users WHERE id = :id');
-    $stmt->execute([':id' => $targetUserId]);
-    $row = $stmt->fetch();
+    $secureDb = new SecureDatabaseManager($db);
+    $row = $secureDb->fetchOne('SELECT id, username, email, created_at FROM users WHERE id = :id', [':id' => $targetUserId]);
     
     if (!$row) {
         return null;
