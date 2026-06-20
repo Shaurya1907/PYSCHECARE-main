@@ -271,6 +271,12 @@
 
                 <form class="msger-inputarea">
                     <input type="text" class="msger-input" id="textInput" placeholder="Type your message...">
+<div id="char-counter" style="text-align: right; font-size: 12px; color: #888; margin-top: 4px;">
+    <span id="char-count">0</span>/500
+</div>
+                    <div id="char-counter" style="text-align: right; font-size: 12px; color: #888; margin-top: 4px;">
+                      <span id="char-count">0</span>/500
+                    </div>
                     <button type="button" class="msger-mic-btn" id="micBtn" style="display: none;" title="Speak">
                         <i class="fas fa-microphone"></i>
                     </button>
@@ -326,6 +332,24 @@
         // Global variables & state
         const BOT_IMG = "../Images/illustration-new/home-bot-img.png";
         const PERSON_IMG = "../Images/illustration/person.png";
+// Character counter for chat input - Issue #325
+const inputField = document.getElementById('textInput');
+const charCount = document.getElementById('char-count');
+const sendBtn = document.getElementById('sendBtn');
+const MAX_LENGTH = 500;
+
+inputField.addEventListener('input', function() {
+    const currentLength = this.value.length;
+    charCount.textContent = currentLength;
+    
+    if (currentLength > MAX_LENGTH) {
+        charCount.style.color = 'red';
+        sendBtn.disabled = true;
+    } else {
+        charCount.style.color = '#888';
+        sendBtn.disabled = false;
+    }
+});
         
         let currentMode = 'text'; // 'text' or 'voice'
         let isListening = false;
@@ -763,5 +787,27 @@
         }
     </script>
     <script src="../otherJS/accessibility.js"></script>
+<script>
+// Character counter for chat input - Issue #325
+const inputField = document.getElementById('textInput');
+const charCount = document.getElementById('char-count');
+const sendBtn = document.getElementById('sendBtn');
+const MAX_LENGTH = 500;
+
+if (inputField && charCount && sendBtn) {
+    inputField.addEventListener('input', function() {
+        const currentLength = this.value.length;
+        charCount.textContent = currentLength;
+        
+        if (currentLength > MAX_LENGTH) {
+            charCount.style.color = 'red';
+            sendBtn.disabled = true;
+        } else {
+            charCount.style.color = '#888';
+            sendBtn.disabled = false;
+        }
+    });
+}
+</script>
 </body>
 </html>

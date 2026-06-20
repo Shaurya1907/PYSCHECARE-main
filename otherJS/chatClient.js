@@ -95,3 +95,38 @@
         module.exports = client;
     }
 })(typeof window !== 'undefined' ? window : globalThis);
+
+
+// ==========================================
+// FETCH INTERCEPTOR FOR ISSUE #325
+// Handles HTTP 400 errors for chat API
+// ==========================================
+(function() {
+    const originalFetch = window.fetch;
+    window.fetch = async function(...args) {
+        const response = await originalFetch.apply(this, args);
+        
+        // Check if this is a chat API request
+        const url = args[0];
+        if (url && typeof url === 'string' && (url.includes('/api/chat') || url.includes('/chat'))) {
+            if (response.status === 400) {
+                // Clone response to read body
+                const clonedResponse = response.clone();
+                try {
+                    const errorData = await clonedResponse.json();
+                    // Throw a custom error with the friendly message
+                    const error = new Error("Your message is too long — please keep it under 500 characters");
+                    error.response = response;
+                    throw error;
+                } catch (e) {
+                    // If we can't parse JSON, still throw a friendly error
+                    const error = new Error("Your message is too long — please keep it under 500 characters");
+                    error.response = response;
+                    throw error;
+                }
+            }
+        }
+        return response;
+    };
+})();
+
