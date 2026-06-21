@@ -5,7 +5,10 @@ Main application file for PsycheCare Chat API.
 import base64
 import hashlib
 import hmac
+import time
+import json
 import os
+import logging
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -65,6 +68,77 @@ def _verify_chat_token(token: str) -> str:
     except Exception:  # pylint: disable=broad-exception-caught
         return None
 
+class SecureSessionManager:
+    """
+    Prevents Insecure Deserialization by utilizing strict JSON parsing
+    with cryptographic signature verification, completely avoiding the use
+    of unsafe native serialization methods like Python's `pickle`.
+    """
+    def __init__(self, secret_key: str):
+        if not secret_key or len(secret_key) < 32:
+            logging.warning("A strong cryptographic key is recommended for secure session management.")
+        self.secret_key = secret_key.encode('utf-8')
+        
+    def _sign_payload(self, payload: str) -> str:
+        """Generates an HMAC-SHA256 signature for the session payload."""
+        return hmac.new(self.secret_key, payload.encode('utf-8'), hashlib.sha256).hexdigest()
+
+    def serialize_session(self, state: dict) -> str:
+        """
+        Safely serializes the session state to JSON and attaches a cryptographic signature.
+        """
+        if not isinstance(state, dict):
+            raise TypeError("Session state must be a dictionary.")
+            
+        # Inject timestamp to enforce session expiration at the data layer
+        state['_issued_at'] = int(time.time())
+        
+        # Use secure JSON serialization, avoiding unsafe pickle objects
+        json_payload = json.dumps(state, separators=(',', ':'))
+        encoded_payload = base64.b64encode(json_payload.encode('utf-8')).decode('utf-8')
+        
+        signature = self._sign_payload(encoded_payload)
+        return f"{encoded_payload}.{signature}"
+
+    def deserialize_session(self, token: str, max_age_seconds: int = 3600) -> dict:
+        """
+        Safely reconstructs the session state only after cryptographic verification
+        and strict JSON structural validation.
+        """
+        if not token or "." not in token:
+            logging.error("Invalid session token format.")
+            return {}
+            
+        try:
+            encoded_payload, signature = token.split(".", 1)
+            expected_signature = self._sign_payload(encoded_payload)
+            
+            # Constant-time comparison prevents timing attacks
+            if not hmac.compare_digest(expected_signature, signature):
+                logging.error("Session signature mismatch! Possible tampering detected.")
+                return {}
+                
+            json_payload = base64.b64decode(encoded_payload).decode('utf-8')
+            
+            # Strictly use JSON parser; never evaluate or unpickle the payload
+            state = json.loads(json_payload)
+            
+            if not isinstance(state, dict):
+                logging.error("Invalid session structure decoded.")
+                return {}
+                
+            issued_at = state.get('_issued_at', 0)
+            if int(time.time()) - issued_at > max_age_seconds:
+                logging.warning("Session token has expired.")
+                return {}
+                
+            return state
+            
+        except (ValueError, json.JSONDecodeError, TypeError) as e:
+            logging.error(f"Insecure deserialization attempt prevented: {str(e)}")
+            return {}
+
+secure_session_manager = SecureSessionManager(os.environ.get("CHAT_API_SECRET", "fallback_secret_must_be_thirty_two_chars_long"))
 
 @app.route("/chat", methods=["POST"])
 @limiter.limit("30 per minute")
