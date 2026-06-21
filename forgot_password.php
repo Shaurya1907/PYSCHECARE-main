@@ -52,8 +52,15 @@ if ($user) {
         ':expires_at'  => $expiresAt,
     ]);
 
-    $resetLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
-        . "://" . $_SERVER['HTTP_HOST']
+    $appUrl = getenv('ALLOWED_ORIGIN');
+    if (!$appUrl) {
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http');
+        $host = $_SERVER['SERVER_NAME'] ?? 'localhost';
+        $appUrl = $protocol . "://" . $host;
+    }
+    $appUrl = rtrim($appUrl, '/');
+
+    $resetLink = $appUrl
         . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . "/"
         . "reset_password.php?token=" . rawurlencode($token);
 

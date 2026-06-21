@@ -211,14 +211,14 @@ def get_chatbot_response(message, user_id="000"):
     # Detect language
     lang = detect_language(message)
 
-# Check crisis risk before blocking non-English messages
-risk = detect_crisis_risk(message)
+    # Check crisis risk before blocking non-English messages
+    risk = detect_crisis_risk(message)
 
-if lang != 'en' and risk["level"] == "LOW":
-    return "I currently only speak English, but you can contact our human support team for help in other languages."
+    if lang != 'en' and risk["level"] == "LOW":
+        return "I currently only speak English, but you can contact our human support team for help in other languages."
 
     try:
-       # Apply spelling correction (uses module-level singleton, not a new instance per call)
+        # Apply spelling correction (uses module-level singleton, not a new instance per call)
         corrected_message = _speller(message)
         
         # Get predictions
