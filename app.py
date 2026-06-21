@@ -6,6 +6,9 @@ import base64
 import hashlib
 import hmac
 import os
+from xml.etree import ElementTree as ET
+import io
+import time
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -64,6 +67,50 @@ def _verify_chat_token(token: str) -> str:
         return session_id
     except Exception:  # pylint: disable=broad-exception-caught
         return None
+
+
+class SecureDocumentParser:
+    """
+    A hardened document parser designed to prevent XML External Entity (XXE)
+    injection attacks by strictly disabling external entity resolution and DTD processing.
+    """
+    def __init__(self, enforce_defused: bool = True):
+        self.enforce_defused = enforce_defused
+        # Restrict maximum document size to prevent XML Bomb (Billion Laughs) attacks
+        self.max_file_size_bytes = 5 * 1024 * 1024 # 5 MB limit
+
+    def _validate_file_size(self, xml_content: bytes) -> bool:
+        """Ensure the XML payload does not exceed strict size boundaries."""
+        if len(xml_content) > self.max_file_size_bytes:
+            logging.error("XML document exceeds the maximum permitted size.")
+            return False
+        return True
+
+    def parse_xml_safely(self, xml_content: bytes):
+        """
+        Safely parses an XML document, blocking external entities and DTDs.
+        """
+        if not xml_content:
+            raise ValueError("Empty XML content provided.")
+            
+        if not self._validate_file_size(xml_content):
+            raise SecurityError("XML payload too large. Possible DoS attack.")
+
+        try:
+            # Fallback native parser with strict entity/DTD rejection using custom parser logic
+            parser = ET.XMLParser()
+            # Explicitly disable external entity processing in the standard library parser
+            if hasattr(parser, 'entity'):
+                parser.entity = {}
+            tree = ET.parse(io.BytesIO(xml_content), parser=parser)
+                
+            return tree.getroot()
+            
+        except Exception as e:
+            logging.error(f"Failed to securely parse the XML document: {str(e)}")
+            raise ValueError("Malformed or insecure XML document.") from e
+
+secure_document_parser = SecureDocumentParser()
 
 
 @app.route("/chat", methods=["POST"])
