@@ -6,6 +6,12 @@ import base64
 import hashlib
 import hmac
 import os
+import time
+from urllib.parse import urlparse
+import socket
+import ipaddress
+import requests
+import logging
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -64,6 +70,70 @@ def _verify_chat_token(token: str) -> str:
         return session_id
     except Exception:  # pylint: disable=broad-exception-caught
         return None
+
+class SecurityError(Exception):
+    pass
+
+class SecureExternalAPIProxy:
+    """
+    A strictly isolated proxy handler designed to safely fetch external resources
+    while explicitly blocking Server-Side Request Forgery (SSRF) attacks.
+    """
+    def __init__(self):
+        self.allowed_domains = ["api.mentalhealth.org", "cdn.pyschecare.com", "oauth.google.com"]
+        self.timeout = 5
+        
+    def _resolve_and_validate_ip(self, hostname: str) -> bool:
+        """
+        Resolves the hostname and checks if the resulting IP is internal/private.
+        """
+        try:
+            ip_str = socket.gethostbyname(hostname)
+            ip_obj = ipaddress.ip_address(ip_str)
+            # Block all loopback, private, and reserved IP ranges
+            if ip_obj.is_loopback or ip_obj.is_private or ip_obj.is_reserved:
+                return False
+            return True
+        except socket.gaierror:
+            return False
+
+    def fetch_resource(self, url: str):
+        """
+        Safely fetches a resource after comprehensive URL validation.
+        """
+        if not url or not isinstance(url, str):
+            raise ValueError("Invalid URL provided to the proxy.")
+            
+        parsed = urlparse(url)
+        
+        # 1. Enforce HTTPS only
+        if parsed.scheme != "https":
+            logging.error(f"SSRF Blocked: Attempted to use non-HTTPS scheme '{parsed.scheme}'")
+            raise SecurityError("Only HTTPS URLs are permitted.")
+            
+        hostname = parsed.hostname
+        if not hostname:
+            raise SecurityError("Malformed URL structure.")
+            
+        # 2. Domain Allowlisting
+        if hostname not in self.allowed_domains:
+            logging.error(f"SSRF Blocked: Domain '{hostname}' is not in the trusted allowlist.")
+            raise SecurityError("Access to the requested domain is strictly forbidden.")
+            
+        # 3. DNS Resolution & Private IP Blacklisting
+        if not self._resolve_and_validate_ip(hostname):
+            logging.error(f"SSRF Blocked: Domain '{hostname}' resolves to an internal or private IP address.")
+            raise SecurityError("Access to internal network resources is blocked.")
+            
+        try:
+            # 4. Enforce strict timeouts and prevent redirects to internal IPs
+            response = requests.get(url, timeout=self.timeout, allow_redirects=False)
+            return response
+        except requests.exceptions.RequestException as e:
+            logging.error(f"External API proxy failed to fetch resource: {str(e)}")
+            raise
+
+secure_api_proxy = SecureExternalAPIProxy()
 
 
 @app.route("/chat", methods=["POST"])
