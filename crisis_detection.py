@@ -50,7 +50,7 @@ RISK_PHRASES = {
 DEFAULT_EVENT_LOG = Path(__file__).resolve().parent / "crisis_events.json"
 _crisis_log_lock = threading.Lock()
 
-
+MAX_EVENTS = 10_000
 def _matches_phrase(message: str, phrase: str) -> bool:
     phrase = phrase.lower().strip()
     if " " in phrase:
@@ -102,4 +102,5 @@ def log_crisis_event(risk: dict, session_id: str, log_path: Path | str = DEFAULT
             events = []
 
         events.append(event)
+        events = events[-MAX_EVENTS:]
         path.write_text(json.dumps(events, indent=2), encoding="utf-8")
