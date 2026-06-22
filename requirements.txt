@@ -24,3 +24,4 @@ keras>=2.16.0
 numpy>=1.26.2
 gunicorn==21.2.0
 waitress==3.0.0  
+chart.js==3.9.1

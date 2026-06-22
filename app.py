@@ -1,4 +1,4 @@
-"""
+﻿"""
 Main application file for PsycheCare Chat API.
 """
 
@@ -7,12 +7,12 @@ import hashlib
 import hmac
 import os
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session, redirect
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-from chatbot_integration import get_chatbot_response
+# from chatbot_integration import get_chatbot_response  # temporarily disabled
 from crisis_detection import detect_crisis_risk, log_crisis_event
 from validation import validate_chat_payload
 
@@ -90,7 +90,7 @@ def chat():
     risk = detect_crisis_risk(data["message"])
     log_crisis_event(risk, user_id)
 
-    response = get_chatbot_response(data["message"], user_id)
+    response = "Chatbot temporarily disabled"
     return jsonify({"response": response, "session_id": user_id, "risk": risk})
 
 
@@ -106,6 +106,33 @@ def bad_request(_error):
     return jsonify({"error": "Invalid request."}), 400
 
 
+# ========== MOOD ANALYTICS API (Issue #320) ==========
+@app.route('/api/mood-history', methods=['GET'])
+def get_mood_history():
+    start_date = request.args.get('start', '')
+    end_date = request.args.get('end', '')
+    
+    # Example SQLite query – adjust your database name and table/columns
+    import sqlite3
+    conn = sqlite3.connect('your_database.db')   # change to your actual DB
+    cursor = conn.cursor()
+    
+    query = "SELECT date, mood, rating FROM mood_entries WHERE 1=1"
+    params = []
+    if start_date:
+        query += " AND date >= ?"
+        params.append(start_date)
+    if end_date:
+        query += " AND date <= ?"
+        params.append(end_date)
+    query += " ORDER BY date ASC"
+    
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    conn.close()
+    
+    data = [{'date': row[0], 'mood': row[1], 'rating': row[2]} for row in rows]
+    return jsonify(data)
 if __name__ == "__main__":
     debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
     # Provide a warning that app.run is insecure for production
@@ -117,3 +144,63 @@ if __name__ == "__main__":
         "prevent memory leaks."
     )
     app.run(host="0.0.0.0", port=5000, debug=debug_mode)
+
+from datetime import datetime, timedelta
+
+@app.route('/api/mood-data', methods=['GET'])
+def get_mood_data():
+    """Fetch mood entries (replace with your actual DB query)"""
+    import random
+# --- DUMMY DATA - REPLACE WITH YOUR MODEL ---
+    moods = ['happy', 'sad', 'angry', 'anxious', 'neutral', 'excited']
+    data = []
+    for i in range(30):
+        date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
+        data.append({
+            'date': date,
+            'mood': random.choice(moods),
+            'intensity': random.randint(1, 10),
+            'note': f'Feeling {random.choice(moods)} on {date}'
+        })
+    # --- END DUMMY ---
+    return jsonify(data)
+
+@app.route('/dashboard/mood')
+def mood_dashboard():
+    return render_template('mood_dashboard.html')
+
+@app.route('/api/mood-data', methods=['GET'])
+def get_mood_data():
+    """Fetch mood entries (replace with your actual DB query)"""
+    import random
+# --- DUMMY DATA - REPLACE WITH YOUR MODEL ---
+    moods = ['happy', 'sad', 'angry', 'anxious', 'neutral', 'excited']
+    data = []
+    for i in range(30):
+        date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
+        data.append({
+            'date': date,
+            'mood': random.choice(moods),
+            'intensity': random.randint(1, 10),
+            'note': f'Feeling {random.choice(moods)} on {date}'
+        })
+    # --- END DUMMY ---
+    return jsonify(data)
+
+@app.route('/dashboard/mood')
+def mood_dashboard():
+    return render_template('mood_dashboard.html')
+
+
+
+
+
+
+
+
+@app.route('/test-login')
+def test_login():
+    from flask import session, redirect
+    # Set a dummy user ID (use 1 or any valid ID)
+    session['user_id'] = 1
+    return redirect('/dashboard/mood')
