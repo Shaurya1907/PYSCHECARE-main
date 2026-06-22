@@ -209,3 +209,115 @@ errorBtn.addEventListener('click',()=>{
 
 
 
+
+// ========== MOOD DASHBOARD CODE (Issue #320) ==========
+let moodChart = null;
+let distributionChart = null;
+let allMoodData = [];
+
+async function fetchMoodData(startDate, endDate) {
+    try {
+        const response = await fetch(/api/mood-history?start=\&end=\);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching mood data:', error);
+        return generateSampleData();
+    }
+}
+
+function generateSampleData() {
+    const moods = ['Happy', 'Sad', 'Neutral', 'Excited', 'Anxious'];
+    const data = [];
+    const today = new Date();
+    for (let i = 30; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        data.push({
+            date: date.toISOString().split('T')[0],
+            mood: moods[Math.floor(Math.random() * moods.length)],
+            rating: Math.floor(Math.random() * 5) + 1
+        });
+    }
+    return data;
+}
+
+function initCharts(data) {
+    if (moodChart) moodChart.destroy();
+    if (distributionChart) distributionChart.destroy();
+    const dates = data.map(d => d.date);
+    const ratings = data.map(d => d.rating);
+    const moodLabels = [...new Set(data.map(d => d.mood))];
+    const moodCounts = moodLabels.map(mood => data.filter(d => d.mood === mood).length);
+    const ctx1 = document.getElementById('moodChart').getContext('2d');
+    moodChart = new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: 'Mood Rating',
+                data: ratings,
+                borderColor: '#4CAF50',
+                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#4CAF50'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'top' }, title: { display: true, text: 'Mood Trends Over Time' } },
+            scales: { y: { min: 0, max: 5, ticks: { stepSize: 1 } } }
+        }
+    });
+    const ctx2 = document.getElementById('distributionChart').getContext('2d');
+    distributionChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+            labels: moodLabels,
+            datasets: [{ data: moodCounts, backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'] }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Mood Distribution' } }
+        }
+    });
+    updateSummaryStats(data);
+}
+
+function updateSummaryStats(data) {
+    if (!data.length) return;
+    let currentStreak = 0;
+    for (let i = data.length - 1; i >= 0; i--) {
+        if (data[i].rating >= 3) currentStreak++;
+        else break;
+    }
+    const last7 = data.slice(-7);
+    const avg = last7.reduce((s, d) => s + d.rating, 0) / last7.length;
+    const moodCount = {};
+    data.forEach(d => { moodCount[d.mood] = (moodCount[d.mood] || 0) + 1; });
+    const mostCommon = Object.keys(moodCount).reduce((a, b) => moodCount[a] > moodCount[b] ? a : b);
+    document.getElementById('current-streak').textContent = \\ days\;
+    document.getElementById('weekly-avg').textContent = avg.toFixed(1);
+    document.getElementById('most-common').textContent = mostCommon;
+    document.getElementById('total-entries').textContent = data.length;
+}
+
+async function applyFilter() {
+    const start = document.getElementById('start-date').value;
+    const end = document.getElementById('end-date').value;
+    const data = await fetchMoodData(start, end);
+    initCharts(data);
+}
+
+async function resetFilter() {
+    document.getElementById('start-date').value = '';
+    document.getElementById('end-date').value = '';
+    const data = await fetchMoodData('', '');
+    initCharts(data);
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+    const data = await fetchMoodData('', '');
+    initCharts(data);
+});
