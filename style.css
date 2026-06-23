@@ -1478,6 +1478,23 @@ html {
   transform: translateY(-5px);
 }
 
+.tooltiptext{
+    visibility: hidden;
+    width: 130px;
+    background-color: rgb(85, 83, 83);
+    color: #ffffff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    top: -4px;
+    right: 105%;
+}
+
+.back-to-top:hover .tooltiptext{
+    visibility: visible;
+}
 @media (max-width: 576px) {
   .back-to-top {
     bottom: 80px;
