@@ -222,10 +222,11 @@
 }
 
 .insight-card p {
-    color: #444;
+    color:#e5e7eb;
     font-size: 0.95rem;
     line-height: 1.6;
 }
+
 
 /* Error Message */
 .error-msg-cont {
@@ -352,6 +353,20 @@ body.dark-mode .statistics-table-row {
 
 body.dark-mode .statistics-table-row p {
     color: rgba(232, 232, 232, 0.8);
+}
+body.dark-mode .insight-card h3 {
+    color: #ffffff;
+}
+
+body.dark-mode .insight-card p {
+    color: rgba(232, 232, 232, 0.9);
+}
+
+body.dark-mode .insight-card {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+body.dark-mode .insight-card h3 {
+    color: white;
 }
 
 
