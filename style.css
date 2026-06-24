@@ -1409,7 +1409,7 @@ p::selection{
         min-width: 200px;
         min-height: 200px;
     }
-}
+
 
 
     .take-page-img-cont{
@@ -1974,7 +1974,7 @@ body.dark-mode .login-container {
 }
 
 body.dark-mode .form-group label {
-    color: var(--dark-color);
+      color: rgba(255, 255, 255, 0.9);
 }
 
 body.dark-mode .form-group input {
@@ -1988,3 +1988,14 @@ body.dark-mode .form-group input:focus {
     box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.1);
 }
 
+body.dark-mode .login-header h2 {
+    color: #ffffff;
+}
+
+body.dark-mode .login-form h2 {
+    color: #ffffff;
+}
+
+body.dark-mode .login-form p {
+    color: rgba(255, 255, 255, 0.85);
+}
