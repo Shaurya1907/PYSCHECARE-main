@@ -6,6 +6,8 @@ import base64
 import hashlib
 import hmac
 import os
+import sqlite3
+import math
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -18,6 +20,14 @@ from validation import validate_chat_payload
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024
+
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.sqlite")
+
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
 
 ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN")
 if not ALLOWED_ORIGIN:
@@ -91,7 +101,83 @@ def chat():
     log_crisis_event(risk, user_id)
 
     response = get_chatbot_response(data["message"], user_id)
+
+    # Save to chat_history
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO chat_messages (user_id, sender, message) VALUES (?, ?, ?)",
+            (user_id, "user", data["message"])
+        )
+        cursor.execute(
+            "INSERT INTO chat_messages (user_id, sender, message) VALUES (?, ?, ?)",
+            (user_id, "bot", response)
+        )
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        app.logger.error(f"Failed to save chat history: {e}")
+
     return jsonify({"response": response, "session_id": user_id, "risk": risk})
+
+@app.route("/chat/history", methods=["GET"])
+@limiter.limit("30 per minute")
+def chat_history():
+    """Retrieve paginated chat history for the logged-in user."""
+    auth_header = request.headers.get("Authorization", "")
+    token = auth_header.removeprefix("Bearer ").strip()
+
+    user_id = _verify_chat_token(token)
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    try:
+        page = int(request.args.get("page", 1))
+        limit = int(request.args.get("limit", 20))
+        if page < 1 or limit < 1:
+            return jsonify({"error": "Invalid pagination parameters"}), 400
+    except ValueError:
+        return jsonify({"error": "Invalid pagination parameters"}), 400
+
+    offset = (page - 1) * limit
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Get total items
+        cursor.execute("SELECT COUNT(*) FROM chat_messages WHERE user_id = ?", (user_id,))
+        total_items = cursor.fetchone()[0]
+        
+        # Get messages for the page (ordered by created_at DESC to get newest first, then we can reverse if needed)
+        # Usually history is loaded newest first for pagination, but displayed oldest first.
+        cursor.execute(
+            "SELECT id, sender, message, created_at FROM chat_messages WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
+            (user_id, limit, offset)
+        )
+        rows = cursor.fetchall()
+        conn.close()
+
+        messages = [dict(row) for row in rows]
+        
+        total_pages = math.ceil(total_items / limit) if total_items > 0 else 1
+
+        return jsonify({
+            "data": messages,
+            "meta": {
+                "currentPage": page,
+                "pageSize": limit,
+                "totalItems": total_items,
+                "totalPages": total_pages,
+                "hasNextPage": page < total_pages,
+                "hasPreviousPage": page > 1
+            }
+        })
+
+    except Exception as e:
+        app.logger.error(f"Database error: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.errorhandler(413)
