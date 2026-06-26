@@ -80,8 +80,41 @@
         }
     }
 
+    async function getHistory(page, limit, options) {
+        const config = options || {};
+        const apiUrl = config.apiUrl;
+        if (!apiUrl) throw new Error(handleError());
+
+        const fetchImpl = config.fetchImpl || root.fetch;
+        const controller = new root.AbortController();
+        const timeoutId = handleTimeout(controller, config.timeoutMs);
+
+        try {
+            const response = await fetchImpl(`${apiUrl}/chat/history?page=${page}&limit=${limit}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${config.token || ''}`
+                },
+                signal: controller.signal
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            const friendlyError = new Error(handleError(error));
+            friendlyError.cause = error;
+            throw friendlyError;
+        } finally {
+            root.clearTimeout(timeoutId);
+        }
+    }
+
     const client = {
         sendMessage,
+        getHistory,
         handleError,
         handleTimeout,
         getSessionId,

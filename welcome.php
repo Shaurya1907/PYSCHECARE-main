@@ -208,6 +208,7 @@ try {
             <div class="welcome-actions">
                 <a href="index.html"><button class="explore-btn">Go to Home</button></a>
                 <a href="otherHTML/chatBot.php"><button class="blog-btn">Open Chat Bot</button></a>
+                <a href="otherHTML/journal.php"><button class="explore-btn" style="background-color: #2b2c34; color: white;">Open Journal</button></a>
             </div>
             <p class="welcome-note">If you were not expecting this page, simply return to the home screen.</p>
         </div>

@@ -1,2 +1,4 @@
 database.sqlite
 crisis_events.json
+
+__pycache__/

@@ -350,7 +350,87 @@
 
             // Setup form submission
             setupChatForm();
+
+            // Load history
+            loadChatHistory();
         });
+
+        let currentPage = 1;
+        let hasNextPage = false;
+        let isLoadingHistory = false;
+
+        async function loadChatHistory(page = 1) {
+            if (isLoadingHistory) return;
+            isLoadingHistory = true;
+            
+            try {
+                const msgerChat = document.querySelector(".msger-chat");
+                const oldScrollHeight = msgerChat.scrollHeight;
+                
+                const response = await window.PsycheCareChatClient.getHistory(page, 20, {
+                    apiUrl: CHATBOT_API_URL,
+                    token: window.PSYCHECARE_TOKEN || ''
+                });
+
+                if (response.data && response.data.length > 0) {
+                    if (page === 1) {
+                        msgerChat.innerHTML = '';
+                    }
+
+                    const loadMoreBtn = document.getElementById('loadMoreHistoryBtn');
+                    if (loadMoreBtn) loadMoreBtn.remove();
+
+                    const messages = response.data.reverse();
+                    
+                    let htmlString = '';
+                    messages.forEach(msg => {
+                        const name = msg.sender === 'bot' ? 'PsycheCare Assistant' : 'You';
+                        const img = msg.sender === 'bot' ? BOT_IMG : PERSON_IMG;
+                        const side = msg.sender === 'bot' ? 'left' : 'right';
+                        let time = '';
+                        if (msg.created_at) {
+                            const d = new Date(msg.created_at);
+                            if (!isNaN(d.getTime())) time = formatDate(d);
+                        }
+                        
+                        htmlString += `
+                        <div class="msg ${side}-msg">
+                            <div class="msg-img">
+                                <img src="${img}" alt="${name}">
+                            </div>
+                            <div class="msg-bubble">
+                                <div class="msg-info">
+                                    <div class="msg-info-name">${name}</div>
+                                    <div class="msg-info-time">${time}</div>
+                                </div>
+                                <div class="msg-text">${msg.message}</div>
+                            </div>
+                        </div>`;
+                    });
+
+                    msgerChat.insertAdjacentHTML('afterbegin', htmlString);
+
+                    hasNextPage = response.meta.hasNextPage;
+                    if (hasNextPage) {
+                        msgerChat.insertAdjacentHTML('afterbegin', `<button id="loadMoreHistoryBtn" class="blog-btn" style="margin: 10px auto; display: block; font-size: 0.8rem; padding: 5px 10px;">Load Older Messages</button>`);
+                        document.getElementById('loadMoreHistoryBtn').addEventListener('click', () => {
+                            currentPage++;
+                            loadChatHistory(currentPage);
+                        });
+                    }
+
+                    if (page === 1) {
+                        msgerChat.scrollTop = msgerChat.scrollHeight;
+                    } else {
+                        msgerChat.scrollTop = msgerChat.scrollHeight - oldScrollHeight;
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to load history:", error);
+            } finally {
+                isLoadingHistory = false;
+            }
+        }
 
         function initRiveScript() {
             if (typeof RiveScript !== 'undefined') {
