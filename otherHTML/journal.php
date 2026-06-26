@@ -56,7 +56,22 @@ $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
-$journals = $stmt->fetchAll();
+$journals = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+if (isset($_GET['action']) && $_GET['action'] === 'fetch') {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'data' => $journals,
+        'meta' => [
+            'currentPage' => $page,
+            'pageSize' => $limit,
+            'totalItems' => $totalItems,
+            'totalPages' => $totalPages,
+            'hasNextPage' => $page < $totalPages
+        ]
+    ]);
+    exit();
+}
 
 ?>
 <!DOCTYPE html>
@@ -182,7 +197,7 @@ $journals = $stmt->fetchAll();
             <button type="submit">Save Entry</button>
         </form>
 
-        <div class="journals-list">
+        <div class="journals-list" id="journalsList">
             <?php if (empty($journals)): ?>
                 <div class="empty-state">
                     <h3>No journal entries yet</h3>
@@ -200,18 +215,83 @@ $journals = $stmt->fetchAll();
         </div>
 
         <?php if ($totalPages > 1): ?>
-        <div class="pagination">
-            <?php if ($page > 1): ?>
-                <a href="?page=<?php echo $page - 1; ?>&limit=<?php echo $limit; ?>">&laquo; Previous</a>
-            <?php endif; ?>
-            
-            <span class="active">Page <?php echo $page; ?> of <?php echo $totalPages; ?></span>
-            
+        <div class="pagination" id="paginationContainer">
             <?php if ($page < $totalPages): ?>
-                <a href="?page=<?php echo $page + 1; ?>&limit=<?php echo $limit; ?>">Next &raquo;</a>
+                <button id="loadMoreJournalsBtn" data-page="<?php echo $page + 1; ?>" style="background: var(--primary-color, #7f5af0); color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: bold;">Load More</button>
             <?php endif; ?>
         </div>
         <?php endif; ?>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const loadMoreBtn = document.getElementById("loadMoreJournalsBtn");
+            const journalsList = document.getElementById("journalsList");
+
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener("click", async function() {
+                    const page = parseInt(this.getAttribute("data-page"));
+                    const limit = <?php echo $limit; ?>;
+                    
+                    const originalText = this.innerText;
+                    this.innerText = "Loading...";
+                    this.disabled = true;
+
+                    try {
+                        const response = await fetch(`journal.php?action=fetch&page=${page}&limit=${limit}`);
+                        if (!response.ok) throw new Error("Failed to fetch journals");
+                        const result = await response.json();
+                        
+                        if (result.data && result.data.length > 0) {
+                            result.data.forEach(journal => {
+                                const entryDiv = document.createElement("div");
+                                entryDiv.className = "journal-entry";
+                                
+                                const titleEl = document.createElement("h3");
+                                titleEl.className = "journal-title";
+                                titleEl.textContent = journal.title;
+                                
+                                const dateEl = document.createElement("div");
+                                dateEl.className = "journal-date";
+                                dateEl.textContent = journal.created_at;
+                                
+                                const contentEl = document.createElement("div");
+                                contentEl.className = "journal-content";
+                                contentEl.innerHTML = escapeHtml(journal.content).replace(/\\n/g, "<br>");
+                                
+                                entryDiv.appendChild(titleEl);
+                                entryDiv.appendChild(dateEl);
+                                entryDiv.appendChild(contentEl);
+                                
+                                journalsList.appendChild(entryDiv);
+                            });
+
+                            if (result.meta.hasNextPage) {
+                                this.setAttribute("data-page", page + 1);
+                                this.innerText = originalText;
+                                this.disabled = false;
+                            } else {
+                                this.remove();
+                            }
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        this.innerText = originalText;
+                        this.disabled = false;
+                        alert("Failed to load more journals.");
+                    }
+                });
+            }
+            
+            function escapeHtml(unsafe) {
+                return unsafe
+                     .replace(/&/g, "&amp;")
+                     .replace(/</g, "&lt;")
+                     .replace(/>/g, "&gt;")
+                     .replace(/"/g, "&quot;")
+                     .replace(/'/g, "&#039;");
+            }
+        });
+    </script>
 </body>
 </html>
