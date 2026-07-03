@@ -140,9 +140,14 @@ function updateProfileEmailSecure(PDO $db, int $targetUserId, int $requestingUse
         return false;
     }
 
-    $stmt = $db->prepare('UPDATE users SET email = :email WHERE id = :id');
-    return $stmt->execute([
-        ':email' => $newEmail,
-        ':id' => $targetUserId
-    ]);
+    try {
+        $stmt = $db->prepare('UPDATE users SET email = :email WHERE id = :id');
+        return $stmt->execute([
+            ':email' => $newEmail,
+            ':id' => $targetUserId
+        ]);
+    } catch (PDOException $e) {
+        error_log("Failed to update email: " . $e->getMessage());
+        return false;
+    }
 }
