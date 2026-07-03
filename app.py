@@ -11,12 +11,14 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from chatbot_integration import get_chatbot_response
 from crisis_detection import detect_crisis_risk, log_crisis_event
 from validation import validate_chat_payload
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024
 
 ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN")
