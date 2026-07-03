@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     // Inject the markup cleanly into the DOM right before the body closes
-    document.body.insertAdjacentHTML('beforeend', accessibilityMarkup);
+    document.body.insertAdjacentHTML('afterbegin', accessibilityMarkup);
 
     // =====================================================
     // 2. DOM ELEMENT TARGET SELECTION
