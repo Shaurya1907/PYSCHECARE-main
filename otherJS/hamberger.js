@@ -36,11 +36,9 @@ if (hamburger) {
 mobileNavList.forEach((list)=>{
     list.addEventListener('click',()=>{
         if (mobileNav) mobileNav.classList.remove('show-nav');
-
-        if (line1) line1.classList.toggle('changetheline1');
-        if (line3) line3.classList.toggle('changetheline3');
-    
-        if (midLine1) midLine1.classList.toggle('changeMidLine1');
-        if (midLine2) midLine2.classList.toggle('changeMidLine2');
+        if (line1) line1.classList.remove('changetheline1');
+        if (line3) line3.classList.remove('changetheline3');
+        if (midLine1) midLine1.classList.remove('changeMidLine1');
+        if (midLine2) midLine2.classList.remove('changeMidLine2');
     })
 })
