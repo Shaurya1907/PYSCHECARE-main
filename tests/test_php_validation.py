@@ -43,10 +43,24 @@ def test_signup_rejects_weak_password():
 
 
 def test_contact_form_validation():
-    assert run_php("validateContactInput('Ava', 'ava@example.com', 'Hello there')") is None
-    assert run_php("validateContactInput('', 'ava@example.com', 'Hello there')") == "Please enter your name."
-    assert run_php("validateContactInput('Ava', 'bad-email', 'Hello there')") == "Please enter a valid email address."
+    assert run_php("validateContactInput('Ava', 'ava@example.com', 'Checking in', 'Hello there')") is None
     assert (
-        run_php("validateContactInput('Ava', 'ava@example.com', str_repeat('x', 1001))")
+        run_php("validateContactInput('', 'ava@example.com', 'Checking in', 'Hello there')")
+        == "Please enter your name under 100 characters."
+    )
+    assert (
+        run_php("validateContactInput('Ava', 'bad-email', 'Checking in', 'Hello there')")
+        == "Please enter a valid email address."
+    )
+    assert (
+        run_php("validateContactInput('Ava', 'ava@example.com', '', 'Hello there')")
+        == "Please enter a subject under 255 characters."
+    )
+    assert (
+        run_php("validateContactInput('Ava', 'ava@example.com', str_repeat('x', 256), 'Hello there')")
+        == "Please enter a subject under 255 characters."
+    )
+    assert (
+        run_php("validateContactInput('Ava', 'ava@example.com', 'Checking in', str_repeat('x', 1001))")
         == "Please enter a message under 1000 characters."
     )
