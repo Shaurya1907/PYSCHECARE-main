@@ -313,7 +313,7 @@
     
     <!-- Replace with our updated JavaScript code -->
     <script>
-        // ─── API Configuration ──────────────────────────────────────────────────────
+        // --- API Configuration ------------------------------------------------------
         // For local development this auto-detects localhost.
         // For production: set window.CHATBOT_API_URL in a server-rendered config block
         // e.g. <script>window.CHATBOT_API_URL = 'https://api.yourdomain.com';<\/script>
@@ -321,7 +321,7 @@
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             return isLocal ? 'http://127.0.0.1:5000' : (window.CHATBOT_API_URL || '');
         })();
-        // ────────────────────────────────────────────────────────────────────────────
+        // ---------------------------------------------------------------------------
 
         // Global variables & state
         const BOT_IMG = "../Images/illustration-new/home-bot-img.png";
