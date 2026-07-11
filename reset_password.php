@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $row = $stmt->fetch();
 
     if (!$row) {
-        header("Location: forgot_password.html?error=invalid_token");
+        header("Location: forgot-password.html?error=invalid_token");
         exit();
     }
 
@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 $token = $_GET["token"] ?? "";
 if ($token === "") {
-    header("Location: forgot_password.html");
+    header("Location: forgot-password.html");
     exit();
 }
 
@@ -87,7 +87,7 @@ $stmt->execute([':token_hash' => $tokenHash, ':now' => time()]);
 $row = $stmt->fetch();
 
 if (!$row) {
-    header("Location: forgot_password.html?error=invalid_token");
+    header("Location: forgot-password.html?error=invalid_token");
     exit();
 }
 ?><!DOCTYPE html>

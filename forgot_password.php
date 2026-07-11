@@ -5,7 +5,7 @@ session_start();
 require_once __DIR__ . '/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: forgot_password.html");
+    header("Location: forgot-password.html");
     exit();
 }
 
@@ -21,7 +21,7 @@ if (
 $email = trim($_POST["email"] ?? "");
 
 if ($email === "" || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header("Location: forgot_password.html?error=invalid_email");
+    header("Location: forgot-password.html?error=invalid_email");
     exit();
 }
 
@@ -30,7 +30,7 @@ $ip = getIPAddress();
 $rateKey = "forgot_pwd:" . $ip;
 
 if (!enforceRateLimit($db, $rateKey, 3, 900)) {
-    header("Location: forgot_password.html?error=rate_limit");
+    header("Location: forgot-password.html?error=rate_limit");
     exit();
 }
 
@@ -65,5 +65,5 @@ if ($user) {
     mail($email, $subject, $message, "From: noreply@psychecare.local");
 }
 
-header("Location: forgot_password.html?sent=1");
+header("Location: forgot-password.html?sent=1");
 exit();
