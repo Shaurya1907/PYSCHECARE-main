@@ -27,40 +27,75 @@ def run_php(expression):
 
 
 def test_valid_signup_data():
-    assert run_php("validateSignupInput('valid_user', 'user@example.com', 'password123')") is None
+    expression = "validateSignupInput('valid_user', 'user@example.com', 'password123')"
+    assert run_php(expression) is None
 
 
 def test_signup_rejects_invalid_email():
-    assert run_php("validateSignupInput('valid_user', 'bad-email', 'password123')") == "email"
+    expression = "validateSignupInput('valid_user', 'bad-email', 'password123')"
+    assert run_php(expression) == "email"
 
 
 def test_signup_rejects_long_username():
-    assert run_php("validateSignupInput(str_repeat('a', 51), 'user@example.com', 'password123')") == "username"
+    expression = (
+        "validateSignupInput("
+        "str_repeat('a', 51), 'user@example.com', 'password123'"
+        ")"
+    )
+    assert run_php(expression) == "username"
 
 
 def test_signup_rejects_weak_password():
-    assert run_php("validateSignupInput('valid_user', 'user@example.com', 'short')") == "weak_password"
+    expression = "validateSignupInput('valid_user', 'user@example.com', 'short')"
+    assert run_php(expression) == "weak_password"
 
 
 def test_contact_form_validation():
-    assert run_php("validateContactInput('Ava', 'ava@example.com', 'Checking in', 'Hello there')") is None
+    expression = (
+        "validateContactInput("
+        "'Ava', 'ava@example.com', 'Checking in', 'Hello there'"
+        ")"
+    )
+    assert run_php(expression) is None
+
+    expression = (
+        "validateContactInput('', 'ava@example.com', 'Checking in', 'Hello there')"
+    )
     assert (
-        run_php("validateContactInput('', 'ava@example.com', 'Checking in', 'Hello there')")
+        run_php(expression)
         == "Please enter your name under 100 characters."
     )
+
+    expression = (
+        "validateContactInput('Ava', 'bad-email', 'Checking in', 'Hello there')"
+    )
     assert (
-        run_php("validateContactInput('Ava', 'bad-email', 'Checking in', 'Hello there')")
+        run_php(expression)
         == "Please enter a valid email address."
     )
+
+    expression = "validateContactInput('Ava', 'ava@example.com', '', 'Hello there')"
     assert (
-        run_php("validateContactInput('Ava', 'ava@example.com', '', 'Hello there')")
+        run_php(expression)
         == "Please enter a subject under 255 characters."
     )
-    assert (
-        run_php("validateContactInput('Ava', 'ava@example.com', str_repeat('x', 256), 'Hello there')")
-        == "Please enter a subject under 255 characters."
+
+    expression = (
+        "validateContactInput("
+        "'Ava', 'ava@example.com', str_repeat('x', 256), 'Hello there'"
+        ")"
     )
     assert (
-        run_php("validateContactInput('Ava', 'ava@example.com', 'Checking in', str_repeat('x', 1001))")
+        run_php(expression)
+        == "Please enter a subject under 255 characters."
+    )
+
+    expression = (
+        "validateContactInput("
+        "'Ava', 'ava@example.com', 'Checking in', str_repeat('x', 1001)"
+        ")"
+    )
+    assert (
+        run_php(expression)
         == "Please enter a message under 1000 characters."
     )
