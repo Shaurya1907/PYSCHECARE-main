@@ -166,6 +166,8 @@ Score = 50 (base) + (difficulty × quality) + type_bonus
 
 ## 🎨 Code Style Guide
 
+- Save text, docs, HTML, CSS, JavaScript, Python, and PHP files as UTF-8.
+
 ### HTML
 - Use semantic elements (`<header>`, `<main>`, `<section>`, `<footer>`)
 - Always include `alt` text on images
