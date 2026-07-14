@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PsycheCare - Book Appointment</title>
+    <link rel="stylesheet" href="../otherStylesheet/styles.css">
+    <link rel="stylesheet" href="../otherStylesheet/appointment.css">
+</head>
+<body>
+    <nav>
+        <!-- Your existing navigation here -->
+        <div class="nav-container">
+            <a href="../index.html" class="logo">PsycheCare</a>
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+                ☰
+            </button>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="chatBot.html">Chat</a></li>
+                <li><a href="appointment.html" class="active">Appointments</a></li>
+                <li><a href="statistics.html">Statistics</a></li>
+                <li><a href="food.html">Food</a></li>
+                <li><a href="exercise.html">Exercise</a></li>
+                <li><a href="sos.html">SOS</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="appointment-container">
+        <h1>📅 Book an Appointment</h1>
+        <p class="subtitle">Connect with a therapist for professional support</p>
+
+        <!-- Message display area -->
+        <div id="booking-message"></div>
+
+        <!-- Booking Form -->
+        <section class="booking-section">
+            <h2>New Appointment</h2>
+            <form id="book-appointment-form" class="appointment-form">
+                <div class="form-group">
+                    <label for="therapist">Choose Your Therapist *</label>
+                    <select id="therapist" required>
+                        <option value="">-- Loading therapists... --</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appt-date">Date *</label>
+                        <input type="date" id="appt-date" required min="">
+                    </div>
+                    <div class="form-group">
+                        <label for="appt-time">Time *</label>
+                        <input type="time" id="appt-time" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="session-type">Session Type *</label>
+                    <select id="session-type" required>
+                        <option value="video">Video Call</option>
+                        <option value="audio">Audio Call</option>
+                        <option value="chat">Chat</option>
+                        <option value="in-person">In-Person</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Additional Notes</label>
+                    <textarea id="notes" rows="3" placeholder="Any specific concerns or preferences..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary">📅 Book Appointment</button>
+            </form>
+        </section>
+
+        <!-- Upcoming Appointments List -->
+        <section class="appointments-list-section">
+            <h2>📋 Your Upcoming Appointments</h2>
+            <div id="appointments-list">
+                <p class="loading">Loading your appointments...</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="../otherJS/hamberger.js"></script>
+    <script src="../otherJS/appointment.js"></script>
+</body>
+</html>
