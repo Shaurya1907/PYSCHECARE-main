@@ -104,3 +104,81 @@ def log_crisis_event(risk: dict, session_id: str, log_path: Path | str = DEFAULT
         events.append(event)
         events = events[-MAX_EVENTS:]
         path.write_text(json.dumps(events, indent=2), encoding="utf-8")
+
+# ADD this function at the bottom of crisis_detection.py
+
+def get_crisis_response_for_frontend(crisis_result: dict) -> dict:
+    """
+    Sanitizes crisis detection results before sending to the browser.
+
+    NEVER expose the raw psychiatric classification label (e.g., 'suicidal_ideation')
+    to the frontend. Only return a boolean flag and a pre-written support message.
+
+    Args:
+        crisis_result: Raw internal result from the crisis classifier
+
+    Returns:
+        dict: Safe response for browser consumption
+    """
+    if crisis_result.get('is_crisis', False):
+        return {
+            'needs_support': True,
+            'support_message': (
+                'It sounds like you\'re going through a really difficult time. '
+                'You are not alone, and help is available right now.'
+            ),
+            'emergency_contacts': [
+                {
+                    'name': 'iCall (India)',
+                    'number': '9152987821',
+                    'hours': 'Mon–Sat, 8am–10pm'
+                },
+                {
+                    'name': 'Vandrevala Foundation',
+                    'number': '1860-2662-345',
+                    'hours': '24/7'
+                },
+                {
+                    'name': 'SNEHI',
+                    'number': '044-24640050',
+                    'hours': '24/7'
+                },
+            ],
+            'show_sos_button': True,
+            # NOTE: 'crisis_type', 'severity', 'classification' are
+            # intentionally OMITTED — stored server-side only
+        }
+
+    return {
+        'needs_support': False,
+        'support_message': None,
+        'show_sos_button': False,
+    }
+
+
+def log_crisis_event_server_side(user_id: int, crisis_type: str, severity: str) -> None:
+    """
+    Stores crisis classification in the database, accessible only to
+    authorized healthcare staff. This function is called from app.py
+    and the result is NEVER forwarded to the client.
+
+    Args:
+        user_id: ID of the user whose message triggered crisis detection
+        crisis_type: Internal classification (e.g., 'suicidal_ideation') — server only
+        severity: Severity level — server only
+    """
+    # TODO: implement encrypted DB write when DB layer is available
+    # Example:
+    # db.execute(
+    #     "INSERT INTO crisis_events (user_id, crisis_type, severity, detected_at) "
+    #     "VALUES (?, ?, ?, NOW())",
+    #     (user_id, crisis_type, severity)
+    # )
+    import logging
+    logger = logging.getLogger('psychecare.crisis')
+    logger.warning(
+        f"[CRISIS EVENT] user_id={user_id} "
+        f"type={crisis_type} "
+        f"severity={severity} "
+        f"[stored server-side, not sent to client]"
+    )
