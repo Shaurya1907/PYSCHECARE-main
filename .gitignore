@@ -1,2 +1,43 @@
 database.sqlite
 crisis_events.json
+
+# .gitignore — append this entire block
+
+# ========================
+# macOS System Files
+# ========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# ========================
+# Windows System Files
+# ========================
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ========================
+# Linux Backup Files
+# ========================
+*~
+
+# ========================
+# Python Cache (already present but verify)
+# ========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ========================
+# Virtual Environments
+# ========================
+venv/
+.venv/
+env/
+.env/
