@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Mood Journal | PsycheCare</title>
+    <link rel="stylesheet" href="../otherStylesheet/journal.css">
+    <!-- Chart.js for mood trend visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- ── Streak Banner ───────────────────────────────────────── -->
+    <div class="streak-banner" id="streak-banner">
+        🔥 <span id="streak-count">0</span> day streak — Keep going!
+    </div>
+
+    <div class="journal-container">
+
+        <h1 class="journal-title">📓 Daily Mood Journal</h1>
+        <p class="journal-subtitle">
+            Track your emotional wellbeing one day at a time.
+            Consistency builds insight.
+        </p>
+
+        <!-- ── Today's Entry Form ──────────────────────────────── -->
+        <section class="entry-section card">
+            <h2>How are you feeling today?</h2>
+
+            <!-- Mood slider -->
+            <div class="mood-scale-wrapper">
+                <span class="scale-label">😔 Very Low</span>
+                <input
+                    type="range"
+                    id="mood-slider"
+                    min="1" max="10" value="5"
+                    aria-label="Mood score from 1 to 10"
+                >
+                <span class="scale-label">😄 Excellent</span>
+            </div>
+            <div class="mood-score-display">
+                Score: <strong id="mood-score-display">5</strong> / 10
+            </div>
+
+            <!-- Quick mood tags -->
+            <div class="mood-tags" role="group" aria-label="Select mood label">
+                <button class="mood-tag" data-mood="Happy">😊 Happy</button>
+                <button class="mood-tag" data-mood="Anxious">😰 Anxious</button>
+                <button class="mood-tag" data-mood="Calm">😌 Calm</button>
+                <button class="mood-tag" data-mood="Sad">😢 Sad</button>
+                <button class="mood-tag" data-mood="Energetic">⚡ Energetic</button>
+                <button class="mood-tag" data-mood="Tired">😴 Tired</button>
+                <button class="mood-tag" data-mood="Neutral">😐 Neutral</button>
+                <button class="mood-tag" data-mood="Grateful">🙏 Grateful</button>
+            </div>
+
+            <!-- Journal text -->
+            <div class="textarea-wrapper">
+                <textarea
+                    id="journal-text"
+                    placeholder="Write about your day... What happened? How do you feel about it? (Optional — max 1000 characters)"
+                    maxlength="1000"
+                    rows="5"
+                    aria-label="Journal entry text"
+                ></textarea>
+                <div class="char-count">
+                    <span id="char-count">0</span>/1000 characters
+                </div>
+            </div>
+
+            <div id="journal-message" class="journal-message" role="alert" aria-live="polite"></div>
+
+            <button id="save-entry-btn" class="save-btn">
+                💾 Save Today's Entry
+            </button>
+        </section>
+
+        <!-- ── 7-Day Mood Trend Chart ───────────────────────────── -->
+        <section class="trend-section card">
+            <h2>📊 Your 7-Day Mood Trend</h2>
+            <div class="chart-wrapper">
+                <canvas
+                    id="moodTrendChart"
+                    aria-label="Line chart showing mood scores over the last 7 days"
+                    role="img"
+                ></canvas>
+            </div>
+            <p class="trend-meta">
+                Average mood (last 7 days):
+                <strong id="avg-mood-display">—</strong>
+            </p>
+        </section>
+
+        <!-- ── Past Entries ─────────────────────────────────────── -->
+        <section class="history-section card">
+            <h2>📅 Past Entries</h2>
+            <div id="history-list" class="history-list">
+                <p class="loading-text">Loading your entries...</p>
+            </div>
+        </section>
+
+    </div><!-- end .journal-container -->
+
+    <script src="../otherJS/journal.js"></script>
+</body>
+</html>
