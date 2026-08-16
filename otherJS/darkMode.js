@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (isDarkMode) {
         body.classList.add('dark-mode');
         if (darkModeToggle) {
-            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            darkModeToggle.textContent = '<i class="fas fa-sun"></i>';
             darkModeToggle.setAttribute('title', 'Toggle Light Mode');
             darkModeToggle.setAttribute('aria-label', 'Toggle Light Mode');
         }
@@ -32,12 +32,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (body.classList.contains('dark-mode')) {
                 localStorage.setItem('darkMode', 'enabled');
-                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                darkModeToggle.textContent = '<i class="fas fa-sun"></i>';
                 darkModeToggle.setAttribute('title', 'Toggle Light Mode');
                 darkModeToggle.setAttribute('aria-label', 'Toggle Light Mode');
             } else {
                 localStorage.setItem('darkMode', 'disabled');
-                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                darkModeToggle.textContent = '<i class="fas fa-moon"></i>';
                 darkModeToggle.setAttribute('title', 'Toggle Dark Mode');
                 darkModeToggle.setAttribute('aria-label', 'Toggle Dark Mode');
             }
