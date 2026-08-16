@@ -194,6 +194,7 @@ Before making changes, ensure an issue has been assigned to you.
 ### 3️⃣ Sync Your Fork
 
 ```bash
+git remote add upstream https://github.com/Niteshagarwal01/PYSCHECARE.git
 git fetch upstream
 git checkout main
 git rebase upstream/main
