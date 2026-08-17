@@ -1,2 +1,16 @@
 database.sqlite
 crisis_events.json
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Linux
+*~
